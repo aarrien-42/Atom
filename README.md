@@ -12,7 +12,7 @@ The goal of this project is to develop my own programming language. It is a very
     - obj/             # Object files (.o)
     - asm/             # Assembly code files (.s)
     - bin/             # Binaries (executable for getting assembly code and the final executable)
-    - lang/            # Own language files (.athy)
+    - lang/            # Own language files (.atm)
 
 ## How to use
 - Step 1: make *(Compiles files)
