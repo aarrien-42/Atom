@@ -4,10 +4,12 @@ int main(int ac, char** av) {
 	if (ac != 2)
 		exitError(E_INVALID_EXEC);
 
-	std::string	file = av[1];
+	std::string	fileName = av[1];
 	size_t		fileExtLen = strlen(FILE_EXT);
-	if (file.size() <= fileExtLen || file.compare(file.size() - fileExtLen, fileExtLen, FILE_EXT))
+	if (fileName.size() <= fileExtLen || fileName.compare(fileName.size() - fileExtLen, fileExtLen, FILE_EXT))
 		exitError(E_INVALID_FILE);
+
+	Lexer L(fileName);
 
 	return 0;
 }

@@ -1,0 +1,74 @@
+#ifndef LEXER_HPP
+#define LEXER_HPP
+
+	#include <iostream>
+	#include <fstream>
+	#include <sstream>
+	#include <string>
+	#include <vector>
+	#include "error.hpp"
+
+	#define KEYWORD_IF					"i."
+	#define KEYWORD_ELSE				"e."
+	#define KEYWORD_IF_ELSE				"ie."
+	#define KEYWORD_WHILE				"w."
+	#define KEYWORD_FOR					"f."
+	#define KEYWORD_RETURN				"r."
+
+	#define OPERATOR_PLUS				"+"
+	#define OPERATOR_MINUS				"-"
+	#define OPERATOR_MULTIPLY			"*"
+	#define OPERATOR_DIVIDE				"/"
+	#define OPERATOR_MODULO				"%"
+	#define OPERATOR_ASSIGN				"="
+
+	#define COMPARISON_EQUAL			"=="
+	#define COMPARISON_NOT_EQUAL		"!="
+	#define COMPARISON_LESS				"<"
+	#define COMPARISON_LESS_EQUAL		"<="
+	#define COMPARISON_GREATER			">"
+	#define COMPARISON_GREATER_EQUAL	">="
+
+	#define LOGICAL_AND					"and"
+	#define LOGICAL_OR					"or"
+
+	#define BITWISE_AND					"&"
+	#define BITWISE_OR					"|"
+	#define BITWISE_XOR					"^"
+	#define BITWISE_NOT					"~"
+
+	#define LEFT_PAREN					"("
+	#define RIGHT_PAREN					")"
+	#define LEFT_BRACE					"{"
+	#define RIGHT_BRACE					"}"
+	#define SEMICOLON					";"
+	#define COMMA						","
+	#define COMMENT						"//"
+	#define WHITESPACE					" \n\t\v\f\r"
+
+	enum TokenType {
+		keyword,
+		operator_type,
+		comparison,
+		logic,
+		bitwise,
+		paren,
+		brace,
+		comment,
+		whitespace
+	};
+
+	struct Token {
+		TokenType	_type;
+		std::string	_value = "";
+	};
+
+	class Lexer {
+		private:
+			std::string			_sourceFileContent;
+			std::vector<Token>	_tokens;
+		public:
+			Lexer( const std::string& fileName );
+	};
+
+#endif

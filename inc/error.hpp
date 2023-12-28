@@ -5,7 +5,7 @@
 	#include "atom.hpp"
 
 	enum Error {
-		E_INVALID_EXEC, E_INVALID_FILE
+		E_INVALID_EXEC, E_INVALID_FILE, E_FILE_OPEN,
 	};
 
 	void	printError( const std::string& str );
