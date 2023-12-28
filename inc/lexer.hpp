@@ -14,6 +14,8 @@
 	#define KEYWORD_WHILE				"w."
 	#define KEYWORD_FOR					"f."
 	#define KEYWORD_RETURN				"r."
+	#define KEYWORD_CONTINUE			"c."
+	#define KEYWORD_BREAK				"b."
 
 	#define OPERATOR_PLUS				"+"
 	#define OPERATOR_MINUS				"-"
@@ -43,19 +45,21 @@
 	#define RIGHT_BRACE					"}"
 	#define SEMICOLON					";"
 	#define COMMA						","
-	#define COMMENT						"//"
+	#define COMMENT						"#"
 	#define WHITESPACE					" \n\t\v\f\r"
 
 	enum TokenType {
-		keyword,
-		operator_type,
-		comparison,
-		logic,
-		bitwise,
-		paren,
-		brace,
-		comment,
-		whitespace
+		identifier,		// variable name
+		variable,		// number, string literal
+		keyword,		// if, else, else if, while, for, return, continue, break
+		operator_type,	// +, -, *, /, %, =
+		comparison,		// ==, !=, <, <=, >, >=
+		logic,			// &&, ||
+		bitwise,		// &, |, ^, ~
+		paren,			// (, )
+		brace,			// {, }
+		comment,		// #
+		whitespace		// spaces
 	};
 
 	struct Token {
@@ -67,8 +71,16 @@
 		private:
 			std::string			_sourceFileContent;
 			std::vector<Token>	_tokens;
+			size_t				_index;
 		public:
 			Lexer( const std::string& fileName );
+			~Lexer();
+
+			std::vector<Token>	getTokens();
+
+			char				peek();
+			char				consume();
+			void				tokenize();
 	};
 
 #endif
