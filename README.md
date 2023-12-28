@@ -1,4 +1,4 @@
-# [Anthony] - Intuitive and Simple Programming
+# [Atom] - Intuitive and Simple Programming
 
 The goal of this project is to develop my own programming language. It is a very ambitious and costly project, so initially, it will start as a simple compiler and will grow from there. I don't intend for it to be a complex and deep language, its purpose is rather educational.
 
@@ -16,7 +16,7 @@ The goal of this project is to develop my own programming language. It is a very
 
 ## How to use
 - Step 1: make *(Compiles files)
-- Step 2: ./bin/athy lang/<file>.athy *(Writes a valid assembly code)
+- Step 2: ./bin/athy lang/<file>.atm *(Writes a valid assembly code)
 
 ## How to Contribute
 At this stage, the development is purely personal.

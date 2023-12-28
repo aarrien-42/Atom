@@ -1,5 +1,5 @@
 # PROGRAM
-NAME = athy
+NAME = atom
 
 # FOLDERS
 SRC_DIR = src

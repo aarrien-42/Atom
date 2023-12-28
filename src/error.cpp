@@ -7,7 +7,7 @@ void	printError( const std::string& str ) {
 void	exitError( const Error& error ) {
 	switch (error) {
 		case E_INVALID_EXEC:
-			printError("Invalid execution\nUse: ./athy <name>.athy");
+			printError("Invalid execution\nUse: ./" + std::string(EXECUTABLE) + " <name>" + std::string(FILE_EXT));
 			break;
 		case E_INVALID_FILE:
 			printError("Invalid file format, file should have " + std::string(FILE_EXT) + " extension");
