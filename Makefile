@@ -33,6 +33,9 @@ WHITE = \033[0;97m
 
 all: $(NAME)
 
+run: all
+	./$(BIN_DIR)/$(NAME) $(word 2,$(MAKECMDGOALS))
+
 $(NAME) : $(OBJ)
 	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) $(OBJ) -I $(INC_DIR) -o $(BIN_DIR)/$(NAME)

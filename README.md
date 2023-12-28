@@ -15,8 +15,7 @@ The goal of this project is to develop my own programming language. It is a very
     - lang/            # Own language files (.atm)
 
 ## How to use
-- Step 1: make *(Compiles files)
-- Step 2: ./bin/athy lang/<file>.atm *(Writes a valid assembly code)
+make run lang/<file>.atm *(Compiles files and Writes a valid assembly code)*
 
 ## Theory
 Programming languages can be either interpreted or compiled. Interpreted languages are executed line by line, while compiled languages, as the name suggests, directly translate the source code into machine code.
