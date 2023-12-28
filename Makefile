@@ -44,10 +44,6 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -o $@ -c $< -I $(INC_DIR)
 	echo "$(GREEN)OK$(DEF_COLOR)"
 
-run: all
-	clear
-	./$(BIN_DIR)/$(NAME)
-
 clean:
 	$(RM) $(OBJ_DIR)
 
