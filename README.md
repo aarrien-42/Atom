@@ -18,8 +18,20 @@ The goal of this project is to develop my own programming language. It is a very
 - Step 1: make *(Compiles files)
 - Step 2: ./bin/athy lang/<file>.atm *(Writes a valid assembly code)
 
+## Theory
+Programming languages can be either interpreted or compiled. Interpreted languages are executed line by line, while compiled languages, as the name suggests, directly translate the source code into machine code.
+
+Mine is meant to be compiled, so it requires a few more steps before executing. Here's a summary of the process:
+- Lexical Analysis - Splits the source code into tokens, resulting in a token list.
+- Parsing
+- Semantic Analysis
+- Optimization
+- Code Generation
+
 ## How to Contribute
 At this stage, the development is purely personal.
 
 ## Additional Resources
 - [Pixeled - Creating a Compiler](https://www.youtube.com/watch?v=vcSijrRsrY0&list=PLUDlas_Zy_qC7c5tCgTMYq2idyyT241qs)
+- [freeCodeCamp - I wrote a programming language. Here’s how you can, too.](https://www.freecodecamp.org/news/the-programming-language-pipeline-91d3f449c919/)
+- [Medium - How to Build Your Own Programming Language — Introduction](https://ruslandzhafarov.medium.com/how-to-create-your-own-programming-language-introduction-7c848585c59)
