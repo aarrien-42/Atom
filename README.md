@@ -15,7 +15,8 @@ The goal of this project is to develop my own programming language. It is a very
     - lang/            # Own language files (.athy)
 
 ## How to use
-...
+- Step 1: make *(Compiles files)
+- Step 2: ./bin/athy lang/<file>.athy *(Writes a valid assembly code)
 
 ## How to Contribute
 At this stage, the development is purely personal.
