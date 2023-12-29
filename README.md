@@ -37,6 +37,7 @@ The goal of this project is to develop my own programming language. It is a very
 
 ## How to use
 `make run lang/<file>.atm` *(Compiles files and Writes a valid assembly code)*
+
 `make asm` *(Compiles the assembly code)*
 
 ## Theory
