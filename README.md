@@ -28,15 +28,15 @@ The goal of this project is to develop my own programming language. It is a very
 
 ## File Structure
  - Project Directory
-    - inc/             # Header files (.hpp)
-    - src/             # Source files (.cpp)
-    - obj/             # Object files (.o)
-    - asm/             # Assembly code files (.s)
-    - bin/             # Binaries (executable for getting assembly code and the final executable)
-    - lang/            # Own language files (.atm)
+    - `inc/`             # Header files (.hpp)
+    - `src/`             # Source files (.cpp)
+    - `obj/`             # Object files (.o)
+    - `asm/`             # Assembly code files (.asm)
+    - `bin/`             # Binaries (executable for getting assembly code and the final executable)
+    - `lang/`            # Own language files (.atm)
 
 ## How to use
-make run lang/<file>.atm *(Compiles files and Writes a valid assembly code)*
+`make run lang/<file>.atm` *(Compiles files and Writes a valid assembly code)*
 
 ## Theory
 Programming languages can be either interpreted or compiled. Interpreted languages are executed line by line, while compiled languages, as the name suggests, directly translate the source code into machine code.
