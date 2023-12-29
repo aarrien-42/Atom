@@ -80,6 +80,7 @@
 
 			char				peek();
 			char				consume();
+			void				createToken( std::string& token );
 			void				tokenize();
 	};
 

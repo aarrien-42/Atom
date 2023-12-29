@@ -39,10 +39,45 @@ char				Lexer::consume() {
 	return currentChar;
 }
 
+void				Lexer::createToken( std::string& token ) {
+	std::cout << token << std::endl;
+	token.clear();
+}
+
 void				Lexer::tokenize() {
 	std::string	buffer;
 
 	while (peek() != 0) {
-		std::cout << consume();
+		if (isalpha(peek()) || peek() == '\"') {
+			if (peek() == '\"') {
+				buffer.push_back(consume());
+				while (peek() != 0 && peek() != '\"')
+					buffer.push_back(consume());
+				if (peek() == '\"')
+					buffer.push_back(consume());
+			} else {
+				while (peek() != 0 && isalnum(peek()))
+					buffer.push_back(consume());
+				if (peek() == '.')
+					buffer.push_back(consume());
+				else if (peek() == ':')
+					buffer.push_back(consume());
+			}
+			createToken(buffer);
+		} else if (isdigit(peek())) {
+			while (peek() != 0 && isdigit(peek()))
+				buffer.push_back(consume());
+			createToken(buffer);
+		} else if (std::string("(){}").find(peek()) != std::string::npos) {
+			buffer.push_back(consume());
+			createToken(buffer);
+		} else if (std::string("=!<>").find(peek()) != std::string::npos) {
+			buffer.push_back(consume());
+			if (peek() == '=')
+				buffer.push_back(consume());
+			createToken(buffer);
+		} else {
+			consume();
+		}
 	}
 }
