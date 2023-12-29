@@ -3,7 +3,28 @@
 The goal of this project is to develop my own programming language. It is a very ambitious and costly project, so initially, it will start as a simple compiler and will grow from there. I don't intend for it to be a complex and deep language, its purpose is rather educational.
 
 ## Key Features
+- Shortened keywords: <details><summary>Keyword List</summary>
+
+    | C++ | Atom |
+    | ------------ | ------------ |
+    | if | i. |
+    | else | e. |
+    | if else | ie. |
+    | while | w. |
+    | for | f. |
+    | return | r. |
+    | continue | c. |
+    | break | b. |
+    | any variable | v. |
+    | write | p. |
+
+</details>
+
+- New Function declarations. `main:` or using parameters `f_name: v. p1, v. p2`
+- Simplyfied conditionals. It's posible to concatenate various conditions to a single variable. `(5 <= x > 1)` or even `(x <= 5 > 1 != 2)`
+
 - Still working on them
+
 
 ## File Structure
  - Project Directory
