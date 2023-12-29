@@ -1,15 +1,18 @@
 # PROGRAM
 NAME = atom
+NAME_ASM = a_atom
 
 # FOLDERS
 SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = inc
+ASM_DIR = asm
 BIN_DIR = bin
 
 # FILES
 SRC = $(wildcard $(SRC_DIR)/*cpp)
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+SRC_ASM = code
 
 # COMPILATION
 CC = c++
@@ -47,6 +50,12 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -o $@ -c $< -I $(INC_DIR)
 	echo "$(GREEN)OK$(DEF_COLOR)"
 
+asm:
+	mkdir -p $(BIN_DIR)
+	nasm -f elf $(ASM_DIR)/$(SRC_ASM).asm
+	ld -m elf_i386 -s -o $(BIN_DIR)/$(NAME_ASM) $(ASM_DIR)/$(SRC_ASM).o
+	rm $(ASM_DIR)/$(SRC_ASM).o
+
 clean:
 	$(RM) $(OBJ_DIR)
 
@@ -55,4 +64,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all run clean fclean re
+.PHONY: all run asm clean fclean re
