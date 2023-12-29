@@ -17,6 +17,7 @@ Lexer::Lexer( const std::string& fileName ) : _index(0) {
 	_sourceFileContent = fileContent;
 
 	tokenize();
+	printTokens();
 }
 
 /*-DESTRUCTOR-*/
@@ -39,9 +40,26 @@ char				Lexer::consume() {
 	return currentChar;
 }
 
-void				Lexer::createToken( std::string& token ) {
-	std::cout << token << std::endl;
-	token.clear();
+void				Lexer::createToken( std::string& buffer ) {
+	Token token = {._value = buffer};
+
+	auto it = tokenMap.find(buffer);
+	if (it != tokenMap.end()) {
+		token._type = it->second;
+	} else {
+		if (isdigit(buffer.at(0)))
+			token._type = variable_num;
+		else if (buffer.at(0) == '\'' || buffer.at(0) == '\"')
+			token._type = variable_string;
+		else {
+			if (buffer.at(buffer.size()-1) == ':')
+				token._type = identifier_func;
+			else
+				token._type = identifier_var;
+		}
+	}
+	_tokens.push_back(token);
+	buffer.clear();
 }
 
 void				Lexer::tokenize() {
@@ -85,5 +103,11 @@ void				Lexer::tokenize() {
 		} else {
 			consume();
 		}
+	}
+}
+
+void				Lexer::printTokens() {
+	for (std::vector<Token>::const_iterator it = _tokens.begin(); it != _tokens.end(); it++) {
+		std::cout << "[" << it->_type << " " << it->_value << "]" << std::endl;
 	}
 }

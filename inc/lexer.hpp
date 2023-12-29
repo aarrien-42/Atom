@@ -6,65 +6,88 @@
 	#include <sstream>
 	#include <string>
 	#include <vector>
+	#include <unordered_map>
 	#include "error.hpp"
 
-	#define KEYWORD_IF					"i."
-	#define KEYWORD_ELSE				"e."
-	#define KEYWORD_IF_ELSE				"ie."
-	#define KEYWORD_WHILE				"w."
-	#define KEYWORD_FOR					"f."
-	#define KEYWORD_RETURN				"r."
-	#define KEYWORD_CONTINUE			"c."
-	#define KEYWORD_BREAK				"b."
-
-	#define OPERATOR_PLUS				"+"
-	#define OPERATOR_MINUS				"-"
-	#define OPERATOR_MULTIPLY			"*"
-	#define OPERATOR_DIVIDE				"/"
-	#define OPERATOR_MODULO				"%"
-	#define OPERATOR_ASSIGN				"="
-
-	#define COMPARISON_EQUAL			"=="
-	#define COMPARISON_NOT_EQUAL		"!="
-	#define COMPARISON_LESS				"<"
-	#define COMPARISON_LESS_EQUAL		"<="
-	#define COMPARISON_GREATER			">"
-	#define COMPARISON_GREATER_EQUAL	">="
-
-	#define LOGICAL_AND					"and"
-	#define LOGICAL_OR					"or"
-
-	#define BITWISE_AND					"&"
-	#define BITWISE_OR					"|"
-	#define BITWISE_XOR					"^"
-	#define BITWISE_NOT					"~"
-
-	#define LEFT_PAREN					"("
-	#define RIGHT_PAREN					")"
-	#define LEFT_BRACE					"{"
-	#define RIGHT_BRACE					"}"
-	#define SEMICOLON					";"
-	#define COMMA						","
-	#define COMMENT						"#"
-	#define WHITESPACE					" \n\t\v\f\r"
-
 	enum TokenType {
-		identifier,		// variable name
-		variable,		// number, string literal
-		keyword,		// if, else, else if, while, for, return, continue, break
-		operator_type,	// +, -, *, /, %, =
-		comparison,		// ==, !=, <, <=, >, >=
-		logic,			// &&, ||
-		bitwise,		// &, |, ^, ~
-		paren,			// (, )
-		brace,			// {, }
-		comment,		// #
-		whitespace		// spaces
+		identifier_var,				// variable and function name
+		identifier_func,
+		variable_num,				// number, string literal
+		variable_string,
+		keyword_if,					// if, else, else if, while, for, return, continue, break
+		keyword_else,
+		keyword_if_else,
+		keyword_while,
+		keyword_for,
+		keyword_return,
+		keyword_continue,
+		keyword_break,
+		keyword_variable,
+		keyword_print,
+		operator_plus,				// +, -, *, /, %, =
+		operator_minus,
+		operator_multiply,
+		operator_divide,
+		operator_modulus,
+		operator_assign,
+		comparison_equal,			// ==, !=, <, <=, >, >=
+		comparison_not_equal,
+		comparison_less,
+		comparison_less_equal,
+		comparison_greater,
+		comparison_greater_equal,
+		logic_and,					// &&, ||
+		logic_or,
+		bitwise_and,				// &, |, ^, ~
+		bitwise_or,
+		bitwise_xor,
+		bitwise_not,
+		paren_open,					// (, )
+		paren_close,
+		brace_open,					// {, }
+		brace_close,
+		comment,					// #
+		whitespace					// spaces
+	};
+
+	static const std::unordered_map<std::string, TokenType> tokenMap = {
+		{"i.", keyword_if},
+		{"e.", keyword_else},
+		{"ie.", keyword_if_else},
+		{"w.", keyword_while},
+		{"f.", keyword_for},
+		{"r.", keyword_return},
+		{"c.", keyword_continue},
+		{"b.", keyword_break},
+		{"v.", keyword_variable},
+		{"p.", keyword_print},
+		{"+", operator_plus},
+		{"-", operator_minus},
+		{"*", operator_multiply},
+		{"/", operator_divide},
+		{"%", operator_modulus},
+		{"=", operator_assign},
+		{"==", comparison_equal},
+		{"!=", comparison_not_equal},
+		{"<", comparison_less},
+		{"<=", comparison_less_equal},
+		{">", comparison_greater},
+		{">=", comparison_greater_equal},
+		{"and", logic_and},
+		{"or", logic_or},
+		{"&", bitwise_and},
+		{"|", bitwise_or},
+		{"^", bitwise_xor},
+		{"~", bitwise_not},
+		{"(", paren_open},
+		{")", paren_close},
+		{"{", brace_open},
+		{"}", brace_close}
 	};
 
 	struct Token {
-		TokenType	_type;
-		std::string	_value = "";
+		TokenType	_type {};
+		std::string	_value;
 	};
 
 	class Lexer {
@@ -80,8 +103,10 @@
 
 			char				peek();
 			char				consume();
-			void				createToken( std::string& token );
+			void				createToken( std::string& buffer );
 			void				tokenize();
+
+			void				printTokens();
 	};
 
 #endif
