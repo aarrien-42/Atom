@@ -56,12 +56,12 @@
 		comparison,             // ==, !=, <, <=, >, >=
 		logic,                  // &&, ||
 		bitwise,                // &, |, ^, ~
-		paren_open,             // (, )
-		paren_close,
-		brace_open,             // {, }
-		brace_close,
+		paren,                  // (, )
+		brace,                  // {, }
+		enter,                  // \n
 		comment,                // #
-		whitespace              // spaces
+		whitespace,             // spaces
+		unknown
 	};
 
 	struct Token {
