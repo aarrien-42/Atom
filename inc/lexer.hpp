@@ -7,6 +7,7 @@
 	#include <string>
 	#include <vector>
 	#include <unordered_map>
+	#include "utils.hpp"
 	#include "error.hpp"
 
 	#define KEYWORD_IF					"i."
@@ -79,10 +80,10 @@
 			~Lexer();
 
 			std::vector<Token>	getTokens();
+			void				setToken( std::string& buffer );
 
 			char				peek();
 			char				consume();
-			void				setToken( std::string& buffer );
 			void				tokenize();
 
 			void				printTokens();

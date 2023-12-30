@@ -28,26 +28,6 @@ Lexer::~Lexer() {}
 
 std::vector<Token>	Lexer::getTokens() { return _tokens; }
 
-char				Lexer::peek() {
-	if (_index < _sourceFileContent.size())
-		return _sourceFileContent.at(_index);
-	return 0;
-}
-
-char				Lexer::consume() {
-	char currentChar = peek();
-	_index++;
-	return currentChar;
-}
-
-bool				isStringInVector( std::string& buffer , const std::vector<std::string>& vector ) {
-	for (std::vector<std::string>::const_iterator it = vector.begin(); it != vector.end(); it++) {
-		if (*it == buffer)
-			return true;
-	}
-	return false;
-}
-
 void				Lexer::setToken( std::string& buffer ) {
 	Token token = {._type = unknown, ._value = buffer};
 
@@ -75,6 +55,18 @@ void				Lexer::setToken( std::string& buffer ) {
 
 	_tokens.push_back(token);
 	buffer.clear();
+}
+
+char				Lexer::peek() {
+	if (_index < _sourceFileContent.size())
+		return _sourceFileContent.at(_index);
+	return 0;
+}
+
+char				Lexer::consume() {
+	char currentChar = peek();
+	_index++;
+	return currentChar;
 }
 
 void				Lexer::tokenize() {
@@ -114,6 +106,10 @@ void				Lexer::tokenize() {
 			buffer.push_back(consume());
 			if (peek() == '=')
 				buffer.push_back(consume());
+			setToken(buffer);
+		} else if (std::string("\n").find(peek()) != std::string::npos) {
+			// new line
+			buffer.push_back(consume());
 			setToken(buffer);
 		} else {
 			consume();
