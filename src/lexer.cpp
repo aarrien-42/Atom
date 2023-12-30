@@ -40,24 +40,13 @@ char				Lexer::consume() {
 	return currentChar;
 }
 
-void				Lexer::createToken( std::string& buffer ) {
+
+
+void				Lexer::setToken( std::string& buffer ) {
 	Token token = {._value = buffer};
 
-	auto it = tokenMap.find(buffer);
-	if (it != tokenMap.end()) {
-		token._type = it->second;
-	} else {
-		if (isdigit(buffer.at(0)))
-			token._type = variable_num;
-		else if (buffer.at(0) == '\'' || buffer.at(0) == '\"')
-			token._type = variable_string;
-		else {
-			if (buffer.at(buffer.size()-1) == ':')
-				token._type = identifier_func;
-			else
-				token._type = identifier_var;
-		}
-	}
+
+
 	_tokens.push_back(token);
 	buffer.clear();
 }
@@ -75,12 +64,12 @@ void				Lexer::tokenize() {
 				buffer.push_back(consume());
 			else if (peek() == ':')
 				buffer.push_back(consume());
-			createToken(buffer);
+			setToken(buffer);
 		} else if (isdigit(peek())) {
 			// digit
 			while (peek() != 0 && isdigit(peek()))
 				buffer.push_back(consume());
-			createToken(buffer);
+			setToken(buffer);
 		} else if (std::string("\'\"").find(peek()) != std::string::npos) {
 			// quotes
 			currentChar = peek();
@@ -89,17 +78,17 @@ void				Lexer::tokenize() {
 				buffer.push_back(consume());
 			if (peek() == currentChar)
 				buffer.push_back(consume());
-			createToken(buffer);
+			setToken(buffer);
 		} else if (std::string("(){}").find(peek()) != std::string::npos) {
 			// parenthesis and braces
 			buffer.push_back(consume());
-			createToken(buffer);
+			setToken(buffer);
 		} else if (std::string("=!<>+-*/%").find(peek()) != std::string::npos) {
 			// operators and comparison
 			buffer.push_back(consume());
 			if (peek() == '=')
 				buffer.push_back(consume());
-			createToken(buffer);
+			setToken(buffer);
 		} else {
 			consume();
 		}
