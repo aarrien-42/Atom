@@ -49,7 +49,7 @@ bool				isStringInVector( std::string& buffer , const std::vector<std::string>& 
 }
 
 void				Lexer::setToken( std::string& buffer ) {
-	Token token = {._value = buffer};
+	Token token = {._type = unknown, ._value = buffer};
 
 	static const std::vector<std::string> keywords = { KEYWORD_IF, KEYWORD_ELSE, KEYWORD_IF_ELSE, KEYWORD_WHILE, KEYWORD_FOR, KEYWORD_RETURN };
 	static const std::vector<std::string> comparisons = { COMPARISON_EQUAL, COMPARISON_NOT_EQUAL, COMPARISON_LESS, COMPARISON_LESS_EQUAL, COMPARISON_GREATER, COMPARISON_GREATER_EQUAL};
@@ -58,17 +58,19 @@ void				Lexer::setToken( std::string& buffer ) {
 	static const std::vector<std::string> parenthesis = { LEFT_PAREN, RIGHT_PAREN };
 	static const std::vector<std::string> braces = { LEFT_BRACE, RIGHT_BRACE };
 
+	// TODO: check for: identifier, variable, whitespace
+
 	if (isStringInVector(buffer, keywords))
 		token._type = keyword;
-	if (isStringInVector(buffer, comparisons))
+	else if (isStringInVector(buffer, comparisons))
 		token._type = comparison;
-	if (isStringInVector(buffer, logicals))
+	else if (isStringInVector(buffer, logicals))
 		token._type = logic;
-	if (isStringInVector(buffer, bitwises))
+	else if (isStringInVector(buffer, bitwises))
 		token._type = bitwise;
-	if (isStringInVector(buffer, parenthesis))
+	else if (isStringInVector(buffer, parenthesis))
 		token._type = paren;
-	if (isStringInVector(buffer, braces))
+	else if (isStringInVector(buffer, braces))
 		token._type = brace;
 
 	_tokens.push_back(token);
@@ -121,6 +123,37 @@ void				Lexer::tokenize() {
 
 void				Lexer::printTokens() {
 	for (std::vector<Token>::const_iterator it = _tokens.begin(); it != _tokens.end(); it++) {
-		std::cout << "[" << it->_type << " " << it->_value << "]" << std::endl;
+		std::string type;
+
+		switch (it->_type) {
+			case identifier:
+				type = "identifier"; break;
+			case variable:
+				type = "variable"; break;
+			case keyword:
+				type = "keyword"; break;
+			case operation:
+				type = "operation"; break;
+			case comparison:
+				type = "comparison"; break;
+			case logic:
+				type = "logic"; break;
+			case bitwise:
+				type = "bitwise"; break;
+			case paren:
+				type = "paren"; break;
+			case brace:
+				type = "brace"; break;
+			case enter:
+				type = "enter"; break;
+			case comment:
+				type = "comment"; break;
+			case whitespace:
+				type = "whitespace"; break;
+			default:
+				type = "unknown";
+		}
+		std::cout << "[" << type << " " << it->_value << "] ";
 	}
+	std::cout << std::endl;
 }
