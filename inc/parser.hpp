@@ -20,10 +20,6 @@
 		NodeType					type;
 	};
 
-	struct ProgramNode : public ASTNode {
-		std::vector<ASTNode>		statements;
-	};
-
 	struct BlockNode : public ASTNode {
 		std::vector<ASTNode>		statements;
 	};
@@ -82,17 +78,17 @@
 
 	class Parser {
 		private:
-			ProgramNode			_tree;
-			std::vector<Token>	_tokens;
-			size_t				_index;
+			std::vector<ASTNode>	_tree;
+			std::vector<Token>		_tokens;
+			size_t					_index;
 		public:
 			Parser( const std::vector<Token>& );
 			~Parser();
 
-			ProgramNode			getTree();
+			std::vector<ASTNode>	getTree();
 
-			Token				peek();
-			Token				consume();
+			Token					peek();
+			Token					consume();
 	};
 
 #endif

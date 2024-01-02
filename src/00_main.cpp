@@ -10,6 +10,7 @@ int main(int ac, char** av) {
 		exitError(E_INVALID_FILE);
 
 	Lexer L(fileName);
+	L.printTokens();
 
 	Parser P(L.getTokens());
 

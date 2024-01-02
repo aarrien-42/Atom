@@ -3,9 +3,15 @@
 /*-CONSTRUCTOR-*/
 
 Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens) {
+	size_t	currentTabs = 0;
+	(void)currentTabs;
+
 	while (!peek().value.empty()) {
+		if (peek().type == tab) {
+			currentTabs = consume().value.size();
+		}
 		Token currentToken = consume();
-		std::cout << "value = [" << currentToken.value << "]" << std::endl;
+		std::cout << "value = [" << currentToken.value << "]" << "currentTabs = " << currentTabs << std::endl;
 	}
 }
 
@@ -15,15 +21,15 @@ Parser::~Parser() {}
 
 /*-METHODS-*/
 
-ProgramNode	Parser::getTree() { return _tree; }
+std::vector<ASTNode>	Parser::getTree() { return _tree; }
 
-Token		Parser::peek() {
+Token					Parser::peek() {
 	if (_index < _tokens.size())
 		return _tokens.at(_index);
 	return Token();
 }
 
-Token		Parser::consume() {
+Token					Parser::consume() {
 	Token currentToken = peek();
 	_index++;
 	return currentToken;
