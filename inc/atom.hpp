@@ -5,6 +5,7 @@
 	#include <cstring>
 	#include "error.hpp"
 	#include "lexer.hpp"
+	#include "parser.hpp"
 
 	#define FILE_EXT   ".atm"
 	#define EXECUTABLE "atom"

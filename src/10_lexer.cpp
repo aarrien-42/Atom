@@ -17,7 +17,6 @@ Lexer::Lexer( const std::string& fileName ) : _index(0) {
 	_sourceFileContent = fileContent;
 
 	tokenize();
-	printTokens();
 }
 
 /*-DESTRUCTOR-*/

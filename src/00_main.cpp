@@ -11,5 +11,7 @@ int main(int ac, char** av) {
 
 	Lexer L(fileName);
 
+	Parser P(L.getTokens());
+
 	return 0;
 }
