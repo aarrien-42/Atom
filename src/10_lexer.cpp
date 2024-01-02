@@ -28,7 +28,7 @@ Lexer::~Lexer() {}
 std::vector<Token>	Lexer::getTokens() { return _tokens; }
 
 void				Lexer::setToken( std::string& buffer , TokenType tokenType ) {
-	Token token = {._type = tokenType, ._value = buffer};
+	Token token = {.type = tokenType, .value = buffer};
 
 	static const std::vector<std::string> keywords = { KEYWORD_IF, KEYWORD_ELSE, KEYWORD_IF_ELSE, KEYWORD_WHILE, KEYWORD_FOR, KEYWORD_VARIABLE, KEYWORD_PRINT, KEYWORD_RETURN };
 	static const std::vector<std::string> operators = { OPERATOR_PLUS, OPERATOR_MINUS, OPERATOR_MULTIPLY, OPERATOR_DIVIDE, OPERATOR_MODULO, OPERATOR_ASSIGN };
@@ -41,19 +41,19 @@ void				Lexer::setToken( std::string& buffer , TokenType tokenType ) {
 	// TODO: check for: identifier, variable, whitespace
 
 	if (isStringInVector(buffer, keywords))
-		token._type = keyword;
+		token.type = keyword;
 	else if (isStringInVector(buffer, operators))
-		token._type = operation;
+		token.type = operation;
 	else if (isStringInVector(buffer, comparisons))
-		token._type = comparison;
+		token.type = comparison;
 	else if (isStringInVector(buffer, logicals))
-		token._type = logic;
+		token.type = logic;
 	else if (isStringInVector(buffer, bitwises))
-		token._type = bitwise;
+		token.type = bitwise;
 	else if (isStringInVector(buffer, parenthesis))
-		token._type = paren;
+		token.type = paren;
 	else if (isStringInVector(buffer, braces))
-		token._type = brace;
+		token.type = brace;
 
 	_tokens.push_back(token);
 	buffer.clear();
@@ -130,7 +130,7 @@ void				Lexer::printTokens() {
 	for (std::vector<Token>::const_iterator it = _tokens.begin(); it != _tokens.end(); it++) {
 		std::string type;
 
-		switch (it->_type) {
+		switch (it->type) {
 			case identifier:
 				type = "identifier"; break;
 			case literal:
@@ -160,8 +160,8 @@ void				Lexer::printTokens() {
 			default:
 				type = "unknown";
 		}
-		std::cout << "[" << type << " " << (it->_value == "\n" ? "\\n" : it->_value) << "] ";
-		if (it->_value == "\n")
+		std::cout << "[" << type << " " << (it->value == "\n" ? "\\n" : it->value) << "] ";
+		if (it->value == "\n")
 			std::cout << "\n";
 	}
 	std::cout << std::endl;

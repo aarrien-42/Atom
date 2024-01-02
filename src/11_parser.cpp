@@ -3,9 +3,9 @@
 /*-CONSTRUCTOR-*/
 
 Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens) {
-	while (!peek()._value.empty()) {
+	while (!peek().value.empty()) {
 		Token currentToken = consume();
-		std::cout << "value = [" << currentToken._value << "]" << std::endl;
+		std::cout << "value = [" << currentToken.value << "]" << std::endl;
 	}
 }
 

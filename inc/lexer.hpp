@@ -70,8 +70,8 @@
 	};
 
 	struct Token {
-		TokenType	_type {};
-		std::string	_value;
+		TokenType	type {};
+		std::string	value;
 	};
 
 	class Lexer {
