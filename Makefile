@@ -1,6 +1,5 @@
 # PROGRAM
 NAME = atom
-NAME_ASM = a_atom
 
 # FOLDERS
 SRC_DIR = src
@@ -36,8 +35,8 @@ WHITE = \033[0;97m
 
 all: $(NAME)
 
-run: all
-	./$(BIN_DIR)/$(NAME) $(word 2,$(MAKECMDGOALS))
+run:
+	./$(BIN_DIR)/$(NAME) $(lastword $(MAKECMDGOALS))
 
 $(NAME) : $(OBJ)
 	mkdir -p $(BIN_DIR)
@@ -53,7 +52,7 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
 asm:
 	mkdir -p $(BIN_DIR)
 	nasm -f elf $(ASM_DIR)/$(SRC_ASM).asm
-	ld -m elf_i386 -s -o $(BIN_DIR)/$(NAME_ASM) $(ASM_DIR)/$(SRC_ASM).o
+	ld -m elf_i386 -s -o $(BIN_DIR)/$(NAME) $(ASM_DIR)/$(SRC_ASM).o
 	rm $(ASM_DIR)/$(SRC_ASM).o
 
 clean:

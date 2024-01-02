@@ -5,7 +5,7 @@ main:
 			p. "Fizz"
 		i. ( x % 5 == 0)
 			p. "Buzz"
-		i. ( x % 3 != 0 and x % 5 != 0)
+		i. ( x % 3 != 0 and x % -50 != 0)
 			p. x
 	r. 0
 

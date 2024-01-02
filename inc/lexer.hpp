@@ -15,6 +15,8 @@
 	#define KEYWORD_IF_ELSE				"ie."
 	#define KEYWORD_WHILE				"w."
 	#define KEYWORD_FOR					"f."
+	#define KEYWORD_VARIABLE			"v."
+	#define KEYWORD_PRINT				"p."
 	#define KEYWORD_RETURN				"r."
 
 	#define OPERATOR_PLUS				"+"
@@ -51,9 +53,9 @@
 
 	enum TokenType {
 		identifier,             // variable and function name
-		variable,               // number, string literal
+		literal,                // number, string literal
 		keyword,                // if, else, while, for, return, continue, break, variable, print
-		operation,               // +, -, *, /, %, =
+		operation,              // +, -, *, /, %, =
 		comparison,             // ==, !=, <, <=, >, >=
 		logic,                  // &&, ||
 		bitwise,                // &, |, ^, ~
@@ -80,7 +82,7 @@
 			~Lexer();
 
 			std::vector<Token>	getTokens();
-			void				setToken( std::string& buffer );
+			void				setToken( std::string& buffer , TokenType tokenType = unknown );
 
 			char				peek();
 			char				consume();

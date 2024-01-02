@@ -28,10 +28,11 @@ Lexer::~Lexer() {}
 
 std::vector<Token>	Lexer::getTokens() { return _tokens; }
 
-void				Lexer::setToken( std::string& buffer ) {
-	Token token = {._type = unknown, ._value = buffer};
+void				Lexer::setToken( std::string& buffer , TokenType tokenType ) {
+	Token token = {._type = tokenType, ._value = buffer};
 
-	static const std::vector<std::string> keywords = { KEYWORD_IF, KEYWORD_ELSE, KEYWORD_IF_ELSE, KEYWORD_WHILE, KEYWORD_FOR, KEYWORD_RETURN };
+	static const std::vector<std::string> keywords = { KEYWORD_IF, KEYWORD_ELSE, KEYWORD_IF_ELSE, KEYWORD_WHILE, KEYWORD_FOR, KEYWORD_VARIABLE, KEYWORD_PRINT, KEYWORD_RETURN };
+	static const std::vector<std::string> operators = { OPERATOR_PLUS, OPERATOR_MINUS, OPERATOR_MULTIPLY, OPERATOR_DIVIDE, OPERATOR_MODULO, OPERATOR_ASSIGN };
 	static const std::vector<std::string> comparisons = { COMPARISON_EQUAL, COMPARISON_NOT_EQUAL, COMPARISON_LESS, COMPARISON_LESS_EQUAL, COMPARISON_GREATER, COMPARISON_GREATER_EQUAL};
 	static const std::vector<std::string> logicals = { LOGICAL_AND, LOGICAL_OR };
 	static const std::vector<std::string> bitwises = { BITWISE_AND, BITWISE_OR, BITWISE_XOR, BITWISE_NOT };
@@ -42,6 +43,8 @@ void				Lexer::setToken( std::string& buffer ) {
 
 	if (isStringInVector(buffer, keywords))
 		token._type = keyword;
+	else if (isStringInVector(buffer, operators))
+		token._type = operation;
 	else if (isStringInVector(buffer, comparisons))
 		token._type = comparison;
 	else if (isStringInVector(buffer, logicals))
@@ -52,6 +55,8 @@ void				Lexer::setToken( std::string& buffer ) {
 		token._type = paren;
 	else if (isStringInVector(buffer, braces))
 		token._type = brace;
+	else if (buffer == "\n")
+		token._type = enter;
 
 	_tokens.push_back(token);
 	buffer.clear();
@@ -82,12 +87,12 @@ void				Lexer::tokenize() {
 				buffer.push_back(consume());
 			else if (peek() == ':')
 				buffer.push_back(consume());
-			setToken(buffer);
+			setToken(buffer, identifier);
 		} else if (isdigit(peek())) {
 			// digit
 			while (peek() != 0 && isdigit(peek()))
 				buffer.push_back(consume());
-			setToken(buffer);
+			setToken(buffer, literal);
 		} else if (std::string("\'\"").find(peek()) != std::string::npos) {
 			// quotes
 			currentChar = peek();
@@ -96,7 +101,7 @@ void				Lexer::tokenize() {
 				buffer.push_back(consume());
 			if (peek() == currentChar)
 				buffer.push_back(consume());
-			setToken(buffer);
+			setToken(buffer, literal);
 		} else if (std::string("(){}").find(peek()) != std::string::npos) {
 			// parenthesis and braces
 			buffer.push_back(consume());
@@ -112,6 +117,8 @@ void				Lexer::tokenize() {
 			buffer.push_back(consume());
 			setToken(buffer);
 		} else {
+			if (std::string(WHITESPACE).find(peek()) == std::string::npos)
+				exitError(E_UNKNOWN_CHAR, std::to_string(peek()));
 			consume();
 		}
 	}
@@ -124,8 +131,8 @@ void				Lexer::printTokens() {
 		switch (it->_type) {
 			case identifier:
 				type = "identifier"; break;
-			case variable:
-				type = "variable"; break;
+			case literal:
+				type = "literal"; break;
 			case keyword:
 				type = "keyword"; break;
 			case operation:
@@ -149,7 +156,9 @@ void				Lexer::printTokens() {
 			default:
 				type = "unknown";
 		}
-		std::cout << "[" << type << " " << it->_value << "] ";
+		std::cout << "[" << type << " " << (it->_value == "\n" ? "\\n" : it->_value) << "] ";
+		if (it->_value == "\n")
+			std::cout << "\n";
 	}
 	std::cout << std::endl;
 }
