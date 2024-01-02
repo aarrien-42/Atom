@@ -5,18 +5,9 @@ The goal of this project is to develop my own programming language. It is a very
 ## Key Features
 - Shortened keywords: <details><summary>Keyword List</summary>
 
-    | C++ | Atom |
-    | ------------ | ------------ |
-    | if | i. |
-    | else | e. |
-    | if else | ie. |
-    | while | w. |
-    | for | f. |
-    | return | r. |
-    | continue | c. |
-    | break | b. |
-    | any variable | v. |
-    | write | p. |
+    | C++ | if | else | if else | while | for | return | continue | break | any variable | write |
+    | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
+    | Atom | i. | e. | ie. | w. | f. | r. | c. | b. | v. | p. |
 
 </details>
 
@@ -44,11 +35,19 @@ The goal of this project is to develop my own programming language. It is a very
 Programming languages can be either interpreted or compiled. Interpreted languages are executed line by line, while compiled languages, as the name suggests, directly translate the source code into machine code.
 
 Mine is meant to be compiled, so it requires a few more steps before executing. Here's a summary of the process:
-- Lexical Analysis - Splits the source code into tokens, resulting in a token list.
-- Parsing
-- Semantic Analysis
-- Optimization
-- Code Generation
+
+1. Lexical Analysis:
+    - **Task**: Implement a lexer to break down the source code into tokens.
+    - **Outcome**: A stream of tokens representing the source code.
+2. Syntax Analysis (Parsing):
+    - **Task**: Develop a parser to check if the arrangement of tokens follows the defined syntax rules.
+    - **Outcome**: An Abstract Syntax Tree (AST) representing the structure of the source code.
+3. Semantic Analysis:
+    - **Task**: Implement a semantic analyzer to check the meaning of the code.
+    - **Outcome**: A semantically validated AST with type information and resolved symbols.
+4. Code Generation:
+    - **Task**: Generate the target code (assembly language or another intermediate code).
+    - **Outcome**: Target code suitable for further processing or execution.
 
 ## How to Contribute
 At this stage, the development is purely personal.
