@@ -1,12 +1,9 @@
 main:
 	v. x = 1
 	w. ( x < 100 )
-		i. (x%3==0)
-			p. "Fizz"
-		i. ( x % 5 == 0)
-			p. "Buzz"
-		i. ( x % 3 != 0 and x % -50 != 0)
-			p. x
+		x+=1
+		i. (x%2)
+			p. "Odd"
+		e.
+			p. "Pair"
 	r. 0
-
-name:

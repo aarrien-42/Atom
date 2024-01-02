@@ -55,8 +55,6 @@ void				Lexer::setToken( std::string& buffer , TokenType tokenType ) {
 		token._type = paren;
 	else if (isStringInVector(buffer, braces))
 		token._type = brace;
-	else if (buffer == "\n")
-		token._type = enter;
 
 	_tokens.push_back(token);
 	buffer.clear();
@@ -115,7 +113,12 @@ void				Lexer::tokenize() {
 		} else if (std::string("\n").find(peek()) != std::string::npos) {
 			// new line
 			buffer.push_back(consume());
-			setToken(buffer);
+			setToken(buffer, enter);
+		} else if (std::string("\t").find(peek()) != std::string::npos) {
+			// tab
+			while (peek() == '\t')
+				buffer.push_back(consume());	
+			setToken(buffer, tab);
 		} else {
 			if (std::string(WHITESPACE).find(peek()) == std::string::npos)
 				exitError(E_UNKNOWN_CHAR, std::to_string(peek()));
@@ -149,6 +152,8 @@ void				Lexer::printTokens() {
 				type = "brace"; break;
 			case enter:
 				type = "enter"; break;
+			case tab:
+				type = "tab"; break;
 			case comment:
 				type = "comment"; break;
 			case whitespace:

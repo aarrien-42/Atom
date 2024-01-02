@@ -49,7 +49,8 @@
 	#define COMMA						","
 	#define COMMENT						"//"
 	#define NEW_LINE					"\n"
-	#define WHITESPACE					" \t\v\f\r"
+	#define TAB							"\t"
+	#define WHITESPACE					" \v\f\r"
 
 	enum TokenType {
 		identifier,             // variable and function name
@@ -62,6 +63,7 @@
 		paren,                  // (, )
 		brace,                  // {, }
 		enter,                  // \n
+		tab,                    // \t
 		comment,                // #
 		whitespace,             // spaces
 		unknown
