@@ -91,7 +91,7 @@
 		std::string					variableName;
 		ASTNode*					value;
 
-		AssignmentNode() : ASTNode(Assignment), value(nullptr) {}
+		AssignNode() : ASTNode(Assign), value(nullptr) {}
 	};
 
 	struct LiteralNode : public ASTNode {
