@@ -8,11 +8,15 @@
 	enum NodeType {
 		Program,
 		Block,
-		Function,
-		Condition,
-		Variable,
+		FunctionDeclaration,
+		FunctionCall,
+		IfStatement,
+		WhileLoop,
 		BinaryOp,
-		Print,
+		VariableDeclaration,
+		Assignament,
+		Literal,
+		Identifier,
 		Return,
 	};
 
@@ -46,7 +50,7 @@
 		ASTNode*					body;
 	};
 
-	struct BinaryOperationNode : public ASTNode {
+	struct BinaryOpNode : public ASTNode {
 		std::string					operation;
 		ASTNode*					leftOperand;
 		ASTNode*					rightOperand;
