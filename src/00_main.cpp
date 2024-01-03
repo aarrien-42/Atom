@@ -11,7 +11,6 @@ int main(int ac, char** av) {
 
 	Lexer L(fileName);
 	L.printTokens();
-	std::cout << "SALE\n";
 
 	Parser P(L.getTokens());
 
