@@ -8,13 +8,14 @@
 	enum NodeType {
 		Program,
 		Block,
-		FunctionDeclaration,
-		FunctionCall,
+		FuncDecl,
+		FuncCall,
 		IfStatement,
 		WhileLoop,
-		BinaryOp,
-		VariableDeclaration,
-		Assignament,
+		ForLoop,
+		BinOp,
+		VarDecl,
+		Assign,
 		Literal,
 		Identifier,
 		Return,
@@ -22,60 +23,93 @@
 
 	struct ASTNode {
 		NodeType					type;
+
+		ASTNode(NodeType t) : type(t) {}
 	};
 
 	struct BlockNode : public ASTNode {
 		std::vector<ASTNode>		statements;
+
+		BlockNode() : ASTNode(Block) {}
 	};
 
-	struct FunctionDeclarationNode : public ASTNode {
+	struct FuncDeclNode : public ASTNode {
 		std::string					functionName;
 		std::vector<std::string>	parameters;
 		ASTNode						*body;
+
+		FuncDeclNode() : ASTNode(FuncDecl), body(nullptr) {}
 	};
 
-	struct FunctionCallNode : public ASTNode {
+	struct FuncCallNode : public ASTNode {
 		std::string					functionName;
-		std::vector<ASTNode*>	parameters;
+		std::vector<ASTNode*>		parameters;
+
+		FuncCallNode() : ASTNode(FuncCall) {}
 	};
 
 	struct IfStatementNode : public ASTNode {
 		ASTNode*					condition;
 		ASTNode*					ifBranch;
 		ASTNode*					elseBranch;
+
+		IfStatementNode() : ASTNode(IfStatement), condition(nullptr), ifBranch(nullptr), elseBranch(nullptr) {}
 	};
 
 	struct WhileLoopNode : public ASTNode {
 		ASTNode*					condition;
 		ASTNode*					body;
+
+		WhileLoopNode() : ASTNode(WhileLoop), condition(nullptr), body(nullptr) {}
 	};
 
-	struct BinaryOpNode : public ASTNode {
+	struct ForLoopNode : public ASTNode {
+		ASTNode* initialization;
+		ASTNode* condition;
+		ASTNode* iteration;
+		ASTNode* body;
+
+		ForLoopNode() : ASTNode(ForLoop), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {}
+	};
+
+	struct BinOpNode : public ASTNode {
 		std::string					operation;
 		ASTNode*					leftOperand;
 		ASTNode*					rightOperand;
+
+		BinOpNode() : ASTNode(BinOp), leftOperand(nullptr), rightOperand(nullptr) {}
 	};
 
-	struct VariableDeclarationNode : public ASTNode { // number or string literals
+	struct VarDeclNode : public ASTNode { // number or string literals
 		std::string					name;
 		ASTNode*					initialValue;
+
+		VarDeclNode() : ASTNode(VarDecl), initialValue(nullptr) {}
 	};
 
-	struct AssignamentNode : public ASTNode {
+	struct AssignNode : public ASTNode {
 		std::string					variableName;
 		ASTNode*					value;
+
+		AssignmentNode() : ASTNode(Assignment), value(nullptr) {}
 	};
 
 	struct LiteralNode : public ASTNode {
 		std::string					value;
+
+		LiteralNode() : ASTNode(Literal) {}
 	};
 
 	struct IdentifierNode : public ASTNode {
 		std::string					name;
+
+		IdentifierNode() : ASTNode(Identifier) {}
 	};
 
 	struct ReturnNode : public ASTNode {
 		ASTNode*					returnValue;
+
+		ReturnNode() : ASTNode(Return), returnValue(nullptr) {}
 	};
 
 	struct Token;
