@@ -4,6 +4,7 @@
 	#include <iostream>
 	#include <vector>
 	#include "lexer.hpp"
+	#include "utils.hpp"
 
 	enum NodeType {
 		Program,
@@ -30,7 +31,9 @@
 	struct BlockNode : public ASTNode {
 		std::vector<ASTNode>		statements;
 
-		BlockNode() : ASTNode(Block) {}
+		BlockNode() : ASTNode(Block) {
+
+		}
 	};
 
 	struct FuncDeclNode : public ASTNode {

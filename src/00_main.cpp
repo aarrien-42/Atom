@@ -10,8 +10,11 @@ int main(int ac, char** av) {
 		exitError(E_INVALID_FILE);
 
 	Lexer L(fileName);
+	std::cout << "TOKEN LIST:\n\n";
 	L.printTokens();
+	std::cout << "\n";
 
+	std::cout << "PARSER:\n\n";
 	Parser P(L.getTokens());
 
 	return 0;

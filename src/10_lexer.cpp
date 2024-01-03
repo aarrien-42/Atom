@@ -40,19 +40,19 @@ void				Lexer::setToken( std::string& buffer , TokenType tokenType ) {
 
 	// TODO: check for: identifier, variable, whitespace
 
-	if (isStringInVector(buffer, keywords))
+	if (isStrInVector(buffer, keywords))
 		token.type = keyword;
-	else if (isStringInVector(buffer, operators))
+	else if (isStrInVector(buffer, operators))
 		token.type = operation;
-	else if (isStringInVector(buffer, comparisons))
+	else if (isStrInVector(buffer, comparisons))
 		token.type = comparison;
-	else if (isStringInVector(buffer, logicals))
+	else if (isStrInVector(buffer, logicals))
 		token.type = logic;
-	else if (isStringInVector(buffer, bitwises))
+	else if (isStrInVector(buffer, bitwises))
 		token.type = bitwise;
-	else if (isStringInVector(buffer, parenthesis))
+	else if (isStrInVector(buffer, parenthesis))
 		token.type = paren;
-	else if (isStringInVector(buffer, braces))
+	else if (isStrInVector(buffer, braces))
 		token.type = brace;
 
 	_tokens.push_back(token);
