@@ -2,7 +2,7 @@
 
 /*-CONSTRUCTOR-*/
 
-Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens) {
+Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens), _index(0) {
 	size_t	currentTabs = 0;
 	(void)currentTabs;
 
