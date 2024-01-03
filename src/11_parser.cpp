@@ -3,8 +3,8 @@
 /*-CONSTRUCTOR-*/
 
 Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens), _index(0) {
-	size_t	currentTabs = 0;
-	size_t	currentLine = 0;
+	currentTabs = 0;
+	currentLine = 0;
 
 	while (!peek().value.empty()) {
 		if (peek().type == tab) {
@@ -18,9 +18,8 @@ Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens), _index(0) 
 			} else if (currentTabs == 0) {
 				std::cerr << "Any program needs to be inside a function\n";
 			}
-
-			Token currentToken = consume();
-			std::cout << "value = [" << currentToken.value << "]" << "Tabs = " << currentTabs << " Line = " << currentLine << std::endl;
+			//Token currentToken = consume();
+			//std::cout << "value = [" << currentToken.value << "]" << "Tabs = " << currentTabs << " Line = " << currentLine << std::endl;
 		}
 	}
 }

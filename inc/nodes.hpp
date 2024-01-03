@@ -23,46 +23,57 @@
 
 	class Parser;
 
+/*-MAIN-*/
+
 	struct ASTNode {
 		NodeType					type;
 
 		ASTNode(NodeType t) : type(t) {}
 	};
 
+/*-BLOCK-*/
+
 	struct BlockNode : public ASTNode {
 		std::vector<ASTNode>		statements;
 
-		BlockNode();
+		BlockNode( Parser&, size_t );
 	};
+
+/*-FUNCTION-*/
 
 	struct FuncDeclNode : public ASTNode {
 		std::string					functionName;
-		std::vector<std::string>	parameters;
+		std::vector<ASTNode>		parameters;
 		ASTNode						*body;
 
 		FuncDeclNode( Parser& );
+		~FuncDeclNode() { delete body; }
 	};
 
 	struct FuncCallNode : public ASTNode {
 		std::string					functionName;
-		std::vector<ASTNode*>		parameters;
+		std::vector<ASTNode>		parameters;
 
-		FuncCallNode();
+		FuncCallNode( Parser& );
 	};
+
+/*-CONDITIONAL-*/
 
 	struct IfStatementNode : public ASTNode {
 		ASTNode*					condition;
 		ASTNode*					ifBranch;
 		ASTNode*					elseBranch;
 
-		IfStatementNode();
+		IfStatementNode( Parser& );
+		~IfStatementNode() { delete condition; delete ifBranch; delete elseBranch; }
 	};
 
 	struct WhileLoopNode : public ASTNode {
 		ASTNode*					condition;
 		ASTNode*					body;
 
-		WhileLoopNode();
+		WhileLoopNode( Parser& );
+		~WhileLoopNode() { delete condition; delete body; }
 	};
 
 	struct ForLoopNode : public ASTNode {
@@ -71,47 +82,58 @@
 		ASTNode* iteration;
 		ASTNode* body;
 
-		ForLoopNode();
+		ForLoopNode( Parser& );
+		~ForLoopNode() { delete initialization; delete condition; delete iteration; delete body; }
 	};
+
+/*-OPERATION-*/
 
 	struct BinOpNode : public ASTNode {
 		std::string					operation;
-		ASTNode*					leftOperand;
-		ASTNode*					rightOperand;
+		ASTNode*					leftOp;
+		ASTNode*					rightOp;
 
-		BinOpNode();
+		BinOpNode( Parser& );
+		~BinOpNode() { delete leftOp; delete rightOp; }
 	};
+
+/*-VARAIBLE-*/
 
 	struct VarDeclNode : public ASTNode { // number or string literals
 		std::string					name;
 		ASTNode*					initialValue;
 
-		VarDeclNode();
+		VarDeclNode( Parser& );
+		~VarDeclNode() { delete initialValue; }
 	};
 
 	struct AssignNode : public ASTNode {
 		std::string					variableName;
 		ASTNode*					value;
 
-		AssignNode();
+		AssignNode( Parser& );
+		~AssignNode() { delete value; }
 	};
 
 	struct LiteralNode : public ASTNode {
 		std::string					value;
 
-		LiteralNode();
+		LiteralNode( Parser& );
 	};
 
 	struct IdentifierNode : public ASTNode {
 		std::string					name;
 
-		IdentifierNode();
+		IdentifierNode( Parser& );
 	};
+
+/*-RETURN-*/
 
 	struct ReturnNode : public ASTNode {
 		ASTNode*					returnValue;
 
-		ReturnNode();
+		ReturnNode( Parser& );
+		~ReturnNode() { delete returnValue; }
 	};
 
 #endif

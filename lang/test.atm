@@ -7,3 +7,5 @@ main:
 		e.
 			p. "Pair"
 	r. 0
+extra:
+	v. e = 2

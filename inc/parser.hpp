@@ -23,6 +23,9 @@
 
 			Token					peek();
 			Token					consume();
+
+			size_t	currentTabs;
+			size_t	currentLine;
 	};
 
 #endif

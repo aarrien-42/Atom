@@ -1,50 +1,84 @@
 #include "nodes.hpp"
 
-BlockNode::BlockNode() : ASTNode(Block) {
-	
+/*-BLOCK-*/
+
+BlockNode::BlockNode( Parser& parser, size_t blockInitTab ) : ASTNode(Block) {
+	std::cout << "BLOCK CREATED\n";
+	do {
+		if (parser.peek().type == enter) {
+			parser.consume();
+			if (parser.peek().type == tab)
+				parser.currentTabs = parser.consume().value.size();
+			else
+				parser.currentTabs = 0;
+		} else if (parser.peek().type == tab) {
+			parser.currentTabs = parser.consume().value.size();
+		} else {
+			std::cout << "Inside block = " << parser.peek().value << " type = " << parser.peek().type << std::endl;
+			// block body check
+			parser.consume();
+		}
+	} while (!parser.peek().value.empty() && parser.currentTabs > blockInitTab);
 }
+
+/*-FUNCTION-*/
 
 FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(FuncDecl), body(nullptr) {
 	std::cout << "FUNCTION DECLARED\n";
-	functionName = parser.peek().value;
+	functionName = parser.consume().value;
+	std::cout << "	name = " << functionName << std::endl;
+	if (parser.peek().type != enter) {
+
+	} else {
+		parser.consume();
+		body = new BlockNode(parser, parser.currentTabs);
+	}
 }
 
-FuncCallNode::FuncCallNode() : ASTNode(FuncCall) {
-
+FuncCallNode::FuncCallNode( Parser& parser ) : ASTNode(FuncCall) {
+	(void)parser;
 }
 
-IfStatementNode::IfStatementNode() : ASTNode(IfStatement), condition(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
+/*-CONDITIONAL-*/
 
+IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(IfStatement), condition(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
+	(void)parser;
 }
 
-WhileLoopNode::WhileLoopNode() : ASTNode(WhileLoop), condition(nullptr), body(nullptr) {
-
+WhileLoopNode::WhileLoopNode( Parser& parser ) : ASTNode(WhileLoop), condition(nullptr), body(nullptr) {
+	(void)parser;
 }
 
-ForLoopNode::ForLoopNode() : ASTNode(ForLoop), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
-
+ForLoopNode::ForLoopNode( Parser& parser ) : ASTNode(ForLoop), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
+	(void)parser;
 }
 
-BinOpNode::BinOpNode() : ASTNode(BinOp), leftOperand(nullptr), rightOperand(nullptr) {
+/*-OPERATION-*/
 
+BinOpNode::BinOpNode( Parser& parser ) : ASTNode(BinOp), leftOp(nullptr), rightOp(nullptr) {
+	(void)parser;
 }
 
-VarDeclNode::VarDeclNode() : ASTNode(VarDecl), initialValue(nullptr) {
+/*-VARAIBLE-*/
 
+VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(VarDecl), initialValue(nullptr) {
+	(void)parser;
 }
 
-AssignNode::AssignNode() : ASTNode(Assign), value(nullptr) {
-
+AssignNode::AssignNode( Parser& parser ) : ASTNode(Assign), value(nullptr) {
+	(void)parser;
 }
 
-LiteralNode::LiteralNode() : ASTNode(Literal) {
-
+LiteralNode::LiteralNode( Parser& parser ) : ASTNode(Literal) {
+	(void)parser;
 }
 
-IdentifierNode::IdentifierNode() : ASTNode(Identifier) {
-
+IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(Identifier) {
+	(void)parser;
 }
 
-ReturnNode::ReturnNode() : ASTNode(Return), returnValue(nullptr) {
+/*-RETURN-*/
 
+ReturnNode::ReturnNode( Parser& parser ) : ASTNode(Return), returnValue(nullptr) {
+	(void)parser;
 }
