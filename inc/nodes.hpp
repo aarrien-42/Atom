@@ -10,6 +10,7 @@
 		Block,
 		FuncDecl,
 		FuncCall,
+		Condition,
 		IfStatement,
 		WhileLoop,
 		ForLoop,
@@ -29,43 +30,66 @@
 		NodeType					type;
 
 		ASTNode(NodeType t) : type(t) {}
+		virtual ~ASTNode() {}
 	};
 
 /*-BLOCK-*/
 
 	struct BlockNode : public ASTNode {
-		std::vector<ASTNode>		statements;
+		std::vector<ASTNode*>		statements;
 
 		BlockNode( Parser&, size_t );
+		~BlockNode() {
+			for (ASTNode* statement : statements)
+				delete statement;
+		}
 	};
 
 /*-FUNCTION-*/
 
 	struct FuncDeclNode : public ASTNode {
 		std::string					functionName;
-		std::vector<ASTNode>		parameters;
-		ASTNode						*body;
+		std::vector<ASTNode*>		parameters;
+		ASTNode*					body;
 
 		FuncDeclNode( Parser& );
-		~FuncDeclNode() { delete body; }
+		~FuncDeclNode() {
+			for (ASTNode* param : parameters)
+				delete param;
+			delete body;
+		}
 	};
 
 	struct FuncCallNode : public ASTNode {
 		std::string					functionName;
-		std::vector<ASTNode>		parameters;
+		std::vector<ASTNode*>		parameters;
 
 		FuncCallNode( Parser& );
+		~FuncCallNode() {
+			for (ASTNode* param : parameters)
+				delete param;
+		}
 	};
 
 /*-CONDITIONAL-*/
 
+	struct ConditionNode : public ASTNode {
+		std::string					comparation;
+		ASTNode*					leftComp;
+		ASTNode*					rightComp;
+
+		ConditionNode( Parser& );
+		~ConditionNode() { delete leftComp; delete rightComp; }
+	};
+
 	struct IfStatementNode : public ASTNode {
 		ASTNode*					condition;
+		ASTNode*					body;
 		ASTNode*					ifBranch;
 		ASTNode*					elseBranch;
 
 		IfStatementNode( Parser& );
-		~IfStatementNode() { delete condition; delete ifBranch; delete elseBranch; }
+		~IfStatementNode() { delete condition; delete body; delete ifBranch; delete elseBranch; }
 	};
 
 	struct WhileLoopNode : public ASTNode {
@@ -77,10 +101,10 @@
 	};
 
 	struct ForLoopNode : public ASTNode {
-		ASTNode* initialization;
-		ASTNode* condition;
-		ASTNode* iteration;
-		ASTNode* body;
+		ASTNode*					initialization;
+		ASTNode*					condition;
+		ASTNode*					iteration;
+		ASTNode*					body;
 
 		ForLoopNode( Parser& );
 		~ForLoopNode() { delete initialization; delete condition; delete iteration; delete body; }

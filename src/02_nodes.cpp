@@ -16,6 +16,23 @@ BlockNode::BlockNode( Parser& parser, size_t blockInitTab ) : ASTNode(Block) {
 		} else {
 			std::cout << "Inside block = " << parser.peek().value << " type = " << parser.peek().type << std::endl;
 			// block body check
+			if (parser.peek().type == keyword) {
+				if (parser.peek().value == "i.") {
+					statements.push_back(new IfStatementNode(parser));
+				} else if (parser.peek().value == "w.") {
+					statements.push_back(new WhileLoopNode(parser));
+				} else if (parser.peek().value == "f.") {
+					statements.push_back(new ForLoopNode(parser));
+				} else if (parser.peek().value == "v.") {
+					statements.push_back(new VarDeclNode(parser));
+				} else if (parser.peek().value == "r.") {
+					statements.push_back(new ReturnNode(parser));
+				} else {
+					std::cerr << "Invalid keyword\n";
+				}
+			} else if (parser.peek().type == identifier) {
+				std::cerr << "Not working yet\n";
+			}
 			parser.consume();
 		}
 	} while (!parser.peek().value.empty() && parser.currentTabs > blockInitTab);
@@ -41,8 +58,20 @@ FuncCallNode::FuncCallNode( Parser& parser ) : ASTNode(FuncCall) {
 
 /*-CONDITIONAL-*/
 
-IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(IfStatement), condition(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
-	(void)parser;
+ConditionNode::ConditionNode( Parser& parser ) : ASTNode(Condition), leftComp(nullptr), rightComp(nullptr) {
+	if (parser.peek().value == "(") {
+
+	}
+}
+
+IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(IfStatement), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
+	if (parser.peek().value == "i.")
+		parser.consume();
+	if (parser.peek().type == enter )
+		std::cerr << "If statement need a condition\n";
+	else {
+		condition = new ConditionNode(parser);
+	}
 }
 
 WhileLoopNode::WhileLoopNode( Parser& parser ) : ASTNode(WhileLoop), condition(nullptr), body(nullptr) {
@@ -62,7 +91,24 @@ BinOpNode::BinOpNode( Parser& parser ) : ASTNode(BinOp), leftOp(nullptr), rightO
 /*-VARAIBLE-*/
 
 VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(VarDecl), initialValue(nullptr) {
-	(void)parser;
+	if (parser.peek().value == "v.")
+		parser.consume();
+	if (parser.peek().type == identifier) {
+		name = parser.consume().value;
+		if (parser.peek().value == "=") {
+			parser.consume();
+			if (parser.peek().type == enter)
+				std::cerr << "Invalid variable assignation\n";
+			if (parser.peek().type == literal) {
+				initialValue = new LiteralNode(parser);
+			} else if (parser.peek().type == identifier) {
+				initialValue = new IdentifierNode(parser);
+			}
+		}
+	} else {
+		std::cerr << "Variable needs an identifier\n";
+	}
+	std::cout << "	Variable " << name << " declared\n";
 }
 
 AssignNode::AssignNode( Parser& parser ) : ASTNode(Assign), value(nullptr) {
@@ -70,11 +116,17 @@ AssignNode::AssignNode( Parser& parser ) : ASTNode(Assign), value(nullptr) {
 }
 
 LiteralNode::LiteralNode( Parser& parser ) : ASTNode(Literal) {
-	(void)parser;
+	if (parser.peek().type != literal)
+		std::cerr << "Invalid Node\n";
+	else
+		value = parser.consume().value;
 }
 
 IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(Identifier) {
-	(void)parser;
+	if (parser.peek().type != identifier)
+		std::cerr << "Invalid Node\n";
+	else
+		name = parser.consume().value;
 }
 
 /*-RETURN-*/
