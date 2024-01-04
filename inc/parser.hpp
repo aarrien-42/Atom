@@ -21,7 +21,7 @@
 
 			std::vector<ASTNode>	getTree();
 
-			Token					peek( size_t );
+			Token					peek( size_t pos = 0);
 			Token					consume();
 
 			size_t	currentTabs;
