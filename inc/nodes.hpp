@@ -8,6 +8,7 @@
 	enum NodeType {
 		Program,
 		Block,
+		Box,
 		FuncDecl,
 		FuncCall,
 		Condition,
@@ -42,6 +43,16 @@
 		~BlockNode() {
 			for (ASTNode* statement : statements)
 				delete statement;
+		}
+	};
+
+	struct BoxNode : public ASTNode {
+		std::vector<ASTNode*>		operations;
+
+		BoxNode( Parser& );
+		~BoxNode() {
+			for (ASTNode* op : operations)
+				delete op;
 		}
 	};
 

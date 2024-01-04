@@ -3,7 +3,7 @@
 /*-BLOCK-*/
 
 BlockNode::BlockNode( Parser& parser, size_t blockInitTab ) : ASTNode(Block) {
-	std::cout << "BLOCK CREATED\n";
+	std::cout << "  **BLOCK NODE CREATED**\n";
 	do {
 		if (parser.peek().type == enter) {
 			parser.consume();
@@ -31,17 +31,29 @@ BlockNode::BlockNode( Parser& parser, size_t blockInitTab ) : ASTNode(Block) {
 					std::cerr << "Invalid keyword\n";
 				}
 			} else if (parser.peek().type == identifier) {
-				std::cerr << "Not working yet\n";
+				statements.push_back(new AssignNode(parser));
+			} else {
+				std::cerr << "Not implemented yet\n";
 			}
 			parser.consume();
 		}
 	} while (!parser.peek().value.empty() && parser.currentTabs > blockInitTab);
 }
 
+BoxNode::BoxNode( Parser& parser ) : ASTNode(Box) {
+	std::cout << "  **BOX NODE CREATED**\n";
+
+	if (parser.peek().value == "(") {
+
+	} else
+		std::cerr << "Invalid Box Node";
+}
+
 /*-FUNCTION-*/
 
 FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(FuncDecl), body(nullptr) {
-	std::cout << "FUNCTION DECLARED\n";
+	std::cout << "  **FUNC DECL NODE CREATED**\n";
+
 	functionName = parser.consume().value;
 	std::cout << "	name = " << functionName << std::endl;
 	if (parser.peek().type != enter) {
@@ -58,13 +70,22 @@ FuncCallNode::FuncCallNode( Parser& parser ) : ASTNode(FuncCall) {
 
 /*-CONDITIONAL-*/
 
+// More conditional types need to be implemented
 ConditionNode::ConditionNode( Parser& parser ) : ASTNode(Condition), leftComp(nullptr), rightComp(nullptr) {
-	if (parser.peek().value == "(") {
+	std::cout << "  **CONDITIONAL NODE CREATED**\n";
 
+	if (parser.peek().value == "(") {
+		parser.consume();
+		
+		
+	} else {
+		std::cerr << "Invalid Conditional Node\n";
 	}
 }
 
 IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(IfStatement), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
+	std::cout << "  **IF NODE CREATED**\n";
+
 	if (parser.peek().value == "i.")
 		parser.consume();
 	if (parser.peek().type == enter )
@@ -91,6 +112,8 @@ BinOpNode::BinOpNode( Parser& parser ) : ASTNode(BinOp), leftOp(nullptr), rightO
 /*-VARAIBLE-*/
 
 VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(VarDecl), initialValue(nullptr) {
+	std::cout << "  **VAR DECL NODE CREATED**\n";
+
 	if (parser.peek().value == "v.")
 		parser.consume();
 	if (parser.peek().type == identifier) {
@@ -112,19 +135,43 @@ VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(VarDecl), initialValue(null
 }
 
 AssignNode::AssignNode( Parser& parser ) : ASTNode(Assign), value(nullptr) {
-	(void)parser;
+	std::cout << "  **ASSIGN NODE CREATED**\n";
+
+	if (parser.peek().type == identifier) {
+		variableName = parser.consume().value;
+		std::cout << "assigned " << parser.peek().value << " to " << variableName << "\n";
+		if (parser.peek().value == "=") {
+			parser.consume();
+			if (parser.peek().type == paren || parser.peek(1).type != enter) {
+				value = new BoxNode(parser);
+			} else {
+				if (parser.peek().type == identifier)
+					value = new IdentifierNode(parser);
+				else if (parser.peek().type == literal)
+					value = new LiteralNode(parser);
+			}
+		} else {
+			std::cerr << "Assign error 1 \n";
+		}
+	} else {
+		std::cerr << "Assign error 2 \n";
+	}
 }
 
 LiteralNode::LiteralNode( Parser& parser ) : ASTNode(Literal) {
+	std::cout << "  **LITERAL NODE CREATED**\n";
+
 	if (parser.peek().type != literal)
-		std::cerr << "Invalid Node\n";
+		std::cerr << "Invalid Literal Node\n";
 	else
 		value = parser.consume().value;
 }
 
 IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(Identifier) {
+	std::cout << "  **IDENTIFIER NODE CREATED**\n";
+
 	if (parser.peek().type != identifier)
-		std::cerr << "Invalid Node\n";
+		std::cerr << "Invalid Identifier Node\n";
 	else
 		name = parser.consume().value;
 }
@@ -132,5 +179,16 @@ IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(Identifier) {
 /*-RETURN-*/
 
 ReturnNode::ReturnNode( Parser& parser ) : ASTNode(Return), returnValue(nullptr) {
-	(void)parser;
+	std::cout << "  **RETURN NODE CREATED**\n";
+
+	if (parser.peek().value != "r.")
+		std::cerr << "Invalid Return Node\n";
+	else {
+		if (parser.peek().type == paren)
+			returnValue = new BoxNode(parser);
+		else if (parser.peek().type == identifier)
+			returnValue = new IdentifierNode(parser);
+		else if (parser.peek().type == literal)
+			returnValue = new LiteralNode(parser);
+	}
 }
