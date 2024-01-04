@@ -32,9 +32,9 @@ Parser::~Parser() {}
 
 std::vector<ASTNode>	Parser::getTree() { return _tree; }
 
-Token					Parser::peek() {
-	if (_index < _tokens.size())
-		return _tokens.at(_index);
+Token					Parser::peek( size_t pos = 0 ) {
+	if (_index + pos < _tokens.size())
+		return _tokens.at(_index + pos);
 	return Token();
 }
 
