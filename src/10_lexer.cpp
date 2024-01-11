@@ -116,7 +116,7 @@ void				Lexer::tokenize() {
 		} else if (std::string("\t").find(peek()) != std::string::npos) {
 			// tab
 			while (peek() == '\t')
-				buffer.push_back(consume());	
+				buffer.push_back(consume());
 			setToken(buffer, tab);
 		} else {
 			if (std::string(WHITESPACE).find(peek()) == std::string::npos)
@@ -124,6 +124,8 @@ void				Lexer::tokenize() {
 			consume();
 		}
 	}
+	buffer.push_back('\n');
+	setToken(buffer, enter);
 }
 
 void				Lexer::printTokens() {
