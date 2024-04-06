@@ -1,95 +1,65 @@
-section .data
-    newline db 0xA        ; Newline character
+bits 64
 
+section .data
+    x dd 0
+
+section .rodata
+    newline db 0x0a
+    msg_1 db "Odd", 0
+    msg_2 db "Pair", 0
 section .text
     global _start
 
+print_str: ; fd = %rdi, buff = %rsi, size = %rdx
+    mov rax, 1
+    syscall
+
+    mov rax, 1
+    mov rsi, newline
+    mov rdx, 1
+    syscall
+    ret
+
 _start:
-    mov eax, 1            ; Initialize counter to 1
+    mov eax, 1
+    mov [x], eax        ; v. x = 1
+    start_while_loop_1:
+        mov eax, [x] ; gets value stored on x
 
-print_loop:
-    cmp eax, 101          ; Compare counter with 101 (loop until 100)
-    jge exit_program      ; If counter >= 101, exit the program
+        inc eax
+        mov [x], eax    ; x = x + 1
 
-    mov ebx, eax          ; Move the current number to ebx for comparison
+        cmp eax, 10
+        jge end_while_loop_1 ; jumps if eax (x) is less than 10
 
-    ; Check if the number is divisible by 3 and 5 (FizzBuzz)
-    mov edx, 0            ; Clear edx to check divisibility
-    mov eax, ebx
-    mov ecx, 15           ; Divisor for 3 and 5
-    div ecx
-    cmp edx, 0
-    je fizzbuzz
+        mov edx, 0
+        mov eax, [x]
+        mov ecx, 2
+        div ecx ; divides eax by ecx, result = eax, reminder = edx
 
-    ; Check if the number is divisible by 3 (Fizz)
-    mov eax, ebx
-    mov ecx, 3            ; Divisor for 3
-    xor edx, edx          ; Clear edx to check divisibility
-    div ecx
-    cmp edx, 0
-    je fizz
+        mov eax, edx ; take the reminder
+        cmp eax, 0
 
-    ; Check if the number is divisible by 5 (Buzz)
-    mov eax, ebx
-    mov ecx, 5            ; Divisor for 5
-    xor edx, edx          ; Clear edx to check divisibility
-    div ecx
-    cmp edx, 0
-    je buzz
+        jne if_1
+        jmp else_1
 
-    ; Print the number
-    mov eax, 4            ; Syscall number for sys_write
-    mov ebx, 1            ; File descriptor: STDOUT
-    mov ecx, ebx          ; Buffer address (pointer to the number)
-    mov edx, 1            ; Buffer size (length of the number)
-    int 0x80              ; Invoke sys_write syscall
-    jmp next_iteration    ; Jump to the next iteration
+        if_1:
+            mov rdi, 1
+            mov rsi, msg_1
+            mov rdx, 3
+            call print_str
+            jmp end_if_1
+        else_1:
+            mov rdi, 1
+            mov rsi, msg_2
+            mov rdx, 4
+            call print_str
+            jmp end_if_1
+        end_if_1:
 
-fizz:
-    mov eax, 4            ; Syscall number for sys_write
-    mov ebx, 1            ; File descriptor: STDOUT
-    mov ecx, fizz_msg     ; Buffer address (pointer to "Fizz")
-    mov edx, 4            ; Buffer size (length of "Fizz")
-    int 0x80              ; Invoke sys_write syscall
-    jmp next_iteration    ; Jump to the next iteration
+        jmp start_while_loop_1
+    end_while_loop_1:
 
-buzz:
-    mov eax, 4            ; Syscall number for sys_write
-    mov ebx, 1            ; File descriptor: STDOUT
-    mov ecx, buzz_msg     ; Buffer address (pointer to "Buzz")
-    mov edx, 4            ; Buffer size (length of "Buzz")
-    int 0x80              ; Invoke sys_write syscall
-    jmp next_iteration    ; Jump to the next iteration
-
-fizzbuzz:
-    mov eax, 4            ; Syscall number for sys_write
-    mov ebx, 1            ; File descriptor: STDOUT
-    mov ecx, fizzbuzz_msg ; Buffer address (pointer to "FizzBuzz")
-    mov edx, 8            ; Buffer size (length of "FizzBuzz")
-    int 0x80              ; Invoke sys_write syscall
-    jmp next_iteration    ; Jump to the next iteration
-
-next_iteration:
-    ; Print newline character
-    mov eax, 4            ; Syscall number for sys_write
-    mov ebx, 1            ; File descriptor: STDOUT
-    mov ecx, newline      ; Buffer address (pointer to newline character)
-    mov edx, 1            ; Buffer size (length of newline character)
-    int 0x80              ; Invoke sys_write syscall
-
-    ; Increment counter
-    inc dword [eax]
-
-    ; Continue the loop
-    jmp print_loop
-
-exit_program:
-    ; Exit the program
-    mov eax, 1            ; Syscall number for sys_exit
-    xor ebx, ebx          ; Exit code 0
-    int 0x80              ; Invoke sys_exit syscall
-
-section .data
-    fizz_msg db 'Fizz', 0   ; Null-terminated string "Fizz"
-    buzz_msg db 'Buzz', 0   ; Null-terminated string "Buzz"
-    fizzbuzz_msg db 'FizzBuzz', 0  ; Null-terminated string "FizzBuzz"
+    mov rax, 60
+    mov rdi, 0
+    syscall

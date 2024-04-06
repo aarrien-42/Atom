@@ -43,3 +43,7 @@ Token					Parser::consume() {
 	_index++;
 	return currentToken;
 }
+
+void					Parser::printTree() {
+	
+}

@@ -53,6 +53,11 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
 At this stage, the development is purely personal.
 
 ## Additional Resources
-- [Pixeled - Creating a Compiler](https://www.youtube.com/watch?v=vcSijrRsrY0&list=PLUDlas_Zy_qC7c5tCgTMYq2idyyT241qs)
-- [freeCodeCamp - I wrote a programming language. Here’s how you can, too.](https://www.freecodecamp.org/news/the-programming-language-pipeline-91d3f449c919/)
-- [Medium - How to Build Your Own Programming Language — Introduction](https://ruslandzhafarov.medium.com/how-to-create-your-own-programming-language-introduction-7c848585c59)
+- **Compiler related:**
+    - [Pixeled - Creating a Compiler](https://www.youtube.com/watch?v=vcSijrRsrY0&list=PLUDlas_Zy_qC7c5tCgTMYq2idyyT241qs)
+    - [freeCodeCamp - I wrote a programming language. Here’s how you can, too.](https://www.freecodecamp.org/news/the-programming-language-pipeline-91d3f449c919/)
+    - [Medium - How to Build Your Own Programming Language — Introduction](https://ruslandzhafarov.medium.com/how-to-create-your-own-programming-language-introduction-7c848585c59)
+- **Assembly language realted:**
+    - [RChapman Blog - Linux system call table for x86 64](https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/)
+    - [University of Alaska Fairbanks - x86_64 NASM Assembly Quick Reference](https://www.cs.uaf.edu/2017/fall/cs301/reference/x86_64.html)
+    - [Aldeid - Architecture/x86-assembly](https://www.aldeid.com/wiki/Category:Architecture/x86-assembly)

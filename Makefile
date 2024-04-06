@@ -35,7 +35,7 @@ WHITE = \033[0;97m
 
 all: $(NAME)
 
-run:
+run: $(NAME)
 	./$(BIN_DIR)/$(NAME) $(lastword $(MAKECMDGOALS))
 
 $(NAME) : $(OBJ)
@@ -51,8 +51,8 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
 
 asm:
 	mkdir -p $(BIN_DIR)
-	nasm -f elf $(ASM_DIR)/$(SRC_ASM).asm
-	ld -m elf_i386 -s -o $(BIN_DIR)/$(NAME) $(ASM_DIR)/$(SRC_ASM).o
+	nasm -f elf64 $(ASM_DIR)/$(SRC_ASM).asm -o $(ASM_DIR)/$(SRC_ASM).o
+	ld $(ASM_DIR)/$(SRC_ASM).o -o $(BIN_DIR)/$(NAME)
 	rm $(ASM_DIR)/$(SRC_ASM).o
 
 clean:

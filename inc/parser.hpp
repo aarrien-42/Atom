@@ -24,6 +24,8 @@
 			Token					peek( size_t pos = 0);
 			Token					consume();
 
+			void					printTree();
+
 			size_t	currentTabs;
 			size_t	currentLine;
 	};

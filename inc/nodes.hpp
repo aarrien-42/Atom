@@ -44,6 +44,11 @@
 			for (ASTNode* statement : statements)
 				delete statement;
 		}
+
+		void	print() {
+			//for (ASTNode* statement : statements)
+				//print(*statement);
+		}
 	};
 
 	struct BoxNode : public ASTNode {
