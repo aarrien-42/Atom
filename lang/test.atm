@@ -1,11 +1,3 @@
 main:
+
 	v. x = 1
-	w. ( x < 100 )
-		x = x + 1
-		i. (x%2)
-			p. "Odd"
-		e.
-			p. "Pair"
-	r. 0
-extra:
-	v. e = 2

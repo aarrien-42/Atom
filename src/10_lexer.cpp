@@ -1,5 +1,7 @@
 #include "lexer.hpp"
 
+size_t	currentTabs = 0, currentRow = 1, currentColumn = 1;
+
 /*-CONSTRUCTOR-*/
 
 Lexer::Lexer( const std::string& fileName ) : _index(0) {
@@ -27,8 +29,8 @@ Lexer::~Lexer() {}
 
 std::vector<Token>	Lexer::getTokens() { return _tokens; }
 
-void				Lexer::setToken( std::string& buffer , TokenType tokenType ) {
-	Token token = {.type = tokenType, .value = buffer};
+void				Lexer::setToken( std::string& buffer, TokenType tokenType) {
+	Token token = {.type = tokenType, .value = buffer, .tabCount = currentTabs, .row = (tokenType == enter ? 0 : currentRow), .column = (tokenType == enter ? 0 : currentColumn)};
 
 	static const std::vector<std::string> keywords = { KEYWORD_IF, KEYWORD_ELSE, KEYWORD_IF_ELSE, KEYWORD_WHILE, KEYWORD_FOR, KEYWORD_VARIABLE, KEYWORD_PRINT, KEYWORD_RETURN };
 	static const std::vector<std::string> operators = { OPERATOR_PLUS, OPERATOR_MINUS, OPERATOR_MULTIPLY, OPERATOR_DIVIDE, OPERATOR_MODULO, OPERATOR_ASSIGN };
@@ -68,6 +70,19 @@ char				Lexer::peek() {
 char				Lexer::consume() {
 	char currentChar = peek();
 	_index++;
+
+	// keep track of reading
+	if (currentChar == '\t') {
+		currentColumn += 4;
+	}
+	else if (currentChar == '\n') {
+		currentColumn = 1;
+		currentRow++;
+	} else {
+		currentColumn++;
+	}
+
+
 	return currentChar;
 }
 
@@ -162,8 +177,13 @@ void				Lexer::printTokens() {
 			default:
 				type = "unknown";
 		}
-		std::cout << "[" << type << " " << (it->value == "\n" ? "\\n" : it->value) << "] ";
-		if (it->value == "\n")
+
+		// print
+		std::cout << "[" << type << " " << (it->value == "\n" ? "\\n" : it->value) << "]";
+		if (it->type != enter && it->type != tab)
+			std::cout << "[t" << it->tabCount << " " << it->row << ":" << it->column << "]";
+		std::cout << " ";
+		if (it->type == enter)
 			std::cout << "\n";
 	}
 	std::cout << std::endl;

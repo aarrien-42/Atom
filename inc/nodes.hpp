@@ -9,18 +9,19 @@
 		Program,
 		Block,
 		Box,
-		FuncDecl,
-		FuncCall,
-		Condition,
-		IfStatement,
-		WhileLoop,
-		ForLoop,
-		BinOp,
-		VarDecl,
-		Assign,
-		Literal,
-		Identifier,
-		Return,
+		FuncDecl,		// <func>:
+		FuncCall,		// <func>(<p1>, <p2>)
+		Condition,		// (<left><comparator><right>)
+		IfStatement,	// i. (<condition>)
+		WhileLoop,		// w. (<condition>)
+		ForLoop,		// f. (<assign>, <condition>, <operation>)
+		BinOp,			// <left><operator><right>
+		UnaryOp,		// <left><operator>
+		VarDecl,		// v. <var>
+		Assign,			// <var> = <?>
+		Literal,		// "42" or 42
+		Identifier,		// <var>
+		Return,			// r. <value>
 	};
 
 	class Parser;
@@ -28,14 +29,20 @@
 /*-MAIN-*/
 
 	struct ASTNode {
-		NodeType					type;
+		private:
+			NodeType					type;
 
-		ASTNode(NodeType t) : type(t) {}
-		virtual ~ASTNode() {}
+		public:
+			ASTNode(NodeType t) : type(t) {}
+			virtual ~ASTNode() {}
+
+			NodeType getType() { return type; }
 	};
 
 /*-BLOCK-*/
 
+// Description: Stores a chunk of lines or statements
+// Data: Function or Conditional content
 	struct BlockNode : public ASTNode {
 		std::vector<ASTNode*>		statements;
 
@@ -51,6 +58,9 @@
 		}
 	};
 
+// WORK IN PROGRESS ??
+// Description: Stores smaller chunks of data
+// Data: Function call parameters, single conditions and operations
 	struct BoxNode : public ASTNode {
 		std::vector<ASTNode*>		operations;
 
@@ -63,6 +73,8 @@
 
 /*-FUNCTION-*/
 
+// Description: Function declaration node
+// Data: Name, parameters and body (normally a BlockNode)
 	struct FuncDeclNode : public ASTNode {
 		std::string					functionName;
 		std::vector<ASTNode*>		parameters;
@@ -76,6 +88,8 @@
 		}
 	};
 
+// Description: Function call node
+// Data: Name and parameters (normally LiteralNode)
 	struct FuncCallNode : public ASTNode {
 		std::string					functionName;
 		std::vector<ASTNode*>		parameters;
@@ -89,6 +103,8 @@
 
 /*-CONDITIONAL-*/
 
+// Description: Condition node
+// Data: Comparation (<, >, ==, etc.) and nodes to be compared
 	struct ConditionNode : public ASTNode {
 		std::string					comparation;
 		ASTNode*					leftComp;
@@ -98,16 +114,20 @@
 		~ConditionNode() { delete leftComp; delete rightComp; }
 	};
 
+// Description: If statement node
+// Data: Condition (ConditionNode), body (BlockNode) and optional if and else branches
 	struct IfStatementNode : public ASTNode {
 		ASTNode*					condition;
 		ASTNode*					body;
-		ASTNode*					ifBranch;
-		ASTNode*					elseBranch;
+		ASTNode*					ifBranch; // not above condition so else if
+		ASTNode*					elseBranch; // just in case there's an else
 
 		IfStatementNode( Parser& );
 		~IfStatementNode() { delete condition; delete body; delete ifBranch; delete elseBranch; }
 	};
 
+// Description: While loop node
+// Data: Condition (ConditionNode) and body (BlockNode)
 	struct WhileLoopNode : public ASTNode {
 		ASTNode*					condition;
 		ASTNode*					body;
@@ -116,6 +136,8 @@
 		~WhileLoopNode() { delete condition; delete body; }
 	};
 
+// Description: For loop node
+// Data: Initialization (VarDeclNode or AssignNode), condition (ConditionNode), iteration (BinOpNode) and body (BlockNode)
 	struct ForLoopNode : public ASTNode {
 		ASTNode*					initialization;
 		ASTNode*					condition;
@@ -128,6 +150,8 @@
 
 /*-OPERATION-*/
 
+// Description: Binary (pair) operation node
+// Data: Operation (+, -, *, /, %, etc.) and two operands
 	struct BinOpNode : public ASTNode {
 		std::string					operation;
 		ASTNode*					leftOp;
@@ -137,9 +161,21 @@
 		~BinOpNode() { delete leftOp; delete rightOp; }
 	};
 
+// Description: Unary operation node
+// Data: Operation (++, --, etc.) and an operand
+	struct UnaryOpNode : public ASTNode {
+		std::string	operation;
+		ASTNode*	operand;
+
+		UnaryOpNode( Parser& );
+		~UnaryOpNode() { delete operand; }
+	};
+
 /*-VARAIBLE-*/
 
-	struct VarDeclNode : public ASTNode { // number or string literals
+// Description: Variable declaration node
+// Data: Name and initial value (normally a number or string literal)
+	struct VarDeclNode : public ASTNode {
 		std::string					name;
 		ASTNode*					initialValue;
 
@@ -147,6 +183,8 @@
 		~VarDeclNode() { delete initialValue; }
 	};
 
+// Description: Variable assignation node
+// Data: Variable name and new value
 	struct AssignNode : public ASTNode {
 		std::string					variableName;
 		ASTNode*					value;
@@ -155,12 +193,16 @@
 		~AssignNode() { delete value; }
 	};
 
+// Description: Literal node
+// Data: Value, could be a string or a number (either way it saves as a string)
 	struct LiteralNode : public ASTNode {
 		std::string					value;
 
 		LiteralNode( Parser& );
 	};
 
+// Description: Identifier node
+// Data: Name of the variable to identify
 	struct IdentifierNode : public ASTNode {
 		std::string					name;
 
@@ -169,6 +211,8 @@
 
 /*-RETURN-*/
 
+// Description: Return node
+// Data: Return value (normally a literal)
 	struct ReturnNode : public ASTNode {
 		ASTNode*					returnValue;
 

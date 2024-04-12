@@ -2,7 +2,7 @@
 
 /*-BLOCK-*/
 
-BlockNode::BlockNode( Parser& parser, size_t blockInitTab ) : ASTNode(Block) {
+BlockNode::BlockNode( Parser& parser, size_t blockInitTab ) : ASTNode(NodeType::Block) {
 	std::cout << "  **BLOCK NODE CREATED**\n";
 	do {
 		if (parser.peek().type == enter) {
@@ -40,7 +40,7 @@ BlockNode::BlockNode( Parser& parser, size_t blockInitTab ) : ASTNode(Block) {
 	} while (!parser.peek().value.empty() && parser.currentTabs > blockInitTab);
 }
 
-BoxNode::BoxNode( Parser& parser ) : ASTNode(Box) {
+BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
 	std::cout << "  **BOX NODE CREATED**\n";
 
 	if (parser.peek().value == "(") {
@@ -51,27 +51,27 @@ BoxNode::BoxNode( Parser& parser ) : ASTNode(Box) {
 
 /*-FUNCTION-*/
 
-FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(FuncDecl), body(nullptr) {
+FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(NodeType::FuncDecl), body(nullptr) {
 	std::cout << "  **FUNC DECL NODE CREATED**\n";
 
 	functionName = parser.consume().value;
 	std::cout << "	name = " << functionName << std::endl;
 	if (parser.peek().type != enter) {
-
+		std::cerr << "Invalid function declaration node\n";
 	} else {
 		parser.consume();
 		body = new BlockNode(parser, parser.currentTabs);
 	}
 }
 
-FuncCallNode::FuncCallNode( Parser& parser ) : ASTNode(FuncCall) {
+FuncCallNode::FuncCallNode( Parser& parser ) : ASTNode(NodeType::FuncCall) {
 	(void)parser;
 }
 
 /*-CONDITIONAL-*/
 
 // More conditional types need to be implemented
-ConditionNode::ConditionNode( Parser& parser ) : ASTNode(Condition), leftComp(nullptr), rightComp(nullptr) {
+ConditionNode::ConditionNode( Parser& parser ) : ASTNode(NodeType::Condition), leftComp(nullptr), rightComp(nullptr) {
 	std::cout << "  **CONDITIONAL NODE CREATED**\n";
 
 	if (parser.peek().value == "(") {
@@ -83,7 +83,7 @@ ConditionNode::ConditionNode( Parser& parser ) : ASTNode(Condition), leftComp(nu
 	}
 }
 
-IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(IfStatement), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
+IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(NodeType::IfStatement), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
 	std::cout << "  **IF NODE CREATED**\n";
 
 	if (parser.peek().value == "i.")
@@ -95,23 +95,27 @@ IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(IfStatement), condi
 	}
 }
 
-WhileLoopNode::WhileLoopNode( Parser& parser ) : ASTNode(WhileLoop), condition(nullptr), body(nullptr) {
+WhileLoopNode::WhileLoopNode( Parser& parser ) : ASTNode(NodeType::WhileLoop), condition(nullptr), body(nullptr) {
 	(void)parser;
 }
 
-ForLoopNode::ForLoopNode( Parser& parser ) : ASTNode(ForLoop), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
+ForLoopNode::ForLoopNode( Parser& parser ) : ASTNode(NodeType::ForLoop), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
 	(void)parser;
 }
 
 /*-OPERATION-*/
 
-BinOpNode::BinOpNode( Parser& parser ) : ASTNode(BinOp), leftOp(nullptr), rightOp(nullptr) {
+BinOpNode::BinOpNode( Parser& parser ) : ASTNode(NodeType::BinOp), leftOp(nullptr), rightOp(nullptr) {
+	(void)parser;
+}
+
+UnaryOpNode::UnaryOpNode( Parser& parser ) : ASTNode(NodeType::UnaryOp), operand(nullptr) {
 	(void)parser;
 }
 
 /*-VARAIBLE-*/
 
-VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(VarDecl), initialValue(nullptr) {
+VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(NodeType::VarDecl), initialValue(nullptr) {
 	std::cout << "  **VAR DECL NODE CREATED**\n";
 
 	if (parser.peek().value == "v.")
@@ -134,7 +138,7 @@ VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(VarDecl), initialValue(null
 	std::cout << "	Variable " << name << " declared\n";
 }
 
-AssignNode::AssignNode( Parser& parser ) : ASTNode(Assign), value(nullptr) {
+AssignNode::AssignNode( Parser& parser ) : ASTNode(NodeType::Assign), value(nullptr) {
 	std::cout << "  **ASSIGN NODE CREATED**\n";
 
 	if (parser.peek().type == identifier) {
@@ -158,7 +162,7 @@ AssignNode::AssignNode( Parser& parser ) : ASTNode(Assign), value(nullptr) {
 	}
 }
 
-LiteralNode::LiteralNode( Parser& parser ) : ASTNode(Literal) {
+LiteralNode::LiteralNode( Parser& parser ) : ASTNode(NodeType::Literal) {
 	std::cout << "  **LITERAL NODE CREATED**\n";
 
 	if (parser.peek().type != literal)
@@ -167,7 +171,7 @@ LiteralNode::LiteralNode( Parser& parser ) : ASTNode(Literal) {
 		value = parser.consume().value;
 }
 
-IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(Identifier) {
+IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(NodeType::Identifier) {
 	std::cout << "  **IDENTIFIER NODE CREATED**\n";
 
 	if (parser.peek().type != identifier)
@@ -178,7 +182,7 @@ IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(Identifier) {
 
 /*-RETURN-*/
 
-ReturnNode::ReturnNode( Parser& parser ) : ASTNode(Return), returnValue(nullptr) {
+ReturnNode::ReturnNode( Parser& parser ) : ASTNode(NodeType::Return), returnValue(nullptr) {
 	std::cout << "  **RETURN NODE CREATED**\n";
 
 	if (parser.peek().value != "r.")

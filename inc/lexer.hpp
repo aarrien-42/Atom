@@ -70,8 +70,11 @@
 	};
 
 	struct Token {
-		TokenType	type {};
+		TokenType	type;
 		std::string	value;
+
+		size_t		tabCount;
+		size_t		row, column;
 	};
 
 	class Lexer {

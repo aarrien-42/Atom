@@ -10,6 +10,13 @@ section .rodata
 section .text
     global _start
 
+print_digit: ; fd = %rdi, digit = %rsi
+    mov rax, 1
+    add rsi, '0'
+    mov rdx, 1
+    syscall
+    ret
+
 print_str: ; fd = %rdi, buff = %rsi, size = %rdx
     mov rax, 1
     syscall
@@ -24,14 +31,6 @@ _start:
     mov eax, 1
     mov [x], eax        ; v. x = 1
     start_while_loop_1:
-        mov eax, [x] ; gets value stored on x
-
-        inc eax
-        mov [x], eax    ; x = x + 1
-
-        cmp eax, 10
-        jge end_while_loop_1 ; jumps if eax (x) is less than 10
-
         mov edx, 0
         mov eax, [x]
         mov ecx, 2
@@ -57,7 +56,17 @@ _start:
             jmp end_if_1
         end_if_1:
 
-        jmp start_while_loop_1
+        mov eax, [x] ; gets value stored on x
+        inc eax
+        mov [x], eax    ; x = x + 1
+
+        mov rdi, 1
+        mov rsi, 5
+        call print_digit
+
+        mov eax, [x] ; gets value stored on x
+        cmp eax, 10
+        jl start_while_loop_1
     end_while_loop_1:
 
     mov rax, 60
