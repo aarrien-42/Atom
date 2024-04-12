@@ -11,8 +11,9 @@ int main(int ac, char** av) {
 
 	Lexer L(fileName);
 	std::cout << "TOKEN LIST:\n\n";
+	std::cout << " * Before clean up:\n";
 	L.printTokens();
-	std::cout << "\n";
+	std::cout << " * After clean up:\n";
 	L.cleanTokens();
 	L.printTokens();
 	std::cout << "\n";

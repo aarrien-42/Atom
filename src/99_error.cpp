@@ -55,7 +55,6 @@ void	parserNodeError( const ParserNodeError& error, Token errorToken, std::strin
 			printError("ReturnNode: " + aditionalInfo); break;
 	}
 
-	(void)errorToken;
-
+	std::cerr << "Error at -> " << errorToken.row << ":" << errorToken.column << std::endl;
 	exit(200 + error);
 }

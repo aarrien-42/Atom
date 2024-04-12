@@ -4,11 +4,18 @@
 
 BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::Block) {
 	std::cout << "  **BLOCK NODE CREATED**\n";
+	bool	newValidLine = true;
+
 	do {
 		if (parser.peek().type == TokenType::enter || parser.peek().type == TokenType::tab) {
+			if (parser.peek().type == TokenType::enter)
+				newValidLine = true;
 			parser.consume();
 		} else {
 			std::cout << "Inside block = " << parser.peek().value << " type = " << parser.peek().type << std::endl;
+			if (!newValidLine) {
+				parserNodeError(INV_BLOCK_NODE, parser.consume(), "Invalid new line");
+			}
 			// block body check
 			if (parser.peek().type == TokenType::keyword) {
 				if (parser.peek().value == "i.") {
@@ -29,6 +36,7 @@ BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::B
 			} else {
 				parserNodeError(INV_BLOCK_NODE, parser.consume(), "Not implemented yet");
 			}
+			newValidLine = false;
 		}
 		if (parser.peek().type != TokenType::enter && parser.peek().tabCount != initialTabs + 1)
 			break;
@@ -37,9 +45,34 @@ BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::B
 
 BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
 	std::cout << "  **BOX NODE CREATED**\n";
+	int nestedParen = 0, index = 0;
+	bool validBox = false;
 
 	if (parser.peek().value == "(") {
-
+		while (!validBox && (parser.peek(index).type != enter || !parser.peek(index).value.empty())) {
+			index++;
+			if (parser.peek().value == "(") {
+				nestedParen++;
+			} else if (parser.peek(index).value == ")") {
+				if (nestedParen == 0)
+					validBox = true;
+				else
+					nestedParen--;
+			}
+		}
+		if (validBox) {
+			parser.consume();
+			if (parser.peek().value == "(") {
+				node = new BoxNode(parser);
+			} else if (parser.peek().value == ")") {
+				parserNodeError(INV_BOX_NODE, parser.consume(), "Nothing between parenthesis");
+			} else {
+				if (parser.peek(1).type != NodeType::enter)
+				// WORK IN PROGRESS
+			}
+		} else {
+			parserNodeError(INV_BOX_NODE, parser.consume(), "Parenthesis not closed");
+		}
 	} else
 		parserNodeError(INV_BOX_NODE, parser.consume(), "Invalid Box node");
 }
@@ -54,6 +87,7 @@ FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(NodeType::FuncDecl), body
 	std::cout << "	name = " << functionName << std::endl;
 	if (parser.peek().type != enter) { // Function has parameters
 		while (parser.peek().type != TokenType::enter) {
+			std::cout << "new parameter: " << parser.peek().value << "\n";
 			if (parser.peek().type == TokenType::identifier)
 				parameters.push_back(new IdentifierNode(parser));
 			else
@@ -126,9 +160,12 @@ VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(NodeType::VarDecl), initial
 		name = parser.consume().value;
 		if (parser.peek().value == "=") {
 			parser.consume();
-			if (parser.peek().type == enter)
+			if (parser.peek().type == enter) {
 				parserNodeError(INV_VARDECL_NODE, parser.consume(), "Invalid variable assignation");
-			if (parser.peek().type == literal) {
+			}
+			if (parser.peek().type == paren) {
+				initialValue = new BoxNode(parser);
+			} else if (parser.peek().type == literal) {
 				initialValue = new LiteralNode(parser);
 			} else if (parser.peek().type == identifier) {
 				initialValue = new IdentifierNode(parser);
@@ -145,10 +182,9 @@ AssignNode::AssignNode( Parser& parser ) : ASTNode(NodeType::Assign), value(null
 
 	if (parser.peek().type == identifier) {
 		variableName = parser.consume().value;
-		std::cout << "assigned " << parser.peek().value << " to " << variableName << "\n";
 		if (parser.peek().value == "=") {
 			parser.consume();
-			if (parser.peek().type == paren || parser.peek(1).type != enter) {
+			if (parser.peek().type == paren) {
 				value = new BoxNode(parser);
 			} else {
 				if (parser.peek().type == identifier)
@@ -157,10 +193,10 @@ AssignNode::AssignNode( Parser& parser ) : ASTNode(NodeType::Assign), value(null
 					value = new LiteralNode(parser);
 			}
 		} else {
-			parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Assign error 1");
+			parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Assignation not done");
 		}
 	} else {
-		parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Assign error 2");
+		parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Invalid assignation");
 	}
 }
 
@@ -190,6 +226,7 @@ ReturnNode::ReturnNode( Parser& parser ) : ASTNode(NodeType::Return), returnValu
 	if (parser.peek().value != "r.")
 		parserNodeError(INV_RETURN_NODE, parser.consume(), "Invalid Return Node");
 	else {
+		parser.consume();
 		if (parser.peek().type == paren)
 			returnValue = new BoxNode(parser);
 		else if (parser.peek().type == identifier)
