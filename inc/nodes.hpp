@@ -58,17 +58,13 @@
 		}
 	};
 
-// WORK IN PROGRESS ??
 // Description: Stores smaller chunks of data
-// Data: Function call parameters, single conditions and operations
+// Data: Node between parenthsis (normally used in operations)
 	struct BoxNode : public ASTNode {
-		std::vector<ASTNode*>		operations;
+		ASTNode*	node;
 
 		BoxNode( Parser& );
-		~BoxNode() {
-			for (ASTNode* op : operations)
-				delete op;
-		}
+		~BoxNode() { delete node; }
 	};
 
 /*-FUNCTION-*/

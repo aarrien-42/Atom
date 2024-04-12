@@ -13,6 +13,9 @@ int main(int ac, char** av) {
 	std::cout << "TOKEN LIST:\n\n";
 	L.printTokens();
 	std::cout << "\n";
+	L.cleanTokens();
+	L.printTokens();
+	std::cout << "\n";
 
 	std::cout << "PARSER:\n\n";
 	Parser P(L.getTokens());

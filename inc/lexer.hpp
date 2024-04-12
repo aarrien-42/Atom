@@ -93,6 +93,7 @@
 			char				consume();
 			void				tokenize();
 
+			void				cleanTokens();
 			void				printTokens();
 	};
 

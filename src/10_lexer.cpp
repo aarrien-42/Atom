@@ -73,9 +73,11 @@ char				Lexer::consume() {
 
 	// keep track of reading
 	if (currentChar == '\t') {
+		currentTabs++;
 		currentColumn += 4;
 	}
 	else if (currentChar == '\n') {
+		currentTabs = 0;
 		currentColumn = 1;
 		currentRow++;
 	} else {
@@ -141,6 +143,19 @@ void				Lexer::tokenize() {
 	}
 	buffer.push_back('\n');
 	setToken(buffer, enter);
+}
+
+// Erases any repeated TokenType::enter tokens
+void				Lexer::cleanTokens() {
+	TokenType	lastType;
+
+	for (std::vector<Token>::iterator it = _tokens.begin(); it != _tokens.end(); it++) {
+		if (lastType == it->type && lastType == TokenType::enter) {
+			_tokens.erase(it);
+			continue;
+		}
+		lastType = it->type;
+	}
 }
 
 void				Lexer::printTokens() {

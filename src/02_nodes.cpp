@@ -2,21 +2,15 @@
 
 /*-BLOCK-*/
 
-BlockNode::BlockNode( Parser& parser, size_t blockInitTab ) : ASTNode(NodeType::Block) {
+BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::Block) {
 	std::cout << "  **BLOCK NODE CREATED**\n";
 	do {
-		if (parser.peek().type == enter) {
+		if (parser.peek().type == TokenType::enter || parser.peek().type == TokenType::tab) {
 			parser.consume();
-			if (parser.peek().type == tab)
-				parser.currentTabs = parser.consume().value.size();
-			else
-				parser.currentTabs = 0;
-		} else if (parser.peek().type == tab) {
-			parser.currentTabs = parser.consume().value.size();
 		} else {
 			std::cout << "Inside block = " << parser.peek().value << " type = " << parser.peek().type << std::endl;
 			// block body check
-			if (parser.peek().type == keyword) {
+			if (parser.peek().type == TokenType::keyword) {
 				if (parser.peek().value == "i.") {
 					statements.push_back(new IfStatementNode(parser));
 				} else if (parser.peek().value == "w.") {
@@ -30,14 +24,16 @@ BlockNode::BlockNode( Parser& parser, size_t blockInitTab ) : ASTNode(NodeType::
 				} else {
 					std::cerr << "Invalid keyword\n";
 				}
-			} else if (parser.peek().type == identifier) {
+			} else if (parser.peek().type == TokenType::identifier) {
 				statements.push_back(new AssignNode(parser));
 			} else {
 				std::cerr << "Not implemented yet\n";
 			}
 			parser.consume();
 		}
-	} while (!parser.peek().value.empty() && parser.currentTabs > blockInitTab);
+		if (parser.peek().type != TokenType::enter && parser.peek().tabCount != initialTabs + 1)
+			break;
+	} while (!parser.peek().value.empty());
 }
 
 BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
@@ -54,14 +50,22 @@ BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
 FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(NodeType::FuncDecl), body(nullptr) {
 	std::cout << "  **FUNC DECL NODE CREATED**\n";
 
+	size_t functionTabs = parser.peek().tabCount;
 	functionName = parser.consume().value;
 	std::cout << "	name = " << functionName << std::endl;
-	if (parser.peek().type != enter) {
-		std::cerr << "Invalid function declaration node\n";
-	} else {
-		parser.consume();
-		body = new BlockNode(parser, parser.currentTabs);
+	if (parser.peek().type != enter) { // Function has parameters
+		while (parser.peek().type != TokenType::enter) {
+			if (parser.peek().type == TokenType::identifier)
+				parameters.push_back(new IdentifierNode(parser));
+			else
+				std::cerr << "Invalid Function declaration node\n";
+		}
 	}
+
+	if (parser.peek().type == TokenType::enter)
+		parser.consume();
+
+	body = new BlockNode(parser, functionTabs);
 }
 
 FuncCallNode::FuncCallNode( Parser& parser ) : ASTNode(NodeType::FuncCall) {
