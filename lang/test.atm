@@ -1,3 +1,2 @@
-main: a
-
-	v. x = 12
+main:
+	v. x = 1

@@ -6,6 +6,7 @@
 	#include "lexer.hpp"
 	#include "utils.hpp"
 	#include "nodes.hpp"
+	#include "error.hpp"
 
 	struct Token;
 	struct ASTNode;

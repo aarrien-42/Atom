@@ -8,7 +8,7 @@ Lexer::Lexer( const std::string& fileName ) : _index(0) {
 	std::ifstream inputFile(fileName);
 
 	if (!inputFile.is_open())
-		exitError(E_FILE_OPEN);
+		fileReadError(FileReadError::FILE_OPEN);
 
 	std::stringstream buffer;
 	buffer << inputFile.rdbuf();
@@ -137,7 +137,7 @@ void				Lexer::tokenize() {
 			setToken(buffer, tab);
 		} else {
 			if (std::string(WHITESPACE).find(peek()) == std::string::npos)
-				exitError(E_UNKNOWN_CHAR, std::to_string(peek()));
+				fileReadError(FileReadError::UNKNOWN_CHAR, std::to_string(peek()));
 			consume();
 		}
 	}
@@ -147,14 +147,15 @@ void				Lexer::tokenize() {
 
 // Erases any repeated TokenType::enter tokens
 void				Lexer::cleanTokens() {
-	TokenType	lastType;
+	TokenType	lastType = unknown;
 
-	for (std::vector<Token>::iterator it = _tokens.begin(); it != _tokens.end(); it++) {
-		if (lastType == it->type && lastType == TokenType::enter) {
-			_tokens.erase(it);
-			continue;
+	for (std::vector<Token>::iterator it = _tokens.begin(); it != _tokens.end();) {
+		if (lastType == TokenType::enter && lastType == it->type) {
+			it = _tokens.erase(it); // Advance iterator after erasing
+		} else {
+			lastType = it->type;
+			++it;
 		}
-		lastType = it->type;
 	}
 }
 

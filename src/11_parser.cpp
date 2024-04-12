@@ -10,6 +10,9 @@ Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens), _index(0) 
 		} else {
 			if (peek().type == identifier && getStrEndChar(peek().value) == ':') {
 				_tree.push_back(FuncDeclNode(*this));
+			} else {
+				std::cerr << "Still not implemented\n";
+				consume();
 			}
 		}
 	}
