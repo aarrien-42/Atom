@@ -277,7 +277,6 @@ VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(NodeType::VarDecl), initial
 	if (parser.peek().type == TokenType::identifier) {
 		if (parser.peek(1).type == TokenType::enter) {
 			name = parser.consume().value;
-			parser.consume();
 		} else {
 			name = parser.peek().value;
 			if (parser.peek(1).value == "=") {

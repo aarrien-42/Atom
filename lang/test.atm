@@ -1,2 +1,6 @@
 main: av ac
-	v. x = 1 + 1
+	v. x = 3
+	v. y
+	v. z = x * 2
+
+	y = x + z
