@@ -77,7 +77,7 @@
 				delete function;
 		}
 
-		void	printNode() {
+		void	printNode() const override {
 			ASTNode::printNode();
 
 			for (ASTNode* function : functions) {
@@ -139,7 +139,7 @@
 			delete body;
 		}
 
-		void	printNode() {
+		void	printNode() const override {
 			ASTNode::printNode();
 
 			std::cout << functionName << " ( ";

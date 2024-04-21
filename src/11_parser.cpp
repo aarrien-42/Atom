@@ -4,6 +4,8 @@
 
 Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens), _index(0) {
 	ASTNode* program = new ProgramNode(*this);
+
+	std::cout << "\nPROGRAM ABSTRACT SINTAX TREE:\n\n";
 	program->printNode();
 	delete program;
 }
