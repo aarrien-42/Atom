@@ -262,7 +262,6 @@ VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(NodeType::VarDecl), initial
 	} else {
 		parserNodeError(INV_VARDECL_NODE, parser.consume(), "Variable needs an identifier");
 	}
-	std::cout << "	Variable " << name << " declared\n";
 
 	// Print result node
 	this->printNode();
