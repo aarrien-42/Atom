@@ -4,6 +4,7 @@
 	#include <iostream>
 	#include <vector>
 	#include "parser.hpp"
+	#include "lexer.hpp"
 
 	enum NodeType {
 		Program,
@@ -37,6 +38,21 @@
 			virtual ~ASTNode() {}
 
 			NodeType getType() { return type; }
+	};
+
+/*-PROGRAM-*/
+
+// Description: Stores information about a single .atm file
+// Data: Program file name and all functions declared in the file
+	struct ProgramNode : public ASTNode {
+		std::string				fileName;
+		std::vector<ASTNode*>	functions;
+
+		ProgramNode( Parser& );
+		~ProgramNode() {
+			for (ASTNode* function : functions)
+				delete function;
+		}
 	};
 
 /*-BLOCK-*/

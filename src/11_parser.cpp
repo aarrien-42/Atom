@@ -3,19 +3,7 @@
 /*-CONSTRUCTOR-*/
 
 Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens), _index(0) {
-
-	while (!peek().value.empty()) {
-		if (peek().type == tab || peek().type == enter) {
-			consume();
-		} else {
-			if (peek().type == identifier && getStrEndChar(peek().value) == ':') {
-				_tree.push_back(FuncDeclNode(*this));
-			} else {
-				std::cerr << "Still not implemented\n";
-				consume();
-			}
-		}
-	}
+	new ProgramNode(*this);
 }
 
 /*-DESTRUCTOR-*/

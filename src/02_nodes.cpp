@@ -1,5 +1,26 @@
 #include "nodes.hpp"
 
+/*-PROGRAM-*/
+
+ProgramNode::ProgramNode( Parser& parser ) : ASTNode(NodeType::Program) {
+	std::cout << "  **PROGRAM NODE CREATED**\n";
+
+	fileName = ""; // Still not captured
+
+	while (!parser.peek().value.empty()) {
+		if (parser.peek().type == tab || parser.peek().type == enter) {
+			parser.consume();
+		} else {
+			if (parser.peek().type == identifier && getStrEndChar(parser.peek().value) == ':') {
+				functions.push_back(new FuncDeclNode(parser));
+			} else {
+				std::cerr << "Still not implemented\n";
+				parser.consume();
+			}
+		}
+	}
+}
+
 /*-BLOCK-*/
 
 BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::Block) {
@@ -67,7 +88,7 @@ BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
 			} else if (parser.peek().value == ")") {
 				parserNodeError(INV_BOX_NODE, parser.consume(), "Nothing between parenthesis");
 			} else {
-				if (parser.peek(1).type != NodeType::enter)
+				//if (parser.peek(1).type != NodeType::enter)
 				// WORK IN PROGRESS
 			}
 		} else {
