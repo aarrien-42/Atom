@@ -3,4 +3,4 @@ main: av ac
 	v. y
 	v. z = x * 2
 
-	y = x + z
+	y = x * (z - 1)

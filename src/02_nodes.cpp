@@ -160,7 +160,7 @@ ConditionNode::ConditionNode( Parser& parser ) : ASTNode(NodeType::Condition), l
 			} else if (parser.peek().type == TokenType::literal) {
 				*compNode = new LiteralNode(parser);
 			} else if (parser.peek().value == "(") {
-				*compNode = new LiteralNode(parser);
+				*compNode = new BoxNode(parser);
 			}
 		} else if (comparation.empty()) {
 			if (parser.peek().type == TokenType::comparison) {
@@ -239,7 +239,7 @@ BinOpNode::BinOpNode( Parser& parser ) : ASTNode(NodeType::BinOp), leftOp(nullpt
 				} else if (parser.peek().type == TokenType::literal) {
 					*opNode = new LiteralNode(parser);
 				} else if (parser.peek().value == "(") {
-					*opNode = new LiteralNode(parser);
+					*opNode = new BoxNode(parser);
 				}
 			} else if (operation.empty()) {
 				if (parser.peek().type == TokenType::operation) {
