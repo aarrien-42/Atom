@@ -3,7 +3,8 @@
 /*-CONSTRUCTOR-*/
 
 Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens), _index(0) {
-	new ProgramNode(*this);
+	ASTNode* program = new ProgramNode(*this);
+	delete program;
 }
 
 /*-DESTRUCTOR-*/

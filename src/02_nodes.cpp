@@ -19,6 +19,9 @@ ProgramNode::ProgramNode( Parser& parser ) : ASTNode(NodeType::Program) {
 			}
 		}
 	}
+
+	// Print result node
+	this->printNode();
 }
 
 /*-BLOCK-*/
@@ -33,9 +36,8 @@ BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::B
 				newValidLine = true;
 			parser.consume();
 		} else {
-			std::cout << "Inside block = " << parser.peek().value << " type = " << parser.peek().type << std::endl;
 			if (!newValidLine) {
-				parserNodeError(INV_BLOCK_NODE, parser.consume(), "Invalid new line");
+				parserNodeError(INV_BLOCK_NODE, parser.consume(), "Expected newline");
 			}
 			// block body check
 			if (parser.peek().type == TokenType::keyword) {
@@ -59,9 +61,12 @@ BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::B
 			}
 			newValidLine = false;
 		}
-		if (parser.peek().type != TokenType::enter && parser.peek().tabCount != initialTabs + 1)
+		if (parser.peek().type != TokenType::enter && parser.peek().tabCount != initialTabs)
 			break;
 	} while (!parser.peek().value.empty());
+
+	// Print result node
+	this->printNode();
 }
 
 BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
@@ -96,6 +101,9 @@ BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
 		}
 	} else
 		parserNodeError(INV_BOX_NODE, parser.consume(), "Invalid Box node");
+
+	// Print result node
+	this->printNode();
 }
 
 /*-FUNCTION-*/
@@ -103,12 +111,9 @@ BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
 FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(NodeType::FuncDecl), body(nullptr) {
 	std::cout << "  **FUNC DECL NODE CREATED**\n";
 
-	size_t functionTabs = parser.peek().tabCount;
 	functionName = parser.consume().value;
-	std::cout << "	name = " << functionName << std::endl;
 	if (parser.peek().type != enter) { // Function has parameters
 		while (parser.peek().type != TokenType::enter) {
-			std::cout << "new parameter: " << parser.peek().value << "\n";
 			if (parser.peek().type == TokenType::identifier)
 				parameters.push_back(new IdentifierNode(parser));
 			else
@@ -119,7 +124,10 @@ FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(NodeType::FuncDecl), body
 	if (parser.peek().type == TokenType::enter)
 		parser.consume();
 
-	body = new BlockNode(parser, functionTabs);
+	body = new BlockNode(parser, parser.peek().tabCount);
+
+	// Print result node
+	this->printNode();
 }
 
 FuncCallNode::FuncCallNode( Parser& parser ) : ASTNode(NodeType::FuncCall) {
@@ -131,43 +139,102 @@ FuncCallNode::FuncCallNode( Parser& parser ) : ASTNode(NodeType::FuncCall) {
 // More conditional types need to be implemented
 ConditionNode::ConditionNode( Parser& parser ) : ASTNode(NodeType::Condition), leftComp(nullptr), rightComp(nullptr) {
 	std::cout << "  **CONDITIONAL NODE CREATED**\n";
+	bool withParen = false;
 
-	if (parser.peek().value == "(") {
+	if (parser.peek().type == TokenType::paren) {
+		if (IsParenthesisClosed(parser)) {
+			withParen = true;
+			parser.consume();
+		} else {
+			parserNodeError(INV_CONDITION_NODE, parser.consume(), "Parenthesis not closed");
+		}
+	}
+
+	ASTNode** compNode;
+	while (true) {
+		leftComp == nullptr ? (compNode = &leftComp) : (compNode = &rightComp) ;
+		if (leftComp == nullptr || (leftComp != nullptr && !comparation.empty() && rightComp == nullptr)) {
+			if (parser.peek().type == TokenType::identifier) {
+				*compNode = new IdentifierNode(parser);
+			} else if (parser.peek().type == TokenType::literal) {
+				*compNode = new LiteralNode(parser);
+			} else if (parser.peek().value == "(") {
+				*compNode = new LiteralNode(parser);
+			}
+		} else if (comparation.empty()) {
+			if (parser.peek().type == TokenType::comparison) {
+				comparation = parser.consume().value;
+			} else {
+				parserNodeError(INV_CONDITION_NODE, parser.consume(), "No comparation operator used");
+			}
+		} else {
+			break;
+		}
+	}
+
+	if (withParen) parser.consume();
+	if (parser.peek().type == TokenType::enter) {
 		parser.consume();
-		
-		
-	} else
-		parserNodeError(INV_CONDITION_NODE, parser.consume(), "Invalid Conditional node");
+	} else {
+		parserNodeError(INV_CONDITION_NODE, parser.consume(), "Condition should end in newline");
+	}
+
+	// Print result node
+	this->printNode();
 }
 
 IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(NodeType::IfStatement), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
 	std::cout << "  **IF NODE CREATED**\n";
+	size_t initialTabs = parser.peek().tabCount;
 
-	if (parser.peek().value == "i.")
+	if (parser.peek().value == "i.") {
 		parser.consume();
-	if (parser.peek().type == enter )
-		parserNodeError(INV_IF_NODE, parser.consume(), "If statement node needs a condition");
-	else {
-		condition = new ConditionNode(parser);
+		if (parser.peek().type != TokenType::enter ) {
+			condition = new ConditionNode(parser);
+			if (parser.peek().tabCount > initialTabs) {
+				body = new BlockNode(parser, parser.peek().tabCount);
+			} else {
+				parserNodeError(INV_IF_NODE, parser.consume(), "Bad alignment for if statement body");
+			}
+		} else {
+			parserNodeError(INV_IF_NODE, parser.consume(), "If statement node needs a condition");
+		}
+	} else {
+		parserNodeError(INV_IF_NODE, parser.consume(), "Invalid if statement");
 	}
+
+	// Print result node
+	this->printNode();
 }
 
 WhileLoopNode::WhileLoopNode( Parser& parser ) : ASTNode(NodeType::WhileLoop), condition(nullptr), body(nullptr) {
 	(void)parser;
+
+	// Print result node
+	this->printNode();
 }
 
 ForLoopNode::ForLoopNode( Parser& parser ) : ASTNode(NodeType::ForLoop), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
 	(void)parser;
+
+	// Print result node
+	this->printNode();
 }
 
 /*-OPERATION-*/
 
 BinOpNode::BinOpNode( Parser& parser ) : ASTNode(NodeType::BinOp), leftOp(nullptr), rightOp(nullptr) {
 	(void)parser;
+
+	// Print result node
+	this->printNode();
 }
 
 UnaryOpNode::UnaryOpNode( Parser& parser ) : ASTNode(NodeType::UnaryOp), operand(nullptr) {
 	(void)parser;
+
+	// Print result node
+	this->printNode();
 }
 
 /*-VARAIBLE-*/
@@ -196,6 +263,9 @@ VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(NodeType::VarDecl), initial
 		parserNodeError(INV_VARDECL_NODE, parser.consume(), "Variable needs an identifier");
 	}
 	std::cout << "	Variable " << name << " declared\n";
+
+	// Print result node
+	this->printNode();
 }
 
 AssignNode::AssignNode( Parser& parser ) : ASTNode(NodeType::Assign), value(nullptr) {
@@ -205,13 +275,24 @@ AssignNode::AssignNode( Parser& parser ) : ASTNode(NodeType::Assign), value(null
 		variableName = parser.consume().value;
 		if (parser.peek().value == "=") {
 			parser.consume();
-			if (parser.peek().type == paren) {
+			if (parser.peek().type == TokenType::paren) { // box assignation
 				value = new BoxNode(parser);
-			} else {
+			} else if (parser.peek(1).type == TokenType::enter) { // simple assignation
 				if (parser.peek().type == identifier)
 					value = new IdentifierNode(parser);
 				else if (parser.peek().type == literal)
 					value = new LiteralNode(parser);
+				else {
+					parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Invalid simple assignation");
+				}
+			} else { // advanced assignation
+				if (parser.peek().type == TokenType::identifier && parser.peek(1).type == TokenType::paren) { // function call
+					value = new FuncCallNode(parser);
+				} else if (parser.peek(1).type == TokenType::operation) {
+					value = new BinOpNode(parser);
+				} else {
+					parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Invalid advanced assignation");
+				}
 			}
 		} else {
 			parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Assignation not done");
@@ -219,6 +300,9 @@ AssignNode::AssignNode( Parser& parser ) : ASTNode(NodeType::Assign), value(null
 	} else {
 		parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Invalid assignation");
 	}
+
+	// Print result node
+	this->printNode();
 }
 
 LiteralNode::LiteralNode( Parser& parser ) : ASTNode(NodeType::Literal) {
@@ -228,6 +312,9 @@ LiteralNode::LiteralNode( Parser& parser ) : ASTNode(NodeType::Literal) {
 		parserNodeError(INV_LITERAL_NODE, parser.consume(), "Invalid Literal Node");
 	else
 		value = parser.consume().value;
+
+	// Print result node
+	this->printNode();
 }
 
 IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(NodeType::Identifier) {
@@ -237,6 +324,9 @@ IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(NodeType::Identifier)
 		parserNodeError(INV_IDENTIFIER_NODE, parser.consume(), "Invalid Identifier Node");
 	else
 		name = parser.consume().value;
+
+	// Print result node
+	this->printNode();
 }
 
 /*-RETURN-*/
@@ -255,6 +345,9 @@ ReturnNode::ReturnNode( Parser& parser ) : ASTNode(NodeType::Return), returnValu
 		else if (parser.peek().type == literal)
 			returnValue = new LiteralNode(parser);
 	}
+
+	// Print result node
+	this->printNode();
 }
 
 /*-UTILS-*/

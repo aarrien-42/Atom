@@ -38,6 +38,29 @@
 			virtual ~ASTNode() {}
 
 			NodeType getType() { return type; }
+
+			virtual void printNode() const {
+				switch (type) {
+					case NodeType::Program:		std::cout << "ProgramNode";		break;
+					case NodeType::Block:		std::cout << "BlockNode";		break;
+					case NodeType::Box:			std::cout << "BoxNode";			break;
+					case NodeType::FuncDecl:	std::cout << "FuncDeclNode";	break;
+					case NodeType::FuncCall:	std::cout << "FuncCallNode";	break;
+					case NodeType::Condition:	std::cout << "ConditionNode";	break;
+					case NodeType::IfStatement:	std::cout << "IfStatementNode";	break;
+					case NodeType::WhileLoop:	std::cout << "WhileLoopNode";	break;
+					case NodeType::ForLoop:		std::cout << "ForLoopNode";		break;
+					case NodeType::BinOp:		std::cout << "BinOpNode";		break;
+					case NodeType::UnaryOp:		std::cout << "UnaryOpNode";		break;
+					case NodeType::VarDecl:		std::cout << "VarDeclNode";		break;
+					case NodeType::Assign:		std::cout << "AssignNode";		break;
+					case NodeType::Literal:		std::cout << "LiteralNode";		break;
+					case NodeType::Identifier:	std::cout << "IdentifierNode";	break;
+					case NodeType::Return:		std::cout << "ReturnNode";		break;
+					default: std::cout << "Unknown";
+				}
+				std::cout << " => ";
+			}
 	};
 
 /*-PROGRAM-*/
@@ -52,6 +75,14 @@
 		~ProgramNode() {
 			for (ASTNode* function : functions)
 				delete function;
+		}
+
+		void	printNode() {
+			ASTNode::printNode();
+
+			for (ASTNode* function : functions) {
+				function->printNode();
+			}
 		}
 	};
 
@@ -68,9 +99,12 @@
 				delete statement;
 		}
 
-		void	print() {
-			//for (ASTNode* statement : statements)
-				//print(*statement);
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			for (ASTNode* statement : statements) {
+				statement->printNode();
+			}
 		}
 	};
 
@@ -81,6 +115,12 @@
 
 		BoxNode( Parser& );
 		~BoxNode() { delete node; }
+
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			node->printNode();
+		}
 	};
 
 /*-FUNCTION-*/
@@ -98,6 +138,18 @@
 				delete param;
 			delete body;
 		}
+
+		void	printNode() {
+			ASTNode::printNode();
+
+			std::cout << functionName << " ( ";
+			for (ASTNode* param : parameters) {
+				param->printNode();
+				std::cout << " ";
+			}
+			std::cout << ")" << std::endl;
+			body->printNode();
+		}
 	};
 
 // Description: Function call node
@@ -110,6 +162,17 @@
 		~FuncCallNode() {
 			for (ASTNode* param : parameters)
 				delete param;
+		}
+
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			std::cout << functionName << " ( ";
+			for (ASTNode* param : parameters) {
+				param->printNode();
+				std::cout << " ";
+			}
+			std::cout << ")" << std::endl;
 		}
 	};
 
@@ -124,6 +187,16 @@
 
 		ConditionNode( Parser& );
 		~ConditionNode() { delete leftComp; delete rightComp; }
+
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			std::cout << "( ";
+			leftComp->printNode();
+			std::cout << " " << comparation << " ";
+			rightComp->printNode();
+			std::cout << " )";
+		}
 	};
 
 // Description: If statement node
@@ -136,6 +209,17 @@
 
 		IfStatementNode( Parser& );
 		~IfStatementNode() { delete condition; delete body; delete ifBranch; delete elseBranch; }
+
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			std::cout << "i. ( ";
+			condition->printNode();
+			std::cout << " )" << std::endl;
+			body->printNode();
+			if (ifBranch != nullptr) ifBranch->printNode();
+			if (elseBranch != nullptr) elseBranch->printNode();
+		}
 	};
 
 // Description: While loop node
@@ -146,6 +230,10 @@
 
 		WhileLoopNode( Parser& );
 		~WhileLoopNode() { delete condition; delete body; }
+
+		void	printNode() const override {
+			ASTNode::printNode();
+		}
 	};
 
 // Description: For loop node
@@ -158,6 +246,10 @@
 
 		ForLoopNode( Parser& );
 		~ForLoopNode() { delete initialization; delete condition; delete iteration; delete body; }
+
+		void	printNode() const override {
+			ASTNode::printNode();
+		}
 	};
 
 /*-OPERATION-*/
@@ -171,6 +263,14 @@
 
 		BinOpNode( Parser& );
 		~BinOpNode() { delete leftOp; delete rightOp; }
+
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			leftOp->printNode();
+			std::cout << " " << operation << " ";
+			rightOp->printNode();
+		}
 	};
 
 // Description: Unary operation node
@@ -181,6 +281,13 @@
 
 		UnaryOpNode( Parser& );
 		~UnaryOpNode() { delete operand; }
+	
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			operand->printNode();
+			std::cout << operation;
+		}
 	};
 
 /*-VARAIBLE-*/
@@ -193,6 +300,17 @@
 
 		VarDeclNode( Parser& );
 		~VarDeclNode() { delete initialValue; }
+	
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			std::cout << "v. " << name;
+			if (initialValue != nullptr) {
+				std::cout << " = ";
+				initialValue->printNode();
+			}
+			std::cout << std::endl;
+		}
 	};
 
 // Description: Variable assignation node
@@ -203,6 +321,13 @@
 
 		AssignNode( Parser& );
 		~AssignNode() { delete value; }
+	
+		void	printNode() const override {
+			ASTNode::printNode();
+			std::cout << variableName << " = ";
+			value->printNode();
+			std::cout << std::endl;
+		}
 	};
 
 // Description: Literal node
@@ -211,6 +336,12 @@
 		std::string					value;
 
 		LiteralNode( Parser& );
+	
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			std::cout << value;
+		}
 	};
 
 // Description: Identifier node
@@ -219,6 +350,12 @@
 		std::string					name;
 
 		IdentifierNode( Parser& );
+	
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			std::cout << name;
+		}
 	};
 
 /*-RETURN-*/
@@ -230,6 +367,14 @@
 
 		ReturnNode( Parser& );
 		~ReturnNode() { delete returnValue; }
+	
+		void	printNode() const override {
+			ASTNode::printNode();
+
+			std::cout << "r. ";
+			returnValue->printNode();
+			std::cout << std::endl;
+		}
 	};
 
 /*-UTILS-*/
