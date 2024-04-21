@@ -267,7 +267,7 @@ bool IsParenthesisClosed( Parser& parser ) {
 	if (parser.peek().value == "(") {
 		parenLevel = 1;
 		while (true) {
-			if (parser.peek(index).type == NodeType::Parenthesis) {
+			if (parser.peek(index).type == TokenType::paren) {
 				if (parser.peek(index).value == "(") {
 					parenLevel++;
 				} else if (parser.peek(index).value == ")") {
@@ -277,7 +277,7 @@ bool IsParenthesisClosed( Parser& parser ) {
 						break;
 					}
 				}
-			} else if (parser.peek(index).type == NodeType::Enter) {
+			} else if (parser.peek(index).type == TokenType::enter) {
 				break;
 			}
 			index++;
