@@ -15,6 +15,7 @@ ProgramNode::ProgramNode( Parser& parser ) : ASTNode(NodeType::Program) {
 				functions.push_back(new FuncDeclNode(parser));
 			} else {
 				std::cerr << "Still not implemented\n";
+				std::cout << parser.peek().value << "\n";
 				parser.consume();
 			}
 		}
@@ -37,7 +38,7 @@ BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::B
 			parser.consume();
 		} else {
 			if (!newValidLine) {
-				parserNodeError(INV_BLOCK_NODE, parser.consume(), "Expected newline");
+				break;
 			}
 			// block body check
 			if (parser.peek().type == TokenType::keyword) {
@@ -208,6 +209,7 @@ IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(NodeType::IfStateme
 }
 
 WhileLoopNode::WhileLoopNode( Parser& parser ) : ASTNode(NodeType::WhileLoop), condition(nullptr), body(nullptr) {
+	std::cout << "  **WHILE LOOP NODE CREATED**\n";
 	(void)parser;
 
 	// Print result node
@@ -215,6 +217,7 @@ WhileLoopNode::WhileLoopNode( Parser& parser ) : ASTNode(NodeType::WhileLoop), c
 }
 
 ForLoopNode::ForLoopNode( Parser& parser ) : ASTNode(NodeType::ForLoop), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
+	std::cout << "  **FOR LOOP NODE CREATED**\n";
 	(void)parser;
 
 	// Print result node
@@ -224,13 +227,40 @@ ForLoopNode::ForLoopNode( Parser& parser ) : ASTNode(NodeType::ForLoop), initial
 /*-OPERATION-*/
 
 BinOpNode::BinOpNode( Parser& parser ) : ASTNode(NodeType::BinOp), leftOp(nullptr), rightOp(nullptr) {
-	(void)parser;
+	std::cout << "  **BIN OP NODE CREATED**\n";
+	
+	if (parser.peek(1).type == TokenType::operation) {
+		ASTNode** opNode;
+		while (true) {
+			leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp) ;
+			if (leftOp == nullptr || (leftOp != nullptr && !operation.empty() && rightOp == nullptr)) {
+				if (parser.peek().type == TokenType::identifier) {
+					*opNode = new IdentifierNode(parser);
+				} else if (parser.peek().type == TokenType::literal) {
+					*opNode = new LiteralNode(parser);
+				} else if (parser.peek().value == "(") {
+					*opNode = new LiteralNode(parser);
+				}
+			} else if (operation.empty()) {
+				if (parser.peek().type == TokenType::operation) {
+					operation = parser.consume().value;
+				} else {
+					parserNodeError(INV_BIN_OP_NODE, parser.consume(), "No operation operator used");
+				}
+			} else {
+				break;
+			}
+		}
+	} else {
+		parserNodeError(INV_BIN_OP_NODE, parser.consume(), "Expected operation");
+	}
 
 	// Print result node
 	this->printNode();
 }
 
 UnaryOpNode::UnaryOpNode( Parser& parser ) : ASTNode(NodeType::UnaryOp), operand(nullptr) {
+	std::cout << "  **UNARY OP NODE CREATED**\n";
 	(void)parser;
 
 	// Print result node
@@ -244,19 +274,16 @@ VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(NodeType::VarDecl), initial
 
 	if (parser.peek().value == "v.")
 		parser.consume();
-	if (parser.peek().type == identifier) {
-		name = parser.consume().value;
-		if (parser.peek().value == "=") {
+	if (parser.peek().type == TokenType::identifier) {
+		if (parser.peek(1).type == TokenType::enter) {
+			name = parser.consume().value;
 			parser.consume();
-			if (parser.peek().type == enter) {
-				parserNodeError(INV_VARDECL_NODE, parser.consume(), "Invalid variable assignation");
-			}
-			if (parser.peek().type == paren) {
-				initialValue = new BoxNode(parser);
-			} else if (parser.peek().type == literal) {
-				initialValue = new LiteralNode(parser);
-			} else if (parser.peek().type == identifier) {
-				initialValue = new IdentifierNode(parser);
+		} else {
+			name = parser.peek().value;
+			if (parser.peek(1).value == "=") {
+				initialValue = new AssignNode(parser);
+			} else {
+				parserNodeError(INV_VARDECL_NODE, parser.consume(), "Expected assignation");
 			}
 		}
 	} else {

@@ -4,6 +4,7 @@
 
 Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens), _index(0) {
 	ASTNode* program = new ProgramNode(*this);
+	program->printNode();
 	delete program;
 }
 
