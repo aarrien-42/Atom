@@ -256,3 +256,35 @@ ReturnNode::ReturnNode( Parser& parser ) : ASTNode(NodeType::Return), returnValu
 			returnValue = new LiteralNode(parser);
 	}
 }
+
+/*-UTILS-*/
+
+bool IsParenthesisClosed( Parser& parser ) {
+	int index = 1; // Starts looking at the next value
+	size_t parenLevel;
+	bool returnValue = false;
+
+	if (parser.peek().value == "(") {
+		parenLevel = 1;
+		while (true) {
+			if (parser.peek(index).type == NodeType::Parenthesis) {
+				if (parser.peek(index).value == "(") {
+					parenLevel++;
+				} else if (parser.peek(index).value == ")") {
+					parenLevel--;
+					if (parenLevel == 0) {
+						returnValue = true;
+						break;
+					}
+				}
+			} else if (parser.peek(index).type == NodeType::Enter) {
+				break;
+			}
+			index++;
+		}
+	} else {
+		std::cerr << "This is not a parenthesis block start\n";
+	}
+
+	return returnValue;
+}

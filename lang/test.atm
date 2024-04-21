@@ -1,3 +1,4 @@
 main: av ac
 	v. x = 1
-	i. 
+	i. x < 2
+		y = 0

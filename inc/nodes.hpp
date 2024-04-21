@@ -232,4 +232,8 @@
 		~ReturnNode() { delete returnValue; }
 	};
 
+/*-UTILS-*/
+
+bool IsParenthesisClosed( Parser& );
+
 #endif
