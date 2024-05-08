@@ -5,6 +5,7 @@
 	#include <vector>
 	#include "parser.hpp"
 	#include "lexer.hpp"
+	#include "colors.hpp"
 
 	enum NodeType {
 		Program,
@@ -52,7 +53,7 @@
 
 			virtual void printNode() const {
 				putSpaces(true);
-				std::cout << "[";
+				std::cout << getColor(level) << "[";
 				switch (type) {
 					case NodeType::Program:		std::cout << "ProgramNode";		break;
 					case NodeType::Block:		std::cout << "BlockNode";		break;
@@ -72,7 +73,7 @@
 					case NodeType::Return:		std::cout << "ReturnNode";		break;
 					default: std::cout << "Unknown";
 				}
-				std::cout << "]:\n";
+				std::cout << "]:\n" << RESET;
 			}
 	};
 
