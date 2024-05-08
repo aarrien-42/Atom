@@ -32,14 +32,27 @@
 	struct ASTNode {
 		private:
 			NodeType					type;
-
+		protected:
+			size_t						level;
 		public:
-			ASTNode(NodeType t) : type(t) {}
+			ASTNode(NodeType t, size_t l = 0) : type(t), level(l) {}
 			virtual ~ASTNode() {}
 
 			NodeType getType() { return type; }
 
+			virtual void putSpaces(bool isNode = false) const {
+				size_t spaceSize = 2;
+
+				for (size_t i = 0; i < level + !isNode; i++) {
+					for (size_t j = 0; j < spaceSize; j++) {
+						std::cout << " ";
+					}
+				}
+			}
+
 			virtual void printNode() const {
+				putSpaces(true);
+				std::cout << "[";
 				switch (type) {
 					case NodeType::Program:		std::cout << "ProgramNode";		break;
 					case NodeType::Block:		std::cout << "BlockNode";		break;
@@ -59,7 +72,7 @@
 					case NodeType::Return:		std::cout << "ReturnNode";		break;
 					default: std::cout << "Unknown";
 				}
-				std::cout << " => ";
+				std::cout << "]:\n";
 			}
 	};
 
@@ -71,7 +84,7 @@
 		std::string				fileName;
 		std::vector<ASTNode*>	functions;
 
-		ProgramNode( Parser& );
+		ProgramNode( Parser&, size_t = 0 );
 		~ProgramNode() {
 			for (ASTNode* function : functions)
 				delete function;
@@ -93,7 +106,7 @@
 	struct BlockNode : public ASTNode {
 		std::vector<ASTNode*>		statements;
 
-		BlockNode( Parser&, size_t );
+		BlockNode( Parser&, size_t, size_t );
 		~BlockNode() {
 			for (ASTNode* statement : statements)
 				delete statement;
@@ -113,7 +126,7 @@
 	struct BoxNode : public ASTNode {
 		ASTNode*	node;
 
-		BoxNode( Parser& );
+		BoxNode( Parser&, size_t );
 		~BoxNode() { delete node; }
 
 		void	printNode() const override {
@@ -132,7 +145,7 @@
 		std::vector<ASTNode*>		parameters;
 		ASTNode*					body;
 
-		FuncDeclNode( Parser& );
+		FuncDeclNode( Parser&, size_t );
 		~FuncDeclNode() {
 			for (ASTNode* param : parameters)
 				delete param;
@@ -142,12 +155,18 @@
 		void	printNode() const override {
 			ASTNode::printNode();
 
-			std::cout << functionName << " ( ";
-			for (ASTNode* param : parameters) {
-				param->printNode();
-				std::cout << " ";
+			ASTNode::putSpaces();
+			std::cout << "Function name = " << functionName << std::endl;
+			if (!parameters.empty()) {
+				ASTNode::putSpaces();
+				std::cout << "Parameters:" << std::endl;
+				for (ASTNode* param : parameters) {
+					param->printNode();
+					std::cout << " ";
+				}
 			}
-			std::cout << ")" << std::endl;
+			ASTNode::putSpaces();
+			std::cout << "Body:" << std::endl;
 			body->printNode();
 		}
 	};
@@ -158,7 +177,7 @@
 		std::string					functionName;
 		std::vector<ASTNode*>		parameters;
 
-		FuncCallNode( Parser& );
+		FuncCallNode( Parser&, size_t );
 		~FuncCallNode() {
 			for (ASTNode* param : parameters)
 				delete param;
@@ -167,12 +186,16 @@
 		void	printNode() const override {
 			ASTNode::printNode();
 
-			std::cout << functionName << " ( ";
-			for (ASTNode* param : parameters) {
-				param->printNode();
-				std::cout << " ";
+			ASTNode::putSpaces();
+			std::cout << "Function name = " << functionName << std::endl;
+			if (!parameters.empty()) {
+				ASTNode::putSpaces();
+				std::cout << "Parameters:" << std::endl;
+				for (ASTNode* param : parameters) {
+					param->printNode();
+					std::cout << " ";
+				}
 			}
-			std::cout << ")" << std::endl;
 		}
 	};
 
@@ -185,17 +208,20 @@
 		ASTNode*					leftComp;
 		ASTNode*					rightComp;
 
-		ConditionNode( Parser& );
+		ConditionNode( Parser&, size_t );
 		~ConditionNode() { delete leftComp; delete rightComp; }
 
 		void	printNode() const override {
 			ASTNode::printNode();
 
-			std::cout << "( ";
+			putSpaces();
+			std::cout << "Comparator: " << comparation << std::endl;
+			putSpaces();
+			std::cout << "Left node:" << std::endl;
 			leftComp->printNode();
-			std::cout << " " << comparation << " ";
+			putSpaces();
+			std::cout << "Right node:" << std::endl;
 			rightComp->printNode();
-			std::cout << " )";
 		}
 	};
 
@@ -207,18 +233,28 @@
 		ASTNode*					ifBranch; // not above condition so else if
 		ASTNode*					elseBranch; // just in case there's an else
 
-		IfStatementNode( Parser& );
+		IfStatementNode( Parser&, size_t );
 		~IfStatementNode() { delete condition; delete body; delete ifBranch; delete elseBranch; }
 
 		void	printNode() const override {
 			ASTNode::printNode();
 
-			std::cout << "i. ( ";
+			putSpaces();
+			std::cout << "Condition:" << std::endl;
 			condition->printNode();
-			std::cout << " )" << std::endl;
+			putSpaces();
+			std::cout << "Body:" << std::endl;
 			body->printNode();
-			if (ifBranch != nullptr) ifBranch->printNode();
-			if (elseBranch != nullptr) elseBranch->printNode();
+			if (ifBranch != nullptr) {
+				putSpaces();
+				std::cout << "If branch:" << std::endl;
+				ifBranch->printNode();
+			}
+			if (elseBranch != nullptr) {
+				putSpaces();
+				std::cout << "Else branch:" << std::endl;
+				elseBranch->printNode();
+			}
 		}
 	};
 
@@ -228,7 +264,7 @@
 		ASTNode*					condition;
 		ASTNode*					body;
 
-		WhileLoopNode( Parser& );
+		WhileLoopNode( Parser&, size_t );
 		~WhileLoopNode() { delete condition; delete body; }
 
 		void	printNode() const override {
@@ -244,7 +280,7 @@
 		ASTNode*					iteration;
 		ASTNode*					body;
 
-		ForLoopNode( Parser& );
+		ForLoopNode( Parser&, size_t );
 		~ForLoopNode() { delete initialization; delete condition; delete iteration; delete body; }
 
 		void	printNode() const override {
@@ -261,14 +297,19 @@
 		ASTNode*					leftOp;
 		ASTNode*					rightOp;
 
-		BinOpNode( Parser& );
+		BinOpNode( Parser&, size_t );
 		~BinOpNode() { delete leftOp; delete rightOp; }
 
 		void	printNode() const override {
 			ASTNode::printNode();
 
+			ASTNode::putSpaces();
+			std::cout << "Operator: " << operation << std::endl;
+			ASTNode::putSpaces();
+			std::cout << "Left Operand: " << std::endl;
 			leftOp->printNode();
-			std::cout << " " << operation << " ";
+			ASTNode::putSpaces();
+			std::cout << "Right Operand: " << std::endl;
 			rightOp->printNode();
 		}
 	};
@@ -279,7 +320,7 @@
 		std::string	operation;
 		ASTNode*	operand;
 
-		UnaryOpNode( Parser& );
+		UnaryOpNode( Parser&, size_t );
 		~UnaryOpNode() { delete operand; }
 	
 		void	printNode() const override {
@@ -298,18 +339,19 @@
 		std::string					name;
 		ASTNode*					initialValue;
 
-		VarDeclNode( Parser& );
+		VarDeclNode( Parser&, size_t );
 		~VarDeclNode() { delete initialValue; }
 	
 		void	printNode() const override {
 			ASTNode::printNode();
 
-			std::cout << "v. " << name;
+			putSpaces();
+			std::cout << "Variable name: " << name << std::endl;
 			if (initialValue != nullptr) {
-				std::cout << " = ";
+				putSpaces();
+				std::cout << "Initial value:" << std::endl;
 				initialValue->printNode();
 			}
-			std::cout << std::endl;
 		}
 	};
 
@@ -319,14 +361,15 @@
 		std::string					variableName;
 		ASTNode*					value;
 
-		AssignNode( Parser& );
+		AssignNode( Parser&, size_t );
 		~AssignNode() { delete value; }
 	
 		void	printNode() const override {
 			ASTNode::printNode();
-			std::cout << variableName << " = ";
+
+			putSpaces();
+			std::cout << "Variable name: " << variableName << std::endl;
 			value->printNode();
-			std::cout << std::endl;
 		}
 	};
 
@@ -335,12 +378,13 @@
 	struct LiteralNode : public ASTNode {
 		std::string					value;
 
-		LiteralNode( Parser& );
+		LiteralNode( Parser&, size_t );
 	
 		void	printNode() const override {
 			ASTNode::printNode();
 
-			std::cout << value;
+			putSpaces();
+			std::cout << value << std::endl;
 		}
 	};
 
@@ -349,12 +393,13 @@
 	struct IdentifierNode : public ASTNode {
 		std::string					name;
 
-		IdentifierNode( Parser& );
+		IdentifierNode( Parser&, size_t );
 	
 		void	printNode() const override {
 			ASTNode::printNode();
 
-			std::cout << name;
+			putSpaces();
+			std::cout << name << std::endl;
 		}
 	};
 
@@ -365,15 +410,13 @@
 	struct ReturnNode : public ASTNode {
 		ASTNode*					returnValue;
 
-		ReturnNode( Parser& );
+		ReturnNode( Parser&, size_t );
 		~ReturnNode() { delete returnValue; }
 	
 		void	printNode() const override {
 			ASTNode::printNode();
 
-			std::cout << "r. ";
 			returnValue->printNode();
-			std::cout << std::endl;
 		}
 	};
 

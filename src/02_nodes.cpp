@@ -2,7 +2,7 @@
 
 /*-PROGRAM-*/
 
-ProgramNode::ProgramNode( Parser& parser ) : ASTNode(NodeType::Program) {
+ProgramNode::ProgramNode( Parser& parser, size_t level ) : ASTNode(NodeType::Program, level) {
 	std::cout << "  **PROGRAM NODE CREATED**\n";
 
 	fileName = ""; // Still not captured
@@ -12,7 +12,7 @@ ProgramNode::ProgramNode( Parser& parser ) : ASTNode(NodeType::Program) {
 			parser.consume();
 		} else {
 			if (parser.peek().type == identifier && getStrEndChar(parser.peek().value) == ':') {
-				functions.push_back(new FuncDeclNode(parser));
+				functions.push_back(new FuncDeclNode(parser, this->level + 1));
 			} else {
 				std::cerr << "Still not implemented\n";
 				std::cout << parser.peek().value << "\n";
@@ -27,7 +27,7 @@ ProgramNode::ProgramNode( Parser& parser ) : ASTNode(NodeType::Program) {
 
 /*-BLOCK-*/
 
-BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::Block) {
+BlockNode::BlockNode( Parser& parser, size_t initialTabs, size_t level ) : ASTNode(NodeType::Block, level) {
 	std::cout << "  **BLOCK NODE CREATED**\n";
 	bool	newValidLine = true;
 
@@ -43,20 +43,20 @@ BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::B
 			// block body check
 			if (parser.peek().type == TokenType::keyword) {
 				if (parser.peek().value == "i.") {
-					statements.push_back(new IfStatementNode(parser));
+					statements.push_back(new IfStatementNode(parser, this->level + 1));
 				} else if (parser.peek().value == "w.") {
-					statements.push_back(new WhileLoopNode(parser));
+					statements.push_back(new WhileLoopNode(parser, this->level + 1));
 				} else if (parser.peek().value == "f.") {
-					statements.push_back(new ForLoopNode(parser));
+					statements.push_back(new ForLoopNode(parser, this->level + 1));
 				} else if (parser.peek().value == "v.") {
-					statements.push_back(new VarDeclNode(parser));
+					statements.push_back(new VarDeclNode(parser, this->level + 1));
 				} else if (parser.peek().value == "r.") {
-					statements.push_back(new ReturnNode(parser));
+					statements.push_back(new ReturnNode(parser, this->level + 1));
 				} else {
 					parserNodeError(INV_BLOCK_NODE, parser.consume(), "Invalid keyword");
 				}
 			} else if (parser.peek().type == TokenType::identifier) {
-				statements.push_back(new AssignNode(parser));
+				statements.push_back(new AssignNode(parser, this->level + 1));
 			} else {
 				parserNodeError(INV_BLOCK_NODE, parser.consume(), "Not implemented yet");
 			}
@@ -70,7 +70,7 @@ BlockNode::BlockNode( Parser& parser, size_t initialTabs ) : ASTNode(NodeType::B
 	this->printNode();
 }
 
-BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
+BoxNode::BoxNode( Parser& parser, size_t level ) : ASTNode(NodeType::Box, level) {
 	std::cout << "  **BOX NODE CREATED**\n";
 	int nestedParen = 0, index = 0;
 	bool validBox = false;
@@ -90,7 +90,7 @@ BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
 		if (validBox) {
 			parser.consume();
 			if (parser.peek().value == "(") {
-				node = new BoxNode(parser);
+				node = new BoxNode(parser, this->level + 1);
 			} else if (parser.peek().value == ")") {
 				parserNodeError(INV_BOX_NODE, parser.consume(), "Nothing between parenthesis");
 			} else {
@@ -109,14 +109,14 @@ BoxNode::BoxNode( Parser& parser ) : ASTNode(NodeType::Box) {
 
 /*-FUNCTION-*/
 
-FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(NodeType::FuncDecl), body(nullptr) {
+FuncDeclNode::FuncDeclNode( Parser& parser, size_t level ) : ASTNode(NodeType::FuncDecl, level), body(nullptr) {
 	std::cout << "  **FUNC DECL NODE CREATED**\n";
 
 	functionName = parser.consume().value;
 	if (parser.peek().type != enter) { // Function has parameters
 		while (parser.peek().type != TokenType::enter) {
 			if (parser.peek().type == TokenType::identifier)
-				parameters.push_back(new IdentifierNode(parser));
+				parameters.push_back(new IdentifierNode(parser, this->level + 1));
 			else
 				parserNodeError(INV_FUNCDECL_NODE, parser.consume(), "Invalid Function declaration node");
 		}
@@ -125,20 +125,20 @@ FuncDeclNode::FuncDeclNode( Parser& parser ) : ASTNode(NodeType::FuncDecl), body
 	if (parser.peek().type == TokenType::enter)
 		parser.consume();
 
-	body = new BlockNode(parser, parser.peek().tabCount);
+	body = new BlockNode(parser, parser.peek().tabCount, this->level + 1);
 
 	// Print result node
 	this->printNode();
 }
 
-FuncCallNode::FuncCallNode( Parser& parser ) : ASTNode(NodeType::FuncCall) {
+FuncCallNode::FuncCallNode( Parser& parser, size_t level ) : ASTNode(NodeType::FuncCall, level) {
 	(void)parser;
 }
 
 /*-CONDITIONAL-*/
 
 // More conditional types need to be implemented
-ConditionNode::ConditionNode( Parser& parser ) : ASTNode(NodeType::Condition), leftComp(nullptr), rightComp(nullptr) {
+ConditionNode::ConditionNode( Parser& parser, size_t level ) : ASTNode(NodeType::Condition, level), leftComp(nullptr), rightComp(nullptr) {
 	std::cout << "  **CONDITIONAL NODE CREATED**\n";
 	bool withParen = false;
 
@@ -156,11 +156,11 @@ ConditionNode::ConditionNode( Parser& parser ) : ASTNode(NodeType::Condition), l
 		leftComp == nullptr ? (compNode = &leftComp) : (compNode = &rightComp) ;
 		if (leftComp == nullptr || (leftComp != nullptr && !comparation.empty() && rightComp == nullptr)) {
 			if (parser.peek().type == TokenType::identifier) {
-				*compNode = new IdentifierNode(parser);
+				*compNode = new IdentifierNode(parser, this->level + 1);
 			} else if (parser.peek().type == TokenType::literal) {
-				*compNode = new LiteralNode(parser);
+				*compNode = new LiteralNode(parser, this->level + 1);
 			} else if (parser.peek().value == "(") {
-				*compNode = new BoxNode(parser);
+				*compNode = new BoxNode(parser, this->level + 1);
 			}
 		} else if (comparation.empty()) {
 			if (parser.peek().type == TokenType::comparison) {
@@ -184,16 +184,16 @@ ConditionNode::ConditionNode( Parser& parser ) : ASTNode(NodeType::Condition), l
 	this->printNode();
 }
 
-IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(NodeType::IfStatement), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
+IfStatementNode::IfStatementNode( Parser& parser, size_t level ) : ASTNode(NodeType::IfStatement, level), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
 	std::cout << "  **IF NODE CREATED**\n";
 	size_t initialTabs = parser.peek().tabCount;
 
 	if (parser.peek().value == "i.") {
 		parser.consume();
 		if (parser.peek().type != TokenType::enter ) {
-			condition = new ConditionNode(parser);
+			condition = new ConditionNode(parser, this->level + 1);
 			if (parser.peek().tabCount > initialTabs) {
-				body = new BlockNode(parser, parser.peek().tabCount);
+				body = new BlockNode(parser, parser.peek().tabCount, this->level + 1);
 			} else {
 				parserNodeError(INV_IF_NODE, parser.consume(), "Bad alignment for if statement body");
 			}
@@ -208,7 +208,7 @@ IfStatementNode::IfStatementNode( Parser& parser ) : ASTNode(NodeType::IfStateme
 	this->printNode();
 }
 
-WhileLoopNode::WhileLoopNode( Parser& parser ) : ASTNode(NodeType::WhileLoop), condition(nullptr), body(nullptr) {
+WhileLoopNode::WhileLoopNode( Parser& parser, size_t level ) : ASTNode(NodeType::WhileLoop, level), condition(nullptr), body(nullptr) {
 	std::cout << "  **WHILE LOOP NODE CREATED**\n";
 	(void)parser;
 
@@ -216,7 +216,7 @@ WhileLoopNode::WhileLoopNode( Parser& parser ) : ASTNode(NodeType::WhileLoop), c
 	this->printNode();
 }
 
-ForLoopNode::ForLoopNode( Parser& parser ) : ASTNode(NodeType::ForLoop), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
+ForLoopNode::ForLoopNode( Parser& parser, size_t level ) : ASTNode(NodeType::ForLoop, level), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
 	std::cout << "  **FOR LOOP NODE CREATED**\n";
 	(void)parser;
 
@@ -226,7 +226,7 @@ ForLoopNode::ForLoopNode( Parser& parser ) : ASTNode(NodeType::ForLoop), initial
 
 /*-OPERATION-*/
 
-BinOpNode::BinOpNode( Parser& parser ) : ASTNode(NodeType::BinOp), leftOp(nullptr), rightOp(nullptr) {
+BinOpNode::BinOpNode( Parser& parser, size_t level ) : ASTNode(NodeType::BinOp, level), leftOp(nullptr), rightOp(nullptr) {
 	std::cout << "  **BIN OP NODE CREATED**\n";
 	
 	if (parser.peek(1).type == TokenType::operation) {
@@ -235,11 +235,11 @@ BinOpNode::BinOpNode( Parser& parser ) : ASTNode(NodeType::BinOp), leftOp(nullpt
 			leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp) ;
 			if (leftOp == nullptr || (leftOp != nullptr && !operation.empty() && rightOp == nullptr)) {
 				if (parser.peek().type == TokenType::identifier) {
-					*opNode = new IdentifierNode(parser);
+					*opNode = new IdentifierNode(parser, this->level + 1);
 				} else if (parser.peek().type == TokenType::literal) {
-					*opNode = new LiteralNode(parser);
+					*opNode = new LiteralNode(parser, this->level + 1);
 				} else if (parser.peek().value == "(") {
-					*opNode = new BoxNode(parser);
+					*opNode = new BoxNode(parser, this->level + 1);
 				}
 			} else if (operation.empty()) {
 				if (parser.peek().type == TokenType::operation) {
@@ -259,7 +259,7 @@ BinOpNode::BinOpNode( Parser& parser ) : ASTNode(NodeType::BinOp), leftOp(nullpt
 	this->printNode();
 }
 
-UnaryOpNode::UnaryOpNode( Parser& parser ) : ASTNode(NodeType::UnaryOp), operand(nullptr) {
+UnaryOpNode::UnaryOpNode( Parser& parser, size_t level ) : ASTNode(NodeType::UnaryOp, level), operand(nullptr) {
 	std::cout << "  **UNARY OP NODE CREATED**\n";
 	(void)parser;
 
@@ -269,7 +269,7 @@ UnaryOpNode::UnaryOpNode( Parser& parser ) : ASTNode(NodeType::UnaryOp), operand
 
 /*-VARAIBLE-*/
 
-VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(NodeType::VarDecl), initialValue(nullptr) {
+VarDeclNode::VarDeclNode( Parser& parser, size_t level ) : ASTNode(NodeType::VarDecl, level), initialValue(nullptr) {
 	std::cout << "  **VAR DECL NODE CREATED**\n";
 
 	if (parser.peek().value == "v.")
@@ -280,7 +280,7 @@ VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(NodeType::VarDecl), initial
 		} else {
 			name = parser.peek().value;
 			if (parser.peek(1).value == "=") {
-				initialValue = new AssignNode(parser);
+				initialValue = new AssignNode(parser, this->level + 1);
 			} else {
 				parserNodeError(INV_VARDECL_NODE, parser.consume(), "Expected assignation");
 			}
@@ -293,7 +293,7 @@ VarDeclNode::VarDeclNode( Parser& parser ) : ASTNode(NodeType::VarDecl), initial
 	this->printNode();
 }
 
-AssignNode::AssignNode( Parser& parser ) : ASTNode(NodeType::Assign), value(nullptr) {
+AssignNode::AssignNode( Parser& parser, size_t level ) : ASTNode(NodeType::Assign, level), value(nullptr) {
 	std::cout << "  **ASSIGN NODE CREATED**\n";
 
 	if (parser.peek().type == identifier) {
@@ -301,20 +301,20 @@ AssignNode::AssignNode( Parser& parser ) : ASTNode(NodeType::Assign), value(null
 		if (parser.peek().value == "=") {
 			parser.consume();
 			if (parser.peek().type == TokenType::paren) { // box assignation
-				value = new BoxNode(parser);
+				value = new BoxNode(parser, this->level + 1);
 			} else if (parser.peek(1).type == TokenType::enter) { // simple assignation
 				if (parser.peek().type == identifier)
-					value = new IdentifierNode(parser);
+					value = new IdentifierNode(parser, this->level + 1);
 				else if (parser.peek().type == literal)
-					value = new LiteralNode(parser);
+					value = new LiteralNode(parser, this->level + 1);
 				else {
 					parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Invalid simple assignation");
 				}
 			} else { // advanced assignation
 				if (parser.peek().type == TokenType::identifier && parser.peek(1).type == TokenType::paren) { // function call
-					value = new FuncCallNode(parser);
+					value = new FuncCallNode(parser, this->level + 1);
 				} else if (parser.peek(1).type == TokenType::operation) {
-					value = new BinOpNode(parser);
+					value = new BinOpNode(parser, this->level + 1);
 				} else {
 					parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Invalid advanced assignation");
 				}
@@ -330,7 +330,7 @@ AssignNode::AssignNode( Parser& parser ) : ASTNode(NodeType::Assign), value(null
 	this->printNode();
 }
 
-LiteralNode::LiteralNode( Parser& parser ) : ASTNode(NodeType::Literal) {
+LiteralNode::LiteralNode( Parser& parser, size_t level ) : ASTNode(NodeType::Literal, level) {
 	std::cout << "  **LITERAL NODE CREATED**\n";
 
 	if (parser.peek().type != literal)
@@ -342,7 +342,7 @@ LiteralNode::LiteralNode( Parser& parser ) : ASTNode(NodeType::Literal) {
 	this->printNode();
 }
 
-IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(NodeType::Identifier) {
+IdentifierNode::IdentifierNode( Parser& parser, size_t level ) : ASTNode(NodeType::Identifier, level) {
 	std::cout << "  **IDENTIFIER NODE CREATED**\n";
 
 	if (parser.peek().type != identifier)
@@ -356,7 +356,7 @@ IdentifierNode::IdentifierNode( Parser& parser ) : ASTNode(NodeType::Identifier)
 
 /*-RETURN-*/
 
-ReturnNode::ReturnNode( Parser& parser ) : ASTNode(NodeType::Return), returnValue(nullptr) {
+ReturnNode::ReturnNode( Parser& parser, size_t level ) : ASTNode(NodeType::Return, level), returnValue(nullptr) {
 	std::cout << "  **RETURN NODE CREATED**\n";
 
 	if (parser.peek().value != "r.")
@@ -364,11 +364,11 @@ ReturnNode::ReturnNode( Parser& parser ) : ASTNode(NodeType::Return), returnValu
 	else {
 		parser.consume();
 		if (parser.peek().type == paren)
-			returnValue = new BoxNode(parser);
+			returnValue = new BoxNode(parser, this->level + 1);
 		else if (parser.peek().type == identifier)
-			returnValue = new IdentifierNode(parser);
+			returnValue = new IdentifierNode(parser, this->level + 1);
 		else if (parser.peek().type == literal)
-			returnValue = new LiteralNode(parser);
+			returnValue = new LiteralNode(parser, this->level + 1);
 	}
 
 	// Print result node

@@ -1,6 +1,4 @@
-main: av ac
-	v. x = 3
-	v. y
-	v. z = x * 2
-
-	y = x * (z - 1)
+main:
+	v. x = 2 * 3
+	x = 3 - x
+	r. 0

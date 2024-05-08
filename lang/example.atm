@@ -7,4 +7,5 @@ main:
 			p. "Buzz"
 		i. ( x % 3 != 0 and x % 5 != 0)
 			p. x
+		x++
 	r. 0
