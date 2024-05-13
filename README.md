@@ -49,6 +49,26 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
     - **Task**: Generate the target code (assembly language or another intermediate code).
     - **Outcome**: Target code suitable for further processing or execution.
 
+## To do list
+- [ ] Implement a lexer to break down the source code into tokens:
+    - [x] Detect and save basic tokens for general purpouse
+    - [ ] Enable a way to set comments inside the actual code
+    - [ ] Implement a character that allows continuing a line on the next line, facilitating multi-line code writing
+    - [ ] End of line character support, as ';' in C
+    - [ ] Add the posibility for unitary operations (increment, decrement, etc.)
+- [ ] Develop a parser to check if the arrangement of tokens follows the defined syntax rules:
+    - [x] Make defined nodes for each situation posible
+    - [x] Develop an easy way to visualize the resulting AST tree
+    - [ ] Make sure it correctly saves every conditional structure:
+        - [ ] If statement
+        - [ ] While loop
+        - [ ] For loop
+    - [x] Manage the parenthesis between operations or comparations correctly
+    - [ ] Enable concatenation of conditions (ex.: (x < 100 && > 50))
+    - [ ] Suport for multiple file compilation
+    - [ ] Error management correctly shown and without any crashes
+- [ ] Generate the target code in assembly
+
 ## How to Contribute
 At this stage, the development is purely personal.
 
