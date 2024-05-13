@@ -105,11 +105,6 @@ BoxNode::BoxNode( Parser& parser, size_t level ) : ASTNode(NodeType::Box, level)
 						} else {
 							parserNodeError(INV_BOX_NODE, parser.consume(), "Not implemented yet");
 						}
-						if (parser.peek().value == ")") {
-							parser.consume();
-						} else {
-							parserNodeError(INV_BOX_NODE, parser.consume(), "Expecting close parenthesis");
-						}
 					} else {
 						parserNodeError(INV_BOX_NODE, parser.consume(), "Expected second operand");
 					}
@@ -124,6 +119,12 @@ BoxNode::BoxNode( Parser& parser, size_t level ) : ASTNode(NodeType::Box, level)
 						parserNodeError(INV_BOX_NODE, parser.consume(), "Invalid operation between parenthesis");
 					}
 				}
+			}
+			// Consume last paren from box
+			if (parser.peek().value == ")") {
+				parser.consume();
+			} else {
+				parserNodeError(INV_BOX_NODE, parser.consume(), "Expecting close parenthesis");
 			}
 		} else {
 			parserNodeError(INV_BOX_NODE, parser.consume(), "Parenthesis not closed");
@@ -262,6 +263,13 @@ BinOpNode::BinOpNode( Parser& parser, size_t level ) : ASTNode(NodeType::BinOp, 
 		while (true) {
 			leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp) ;
 			if (leftOp == nullptr || (leftOp != nullptr && !operation.empty() && rightOp == nullptr)) {
+				// Multiple continous operations
+				if (leftOp != nullptr && !operation.empty() && rightOp == nullptr) {
+					if (parser.peek(1).type == TokenType::operation) {
+						rightOp = new BinOpNode(parser, level + 1);
+					}
+				}
+				// Simple binary operation
 				if (parser.peek().type == TokenType::identifier) {
 					*opNode = new IdentifierNode(parser, this->level + 1);
 				} else if (parser.peek().type == TokenType::literal) {
