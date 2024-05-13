@@ -91,11 +91,21 @@ BoxNode::BoxNode( Parser& parser, size_t level ) : ASTNode(NodeType::Box, level)
 			printf("Is Valid\n");
 			parser.consume();
 			if (parser.peek().value == "(") {
-				//node = new BoxNode(parser, this->level + 1);
-				parserNodeError(INV_BOX_NODE, parser.consume(), "WIP: wrong implementation");
+				// Another BoxNode at the start
+				int closeIndex = isParenthesisClosed(parser);
+				if (closeIndex != 0) {
+					if (parser.peek(closeIndex + 1).type == TokenType::operation) {
+						node = new BinOpNode(parser, level + 1);
+					} else {
+						parserNodeError(INV_BOX_NODE, parser.consume(), "Not implemented yet");
+					}
+				} else {
+					parserNodeError(INV_BOX_NODE, parser.consume(), "Parenthesis not closed");
+				}
 			} else if (parser.peek().value == ")") {
 				parserNodeError(INV_BOX_NODE, parser.consume(), "Nothing between parenthesis");
 			} else {
+				// Another BoxNode at the end
 				if (parser.peek(1).value != ")") {
 					if (parser.peek(2).value != ")") {
 						if (parser.peek(1).type == TokenType::operation) {
@@ -172,7 +182,7 @@ ConditionNode::ConditionNode( Parser& parser, size_t level ) : ASTNode(NodeType:
 	bool withParen = false;
 
 	if (parser.peek().type == TokenType::paren) {
-		if (IsParenthesisClosed(parser)) {
+		if (isParenthesisClosed(parser)) {
 			withParen = true;
 			parser.consume();
 		} else {
@@ -258,37 +268,33 @@ ForLoopNode::ForLoopNode( Parser& parser, size_t level ) : ASTNode(NodeType::For
 BinOpNode::BinOpNode( Parser& parser, size_t level ) : ASTNode(NodeType::BinOp, level), leftOp(nullptr), rightOp(nullptr) {
 	std::cout << "  **BIN OP NODE CREATED**\n";
 	
-	if (parser.peek(1).type == TokenType::operation) {
-		ASTNode** opNode;
-		while (true) {
-			leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp) ;
-			if (leftOp == nullptr || (leftOp != nullptr && !operation.empty() && rightOp == nullptr)) {
-				// Multiple continous operations
-				if (leftOp != nullptr && !operation.empty() && rightOp == nullptr) {
-					if (parser.peek(1).type == TokenType::operation) {
-						rightOp = new BinOpNode(parser, level + 1);
-					}
+	ASTNode** opNode;
+	while (true) {
+		leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp) ;
+		if (leftOp == nullptr || (leftOp != nullptr && !operation.empty() && rightOp == nullptr)) {
+			// Multiple continous operations
+			if (leftOp != nullptr && !operation.empty() && rightOp == nullptr) {
+				if (parser.peek(1).type == TokenType::operation) {
+					rightOp = new BinOpNode(parser, level + 1);
 				}
-				// Simple binary operation
-				if (parser.peek().type == TokenType::identifier) {
-					*opNode = new IdentifierNode(parser, this->level + 1);
-				} else if (parser.peek().type == TokenType::literal) {
-					*opNode = new LiteralNode(parser, this->level + 1);
-				} else if (parser.peek().value == "(") {
-					*opNode = new BoxNode(parser, this->level + 1);
-				}
-			} else if (operation.empty()) {
-				if (parser.peek().type == TokenType::operation) {
-					operation = parser.consume().value;
-				} else {
-					parserNodeError(INV_BIN_OP_NODE, parser.consume(), "No operation operator used");
-				}
-			} else {
-				break;
 			}
+			// Simple binary operation
+			if (parser.peek().type == TokenType::identifier) {
+				*opNode = new IdentifierNode(parser, this->level + 1);
+			} else if (parser.peek().type == TokenType::literal) {
+				*opNode = new LiteralNode(parser, this->level + 1);
+			} else if (parser.peek().value == "(") {
+				*opNode = new BoxNode(parser, this->level + 1);
+			}
+		} else if (operation.empty()) {
+			if (parser.peek().type == TokenType::operation) {
+				operation = parser.consume().value;
+			} else {
+				parserNodeError(INV_BIN_OP_NODE, parser.consume(), "No operation operator used");
+			}
+		} else {
+			break;
 		}
-	} else {
-		parserNodeError(INV_BIN_OP_NODE, parser.consume(), "Expected operation");
 	}
 
 	// Print result node
@@ -399,12 +405,17 @@ ReturnNode::ReturnNode( Parser& parser, size_t level ) : ASTNode(NodeType::Retur
 		parserNodeError(INV_RETURN_NODE, parser.consume(), "Invalid Return Node");
 	else {
 		parser.consume();
-		if (parser.peek().type == paren)
+		if (parser.peek().type == TokenType::paren)
 			returnValue = new BoxNode(parser, this->level + 1);
-		else if (parser.peek().type == identifier)
+		else if (parser.peek().type == TokenType::identifier)
 			returnValue = new IdentifierNode(parser, this->level + 1);
-		else if (parser.peek().type == literal)
+		else if (parser.peek().type == TokenType::literal)
 			returnValue = new LiteralNode(parser, this->level + 1);
+
+		// Line must end by now
+		if (parser.peek().type != TokenType::enter) {
+			parserNodeError(INV_RETURN_NODE, parser.consume(), "Expected a new line");
+		}
 	}
 
 	// Print result node
@@ -413,10 +424,10 @@ ReturnNode::ReturnNode( Parser& parser, size_t level ) : ASTNode(NodeType::Retur
 
 /*-UTILS-*/
 
-bool IsParenthesisClosed( Parser& parser ) {
+int isParenthesisClosed( Parser& parser ) {
 	int index = 1; // Starts looking at the next value
 	size_t parenLevel;
-	bool returnValue = false;
+	bool isParenClosed = false;
 
 	if (parser.peek().value == "(") {
 		parenLevel = 1;
@@ -427,7 +438,7 @@ bool IsParenthesisClosed( Parser& parser ) {
 				} else if (parser.peek(index).value == ")") {
 					parenLevel--;
 					if (parenLevel == 0) {
-						returnValue = true;
+						isParenClosed = true;
 						break;
 					}
 				}
@@ -440,5 +451,8 @@ bool IsParenthesisClosed( Parser& parser ) {
 		std::cerr << "This is not a parenthesis block start\n";
 	}
 
-	return returnValue;
+	if (isParenClosed) {
+		return index;
+	}
+	return isParenClosed;
 }

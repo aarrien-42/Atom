@@ -423,6 +423,6 @@
 
 /*-UTILS-*/
 
-bool IsParenthesisClosed( Parser& );
+int isParenthesisClosed( Parser& );
 
 #endif
