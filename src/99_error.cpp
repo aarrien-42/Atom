@@ -1,10 +1,10 @@
 #include "error.hpp"
 
-void	printError( const std::string& str ) {
+void printError( const std::string& str ) {
 	std::cerr << str << std::endl;
 }
 
-void	fileReadError( const FileReadError& error , std::string aditionalInfo ) {
+void fileReadError( const FileReadError& error , std::string aditionalInfo ) {
 	switch (error) {
 		case INV_EXEC:
 			printError("Invalid execution\nUse: ./" + std::string(EXECUTABLE) + " <name>" + std::string(FILE_EXT)); break;
@@ -21,7 +21,7 @@ void	fileReadError( const FileReadError& error , std::string aditionalInfo ) {
 	exit(100 + error);
 }
 
-void	parserNodeError( const ParserNodeError& error, Token errorToken, std::string aditionalInfo ) {
+void parserNodeError( const ParserNodeError& error, Token errorToken, std::string aditionalInfo ) {
 	switch (error) {
 		case INV_BLOCK_NODE:
 			printError("BlockNode: " + aditionalInfo); break;

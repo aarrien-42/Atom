@@ -17,18 +17,18 @@ Parser::~Parser() {}
 
 ProgramNode* Parser::getProgram() { return _tree; }
 
-Token					Parser::peek( int pos ) {
+Token Parser::peek( int pos ) {
 	if (_index + pos < _tokens.size())
 		return _tokens.at(_index + pos);
 	return Token();
 }
 
-Token					Parser::consume() {
+Token Parser::consume() {
 	Token currentToken = peek();
 	_index++;
 	return currentToken;
 }
 
-void					Parser::printTree() {
+void Parser::printTree() {
 	
 }

@@ -27,9 +27,9 @@ Lexer::~Lexer() {}
 
 /*-METHODS-*/
 
-std::vector<Token>	Lexer::getTokens() { return _tokens; }
+std::vector<Token> Lexer::getTokens() { return _tokens; }
 
-void				Lexer::setToken( std::string& buffer, TokenType tokenType) {
+void Lexer::setToken( std::string& buffer, TokenType tokenType) {
 	Token token = {.type = tokenType, .value = buffer, .tabCount = currentTabs, .row = (tokenType == enter ? 0 : currentRow), .column = (tokenType == enter ? 0 : currentColumn)};
 
 	static const std::vector<std::string> keywords = { KEYWORD_IF, KEYWORD_ELSE, KEYWORD_IF_ELSE, KEYWORD_WHILE, KEYWORD_FOR, KEYWORD_VARIABLE, KEYWORD_PRINT, KEYWORD_RETURN };
@@ -61,13 +61,13 @@ void				Lexer::setToken( std::string& buffer, TokenType tokenType) {
 	buffer.clear();
 }
 
-char				Lexer::peek() {
+char Lexer::peek() {
 	if (_index < _sourceFileContent.size())
 		return _sourceFileContent.at(_index);
 	return 0;
 }
 
-char				Lexer::consume() {
+char Lexer::consume() {
 	char currentChar = peek();
 	_index++;
 
@@ -88,7 +88,7 @@ char				Lexer::consume() {
 	return currentChar;
 }
 
-void				Lexer::tokenize() {
+void Lexer::tokenize() {
 	std::string	buffer;
 	char		currentChar;
 
@@ -146,7 +146,7 @@ void				Lexer::tokenize() {
 }
 
 // Erases any repeated TokenType::enter tokens
-void				Lexer::cleanTokens() {
+void Lexer::cleanTokens() {
 	TokenType	lastType = unknown;
 
 	for (std::vector<Token>::iterator it = _tokens.begin(); it != _tokens.end();) {
@@ -159,7 +159,7 @@ void				Lexer::cleanTokens() {
 	}
 }
 
-void				Lexer::printTokens() {
+void Lexer::printTokens() {
 	for (std::vector<Token>::const_iterator it = _tokens.begin(); it != _tokens.end(); it++) {
 		std::string type;
 
