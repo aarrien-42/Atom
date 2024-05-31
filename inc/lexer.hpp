@@ -64,7 +64,7 @@
 		brace,                  // {, }
 		enter,                  // \n
 		tab,                    // \t
-		comment,                // #
+		comment,                // //
 		whitespace,             // spaces
 		unknown
 	};

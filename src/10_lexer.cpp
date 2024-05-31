@@ -39,23 +39,24 @@ void Lexer::setToken( std::string& buffer, TokenType tokenType) {
 	static const std::vector<std::string> bitwises = { BITWISE_AND, BITWISE_OR, BITWISE_XOR, BITWISE_NOT };
 	static const std::vector<std::string> parenthesis = { LEFT_PAREN, RIGHT_PAREN };
 	static const std::vector<std::string> braces = { LEFT_BRACE, RIGHT_BRACE };
-
-	// TODO: check for: identifier, variable, whitespace
+	static const std::vector<std::string> comments = { COMMENT };
 
 	if (isStrInVector(buffer, keywords))
-		token.type = keyword;
+		token.type = TokenType::keyword;
 	else if (isStrInVector(buffer, operators))
-		token.type = operation;
+		token.type = TokenType::operation;
 	else if (isStrInVector(buffer, comparisons))
-		token.type = comparison;
+		token.type = TokenType::comparison;
 	else if (isStrInVector(buffer, logicals))
-		token.type = logic;
+		token.type = TokenType::logic;
 	else if (isStrInVector(buffer, bitwises))
-		token.type = bitwise;
+		token.type = TokenType::bitwise;
 	else if (isStrInVector(buffer, parenthesis))
-		token.type = paren;
+		token.type = TokenType::paren;
 	else if (isStrInVector(buffer, braces))
-		token.type = brace;
+		token.type = TokenType::brace;
+	else if (isStrInVector(buffer, comments))
+		token.type = TokenType::comment;
 
 	_tokens.push_back(token);
 	buffer.clear();
@@ -121,10 +122,16 @@ void Lexer::tokenize() {
 			buffer.push_back(consume());
 			setToken(buffer);
 		} else if (std::string("=!<>+-*/%").find(peek()) != std::string::npos) {
-			// operators and comparison
+			// operators, comparisons and comments
 			buffer.push_back(consume());
-			if (peek() == '=')
+			if (peek() == '=' || (buffer == "/" && peek() == '/'))
 				buffer.push_back(consume());
+			// comment
+			if (buffer == "//") {
+				while (peek() != 0 && std::string("\n").find(peek()) == std::string::npos) {
+					consume();
+				}
+			}
 			setToken(buffer);
 		} else if (std::string("\n").find(peek()) != std::string::npos) {
 			// new line
@@ -145,16 +152,34 @@ void Lexer::tokenize() {
 	setToken(buffer, enter);
 }
 
-// Erases any repeated TokenType::enter tokens
+// Erases:
+// - Any repeated TokenType::enter tokens
+// - All the comment tokens and its respective enter and tabs
 void Lexer::cleanTokens() {
-	TokenType	lastType = unknown;
+	
+	for (std::vector<Token>::iterator it = _tokens.begin(); it != _tokens.end(); it++) {
+		// Repeated enter tokens
+		if (it->type == TokenType::enter) {
+			if (it+1 != _tokens.end() && (it+1)->type == TokenType::enter) {
+				it = _tokens.erase(it);
+				it--;
+			} else if (it != _tokens.begin()) {
+				if ((it-1)->type == TokenType::enter) {
+					it = _tokens.erase(it);
+					it--;
+				} else if ((it-1)->type == TokenType::tab) {
+					it = _tokens.erase(it-1);
+					it--;
+				}
+			}
+		}
 
-	for (std::vector<Token>::iterator it = _tokens.begin(); it != _tokens.end();) {
-		if (lastType == TokenType::enter && lastType == it->type) {
-			it = _tokens.erase(it); // Advance iterator after erasing
-		} else {
-			lastType = it->type;
-			++it;
+		// Comment tokens
+		if (it->type == TokenType::comment) {
+			it = _tokens.erase(it);
+			if (it != _tokens.begin() && (it-1)->type == TokenType::tab)
+				it = _tokens.erase(it-1);
+			it--;
 		}
 	}
 }

@@ -53,7 +53,7 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
 - [ ] Implement a lexer to break down the source code into tokens:
     - [x] Detect and save basic tokens for general purpouse
     - [x] Save each token position in the code
-    - [ ] Enable a way to set comments inside the actual code
+    - [x] Enable a way to set comments inside the actual code
     - [ ] Implement a character that allows continuing a line on the next line, facilitating multi-line code writing
     - [ ] End of line character support, as ';' in C
     - [ ] Add the posibility for unitary operations (increment, decrement, etc.)
