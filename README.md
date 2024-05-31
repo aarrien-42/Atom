@@ -77,6 +77,7 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
         - [ ] Operation nodes
         - [ ] Variable nodes
         - [ ] Return node
+- [ ] Add a way to develop tests for each compilation step
 - [ ] Final executable:
     - [ ] Compile the assembly code and generate a single executable
     - [ ] Add a flag system for little settings as customizing executable name
