@@ -4,8 +4,9 @@ int main(int ac, char** av) {
 	if (ac < 2) {
 		fileReadError(FileReadError::INV_EXEC);
 	} else {
-		std::string	fileName;
-		size_t		fileExtLen = strlen(FILE_EXT);
+		std::string		fileName;
+		size_t			fileExtLen = strlen(FILE_EXT);
+		CodeGenerator	CG("output.exe");
 
 		for (int fileNumber = 1; fileNumber < ac; fileNumber++) {
 			fileName = av[fileNumber];
@@ -26,8 +27,11 @@ int main(int ac, char** av) {
 			std::cout << "PARSER:\n\n";
 			Parser P(L.getTokens(), fileName);
 			ProgramNode* program = P.getProgram();
-			delete program;
+
+			/*-CODE GENERATOR-*/
+			CG.addProgram(program);
 		}
+		CG.writeFullProgramCode();
 	}
 
 	return 0;
