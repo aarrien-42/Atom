@@ -85,7 +85,7 @@
 		std::string				fileName;
 		std::vector<ASTNode*>	functions;
 
-		ProgramNode( Parser&, size_t = 0 );
+		ProgramNode( Parser&, std::string, size_t = 0 );
 		~ProgramNode() {
 			for (ASTNode* function : functions)
 				delete function;
@@ -94,6 +94,7 @@
 		void	printNode() const override {
 			ASTNode::printNode();
 
+			std::cout << "File name = " << fileName << std::endl;
 			for (ASTNode* function : functions) {
 				function->printNode();
 			}

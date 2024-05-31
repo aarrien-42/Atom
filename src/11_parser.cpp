@@ -2,12 +2,11 @@
 
 /*-CONSTRUCTOR-*/
 
-Parser::Parser( const std::vector<Token>& tokens ) : _tokens(tokens), _index(0) {
-	ASTNode* program = new ProgramNode(*this);
+Parser::Parser( const std::vector<Token>& tokens, std::string fileName ) : _tokens(tokens), _index(0) {
+	_tree = new ProgramNode(*this, fileName);
 
 	std::cout << "\nPROGRAM ABSTRACT SINTAX TREE:\n\n";
-	program->printNode();
-	delete program;
+	_tree->printNode();
 }
 
 /*-DESTRUCTOR-*/
@@ -16,7 +15,7 @@ Parser::~Parser() {}
 
 /*-METHODS-*/
 
-std::vector<ASTNode>	Parser::getTree() { return _tree; }
+ProgramNode* Parser::getProgram() { return _tree; }
 
 Token					Parser::peek( int pos ) {
 	if (_index + pos < _tokens.size())

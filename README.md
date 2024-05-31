@@ -52,6 +52,7 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
 ## To do list
 - [ ] Implement a lexer to break down the source code into tokens:
     - [x] Detect and save basic tokens for general purpouse
+    - [x] Save each token position in the code
     - [ ] Enable a way to set comments inside the actual code
     - [ ] Implement a character that allows continuing a line on the next line, facilitating multi-line code writing
     - [ ] End of line character support, as ';' in C
@@ -67,7 +68,18 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
     - [ ] Enable concatenation of conditions (ex.: (x < 100 && > 50))
     - [ ] Suport for multiple file compilation
     - [ ] Error management correctly shown and without any crashes
-- [ ] Generate the target code in assembly
+- [x] Multiple file compilation
+- [ ] Generate the target code in assembly:
+    - [ ] Code generator class
+    - [ ] Generate code for every node:
+        - [ ] Function nodes
+        - [ ] Conditional nodes
+        - [ ] Operation nodes
+        - [ ] Variable nodes
+        - [ ] Return node
+- [ ] Final executable:
+    - [ ] Compile the assembly code and generate a single executable
+    - [ ] Add a flag system for little settings as customizing executable name
 
 ## How to Contribute
 At this stage, the development is purely personal.

@@ -10,22 +10,23 @@
 
 	struct Token;
 	struct ASTNode;
+	struct ProgramNode;
 
 	class Parser {
 		private:
-			std::vector<ASTNode>	_tree;
+			ProgramNode*			_tree;
 			std::vector<Token>		_tokens;
 			size_t					_index;
 		public:
-			Parser( const std::vector<Token>& );
+			Parser( const std::vector<Token>&, std::string fileName );
 			~Parser();
 
-			std::vector<ASTNode>	getTree();
+			ProgramNode*	getProgram();
 
-			Token					peek( int pos = 0);
-			Token					consume();
+			Token			peek( int pos = 0);
+			Token			consume();
 
-			void					printTree();
+			void			printTree();
 	};
 
 #endif

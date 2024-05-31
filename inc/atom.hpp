@@ -6,6 +6,7 @@
 	#include "error.hpp"
 	#include "lexer.hpp"
 	#include "parser.hpp"
+	#include "nodes.hpp"
 
 	#define FILE_EXT   ".atm"
 	#define EXECUTABLE "atom"

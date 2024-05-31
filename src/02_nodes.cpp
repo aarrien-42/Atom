@@ -2,10 +2,10 @@
 
 /*-PROGRAM-*/
 
-ProgramNode::ProgramNode( Parser& parser, size_t level ) : ASTNode(NodeType::Program, level) {
+ProgramNode::ProgramNode( Parser& parser, std::string file, size_t level ) : ASTNode(NodeType::Program, level) {
 	std::cout << "  **PROGRAM NODE CREATED**\n";
 
-	fileName = ""; // Still not captured
+	fileName = file;
 
 	while (!parser.peek().value.empty()) {
 		if (parser.peek().type == tab || parser.peek().type == enter) {
