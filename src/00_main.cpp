@@ -31,6 +31,7 @@ int main(int ac, char** av) {
 			/*-CODE GENERATOR-*/
 			CG.addProgram(program);
 		}
+		std::cout << "CODE GENERATOR:\n\n";
 		CG.writeFullProgramCode();
 	}
 
