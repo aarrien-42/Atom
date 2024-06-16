@@ -3,8 +3,7 @@ name: Atom tests
 on:
   push:
     branches: [ "main" ] # Trigger on push to the 'main' branch
-  pull_request:
-    branches: [ "main" ] # Trigger on pull requests targeting the 'main' branch
+    paths: ["**.cpp", "**.hpp", "Makefile"]
 
 jobs:
   build:
