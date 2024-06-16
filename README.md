@@ -58,6 +58,7 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
     - [ ] Implement a character that allows continuing a line on the next line, facilitating multi-line code writing
     - [ ] End of line character support, as ';' in C
     - [ ] Add the posibility for unitary operations (increment, decrement, etc.)
+    - [ ] Can use tabs or spaces for indent
 - [ ] Develop a parser to check if the arrangement of tokens follows the defined syntax rules:
     - [x] Make defined nodes for each situation posible
     - [x] Develop an easy way to visualize the resulting AST tree
