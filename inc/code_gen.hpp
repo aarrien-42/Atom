@@ -24,7 +24,7 @@ class CodeGenerator {
 
 		void	writeFullProgramCode();
 		void	nodeHandler( ASTNode* );
-		void	writeProgramNode( ASTNode* );
+		// void	writeProgramNode( ASTNode* );
 		// void	writeBlockNode( ASTNode* );
 		// void	writeBoxNode( ASTNode* );
 		void	writeFuncDeclNode( ASTNode* );

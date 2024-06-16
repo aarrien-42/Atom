@@ -6,7 +6,9 @@ int main(int ac, char** av) {
 	} else {
 		std::string		fileName;
 		size_t			fileExtLen = strlen(FILE_EXT);
-		CodeGenerator	CG("output.exe");
+
+		Config C("conf/atom.conf");
+		CodeGenerator	CG((C.isSetExecutableName()) ? C.getExecutableName() : "atom.exe");
 
 		for (int fileNumber = 1; fileNumber < ac; fileNumber++) {
 			fileName = av[fileNumber];
@@ -15,7 +17,7 @@ int main(int ac, char** av) {
 
 			/*-LEXER-*/
 			Lexer L(fileName);
-			std::cout << "TOKEN LIST:\n\n";
+			std::cout << BOLDBLUE << "\nTOKEN LIST:\n\n" << RESET;
 			std::cout << " * Before clean up:\n";
 			L.printTokens();
 			std::cout << " * After clean up:\n";
@@ -24,14 +26,14 @@ int main(int ac, char** av) {
 			std::cout << "\n";
 
 			/*-PARSER-*/
-			std::cout << "PARSER:\n\n";
+			std::cout << BOLDBLUE << "\nPARSER:\n\n" << RESET;
 			Parser P(L.getTokens(), fileName);
 			ProgramNode* program = P.getProgram();
 
 			/*-CODE GENERATOR-*/
 			CG.addProgram(program);
 		}
-		std::cout << "CODE GENERATOR:\n\n";
+		std::cout << BOLDBLUE << "\nCODE GENERATOR:\n\n" << RESET;
 		CG.writeFullProgramCode();
 	}
 

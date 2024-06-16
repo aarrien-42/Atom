@@ -3,7 +3,6 @@
 /*-CONSTRUCTOR-*/
 
 CodeGenerator::CodeGenerator( std::string outputFile ) : _outputFile(outputFile) {
-	
 }
 
 /*-DESTRUCTOR-*/
@@ -37,56 +36,78 @@ void	CodeGenerator::writeFullProgramCode() {
 }
 
 void	CodeGenerator::nodeHandler( ASTNode* node ) {
+	std::cout << "Node type = " << node->getType() << std::endl;
 	switch (node->getType()) {
-		case NodeType::Program:
-			
+		case NodeType::Program: {
+			ProgramNode* programNode = dynamic_cast<ProgramNode*>(node);
+			for (ASTNode* function : programNode->functions) {
+				nodeHandler(function);
+			}
 			break;
-		case NodeType::Block: break;
-		case NodeType::Box: break;
-		case NodeType::FuncDecl:
+		}
+		case NodeType::Block: {
+			BlockNode* programNode = dynamic_cast<BlockNode*>(node);
+			for (ASTNode* statement : programNode->statements) {
+				nodeHandler(statement);
+			}
+			break;
+		}
+		case NodeType::Box: {
+			break;
+		}
+		case NodeType::FuncDecl: {
 			writeFuncDeclNode(node);
 			break;
-		case NodeType::FuncCall:
+		}
+		case NodeType::FuncCall: {
 			writeFuncCallNode(node);
 			break;
-		case NodeType::Condition:
+		}
+		case NodeType::Condition: {
 			writeConditionNode(node);
 			break;
-		case NodeType::IfStatement:
+		}
+		case NodeType::IfStatement: {
 			writeIfStatementNode(node);
 			break;
-		case NodeType::WhileLoop:
+		}
+		case NodeType::WhileLoop: {
 			writeWhileLoopNode(node);
 			break;
-		case NodeType::ForLoop:
+		}
+		case NodeType::ForLoop: {
 			writeForLoopNode(node);
 			break;
-		case NodeType::BinOp:
+		}
+		case NodeType::BinOp: {
 			writeBinOpNode(node);
 			break;
-		case NodeType::UnaryOp:
+		}
+		case NodeType::UnaryOp: {
 			writeUnaryOpNode(node);
 			break;
-		case NodeType::VarDecl:
+		}
+		case NodeType::VarDecl: {
 			writeVarDeclNode(node);
 			break;
-		case NodeType::Assign:
+		}
+		case NodeType::Assign: {
 			writeAssignNode(node);
 			break;
-		case NodeType::Literal:
+		}
+		case NodeType::Literal: {
 			writeLiteralNode(node);
 			break;
-		case NodeType::Identifier:
+		}
+		case NodeType::Identifier: {
 			writeIdentifierNode(node);
 			break;
-		case NodeType::Return:
+		}
+		case NodeType::Return: {
 			writeReturnNode(node);
 			break;
+		}
 	}
-}
-
-void	CodeGenerator::writeProgramNode( ASTNode* node ) {
-	(void)node;
 }
 
 void	CodeGenerator::writeFuncDeclNode( ASTNode* node ) {

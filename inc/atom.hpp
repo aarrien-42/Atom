@@ -4,6 +4,7 @@
 	#include <iostream>
 	#include <cstring>
 	#include "error.hpp"
+	#include "config.hpp"
 	#include "lexer.hpp"
 	#include "parser.hpp"
 	#include "nodes.hpp"

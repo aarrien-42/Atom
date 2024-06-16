@@ -19,6 +19,7 @@ The goal of this project is to develop my own programming language. It is a very
 
 ## File Structure
  - Project Directory
+    - `conf/`            # Conf file (.conf)
     - `inc/`             # Header files (.hpp)
     - `src/`             # Source files (.cpp)
     - `obj/`             # Object files (.o)
@@ -80,7 +81,7 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
 - [ ] Add a way to develop tests for each compilation step
 - [ ] Final executable:
     - [ ] Compile the assembly code and generate a single executable
-    - [ ] Add a flag system for little settings as customizing executable name
+    - [x] Add a flag system for little settings as customizing executable name
 
 ## How to Contribute
 At this stage, the development is purely personal.
