@@ -17,11 +17,18 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential
+        chmod -R +r atm
 
     - name: Compile program
       run: make re
 
     - name: Run tests
       run: |
-        chmod -R +r atm
         make run atm/test/test_01.atm
+        make run atm/test/test_02.atm
+        make run atm/test/test_03.atm
+        make run atm/test/test_04.atm
+        make run atm/test/test_05.atm
+        make run atm/test/test_06.atm
+        make run atm/test/test_07.atm
+        make run atm/test/test_08.atm
