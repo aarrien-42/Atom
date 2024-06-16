@@ -21,3 +21,7 @@ jobs:
 
     - name: Compile program
       run: make re
+
+    - name: Run tests
+      run: |
+        make run atm/test/test_01.atm
