@@ -3,7 +3,7 @@
 The goal of this project is to develop my own programming language. It is a very ambitious and costly project, so initially, it will start as a simple compiler and will grow from there. I don't intend for it to be a complex and deep language, its purpose is rather educational.
 
 ## Key Features
-- Shortened keywords: <details><summary>Keyword List</summary>
+- Shortened keywords: <details open><summary>Keyword List</summary>
 
     | C++ | if | else | if else | while | for | return | continue | break | any variable | write |
     | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
