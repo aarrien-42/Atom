@@ -3,7 +3,7 @@ name: Atom tests
 on:
   push:
     branches: [ "main" ] # Trigger on push to the 'main' branch
-    paths: ["**.cpp", "**.hpp", "Makefile"]
+    paths: ["**.cpp", "**.hpp", "Makefile", "atm/test/**"]
 
 jobs:
   build:
