@@ -1,0 +1,23 @@
+[1m[34m
+TOKEN LIST:
+
+[0m * Before clean up:
+[enter \n] 
+
+ * After clean up:
+[enter \n] 
+
+
+[1m[34m
+PARSER:
+
+[0m  **PROGRAM NODE CREATED**
+
+PROGRAM ABSTRACT SINTAX TREE:
+
+[33m[ProgramNode]:
+[0mFile name = ./atm/test/20_parser_tests/21_code_examples/test_08.atm
+[1m[34m
+CODE GENERATOR:
+
+[0mNode type = 0
