@@ -1,5 +1,6 @@
 #include "atom.hpp"
 
+// TODO: Change class names and class object names to be more readable
 int main(int ac, char** av) {
     if (ac < 2) {
         fileReadError(FileReadError::INV_EXEC);
@@ -7,7 +8,8 @@ int main(int ac, char** av) {
         std::string fileName;
         size_t fileExtLen = strlen(FILE_EXT);
 
-        Config C("conf/atom.conf");
+        Config C(&av[1]);
+        return 0;
         CodeGenerator CG((C.isSetExecutableName()) ? C.getExecutableName() : "atom.exe");
 
         for (int fileNumber = 1; fileNumber < ac; fileNumber++) {

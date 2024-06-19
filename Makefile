@@ -31,12 +31,16 @@ WHITE = \033[0;97m
 
 # RULES
 
+RULES = all run asm clean fclean re
+
 .SILENT:
 
 all: $(NAME)
 
 run: $(NAME)
-	./$(BIN_DIR)/$(NAME) $(lastword $(MAKECMDGOALS))
+	./$(BIN_DIR)/$(NAME) $(filter-out $(RULES) ,$(MAKECMDGOALS))
+%:
+	@:
 
 $(NAME) : $(OBJ)
 	mkdir -p $(BIN_DIR)
@@ -63,4 +67,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all run asm clean fclean re
+.PHONY: $(RULES)

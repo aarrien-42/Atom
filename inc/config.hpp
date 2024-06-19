@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstring>
 
 /*
     Description:
@@ -20,7 +21,7 @@
         - '-p' or '--parser'  => Execute just Lexer and Parser
         - '-c' or '--color'   => Adds color to certain comments
         - '-o' or '--output'  => After it determine final executable name
-    Final idea: All the configuration flags go into a file
+    Final idea: f:<flags>
 */
 class Config {
     private:
@@ -33,10 +34,9 @@ class Config {
         bool setExecutableName;
         std::string executableName;
     public:
-        Config( std::string );
+        Config( char** );
         ~Config();
 
-        bool isTrue( std::string );
         bool isSetExecutableName() { return setExecutableName; }
         std::string getExecutableName() { return executableName; }
 
