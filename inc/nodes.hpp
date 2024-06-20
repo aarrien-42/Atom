@@ -26,7 +26,7 @@
 		Return,			// r. <value>
 	};
 
-	class Parser;
+	class ParserManager;
 
 /*-MAIN-*/
 
@@ -85,7 +85,7 @@
 		std::string				fileName;
 		std::vector<ASTNode*>	functions;
 
-		ProgramNode( Parser&, std::string, size_t = 0 );
+		ProgramNode( ParserManager&, std::string, size_t = 0 );
 		~ProgramNode() {
 			for (ASTNode* function : functions)
 				delete function;
@@ -108,7 +108,7 @@
 	struct BlockNode : public ASTNode {
 		std::vector<ASTNode*>		statements;
 
-		BlockNode( Parser&, size_t, size_t );
+		BlockNode( ParserManager&, size_t, size_t );
 		~BlockNode() {
 			for (ASTNode* statement : statements)
 				delete statement;
@@ -128,7 +128,7 @@
 	struct BoxNode : public ASTNode {
 		ASTNode*	node;
 
-		BoxNode( Parser&, size_t );
+		BoxNode( ParserManager&, size_t );
 		~BoxNode() { delete node; }
 
 		void	printNode() const override {
@@ -147,7 +147,7 @@
 		std::vector<ASTNode*>		parameters;
 		ASTNode*					body;
 
-		FuncDeclNode( Parser&, size_t );
+		FuncDeclNode( ParserManager&, size_t );
 		~FuncDeclNode() {
 			for (ASTNode* param : parameters)
 				delete param;
@@ -179,7 +179,7 @@
 		std::string					functionName;
 		std::vector<ASTNode*>		parameters;
 
-		FuncCallNode( Parser&, size_t );
+		FuncCallNode( ParserManager&, size_t );
 		~FuncCallNode() {
 			for (ASTNode* param : parameters)
 				delete param;
@@ -210,7 +210,7 @@
 		ASTNode*					leftComp;
 		ASTNode*					rightComp;
 
-		ConditionNode( Parser&, size_t );
+		ConditionNode( ParserManager&, size_t );
 		~ConditionNode() { delete leftComp; delete rightComp; }
 
 		void	printNode() const override {
@@ -235,7 +235,7 @@
 		ASTNode*					ifBranch; // not above condition so else if
 		ASTNode*					elseBranch; // just in case there's an else
 
-		IfStatementNode( Parser&, size_t );
+		IfStatementNode( ParserManager&, size_t );
 		~IfStatementNode() { delete condition; delete body; delete ifBranch; delete elseBranch; }
 
 		void	printNode() const override {
@@ -266,7 +266,7 @@
 		ASTNode*					condition;
 		ASTNode*					body;
 
-		WhileLoopNode( Parser&, size_t );
+		WhileLoopNode( ParserManager&, size_t );
 		~WhileLoopNode() { delete condition; delete body; }
 
 		void	printNode() const override {
@@ -282,7 +282,7 @@
 		ASTNode*					iteration;
 		ASTNode*					body;
 
-		ForLoopNode( Parser&, size_t );
+		ForLoopNode( ParserManager&, size_t );
 		~ForLoopNode() { delete initialization; delete condition; delete iteration; delete body; }
 
 		void	printNode() const override {
@@ -299,7 +299,7 @@
 		ASTNode*					leftOp;
 		ASTNode*					rightOp;
 
-		BinOpNode( Parser&, size_t );
+		BinOpNode( ParserManager&, size_t );
 		~BinOpNode() { delete leftOp; delete rightOp; }
 
 		void	printNode() const override {
@@ -322,7 +322,7 @@
 		std::string	operation;
 		ASTNode*	operand;
 
-		UnaryOpNode( Parser&, size_t );
+		UnaryOpNode( ParserManager&, size_t );
 		~UnaryOpNode() { delete operand; }
 	
 		void	printNode() const override {
@@ -341,7 +341,7 @@
 		std::string					name;
 		ASTNode*					initialValue;
 
-		VarDeclNode( Parser&, size_t );
+		VarDeclNode( ParserManager&, size_t );
 		~VarDeclNode() { delete initialValue; }
 	
 		void	printNode() const override {
@@ -363,7 +363,7 @@
 		std::string					variableName;
 		ASTNode*					value;
 
-		AssignNode( Parser&, size_t );
+		AssignNode( ParserManager&, size_t );
 		~AssignNode() { delete value; }
 	
 		void	printNode() const override {
@@ -380,7 +380,7 @@
 	struct LiteralNode : public ASTNode {
 		std::string					value;
 
-		LiteralNode( Parser&, size_t );
+		LiteralNode( ParserManager&, size_t );
 	
 		void	printNode() const override {
 			ASTNode::printNode();
@@ -395,7 +395,7 @@
 	struct IdentifierNode : public ASTNode {
 		std::string					name;
 
-		IdentifierNode( Parser&, size_t );
+		IdentifierNode( ParserManager&, size_t );
 	
 		void	printNode() const override {
 			ASTNode::printNode();
@@ -412,7 +412,7 @@
 	struct ReturnNode : public ASTNode {
 		ASTNode*					returnValue;
 
-		ReturnNode( Parser&, size_t );
+		ReturnNode( ParserManager&, size_t );
 		~ReturnNode() { delete returnValue; }
 	
 		void	printNode() const override {
@@ -424,6 +424,6 @@
 
 /*-UTILS-*/
 
-int isParenthesisClosed( Parser& );
+int isParenthesisClosed( ParserManager& );
 
 #endif

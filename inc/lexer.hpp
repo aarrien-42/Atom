@@ -77,14 +77,14 @@ struct Token {
     size_t row, column;
 };
 
-class Lexer {
+class LexerManager {
     private:
         std::string _sourceFileContent;
         std::vector<Token> _tokens;
         size_t _index;
     public:
-        Lexer( const std::string& fileName );
-        ~Lexer();
+        LexerManager( const std::string& fileName );
+        ~LexerManager();
 
         std::vector<Token> getTokens();
         void setToken( std::string& buffer , TokenType tokenType = unknown );

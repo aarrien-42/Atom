@@ -2,7 +2,7 @@
 
 /*-CONSTRUCTOR-*/
 
-Parser::Parser( const std::vector<Token>& tokens, std::string fileName ) : _tokens(tokens), _index(0) {
+ParserManager::ParserManager( const std::vector<Token>& tokens, std::string fileName ) : _tokens(tokens), _index(0) {
     _tree = new ProgramNode(*this, fileName);
 
     std::cout << "\nPROGRAM ABSTRACT SINTAX TREE:\n\n";
@@ -11,24 +11,24 @@ Parser::Parser( const std::vector<Token>& tokens, std::string fileName ) : _toke
 
 /*-DESTRUCTOR-*/
 
-Parser::~Parser() {}
+ParserManager::~ParserManager() {}
 
 /*-METHODS-*/
 
-ProgramNode* Parser::getProgram() { return _tree; }
+ProgramNode* ParserManager::getProgram() { return _tree; }
 
-Token Parser::peek( int pos ) {
+Token ParserManager::peek( int pos ) {
     if (_index + pos < _tokens.size())
         return _tokens.at(_index + pos);
     return Token();
 }
 
-Token Parser::consume() {
+Token ParserManager::consume() {
     Token currentToken = peek();
     _index++;
     return currentToken;
 }
 
-void Parser::printTree() {
+void ParserManager::printTree() {
     
 }

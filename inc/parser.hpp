@@ -12,14 +12,14 @@ struct Token;
 struct ASTNode;
 struct ProgramNode;
 
-class Parser {
+class ParserManager {
     private:
         ProgramNode* _tree;
         std::vector<Token> _tokens;
         size_t _index;
     public:
-        Parser( const std::vector<Token>&, std::string fileName );
-        ~Parser();
+        ParserManager( const std::vector<Token>&, std::string fileName );
+        ~ParserManager();
 
         ProgramNode* getProgram();
 

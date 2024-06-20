@@ -2,12 +2,12 @@
 
 /*-CONSTRUCTOR-*/
 
-CodeGenerator::CodeGenerator( std::string outputFile ) : _outputFile(outputFile) {
+CodeGeneratorManager::CodeGeneratorManager( std::string outputFile ) : _outputFile(outputFile) {
 }
 
 /*-DESTRUCTOR-*/
 
-CodeGenerator::~CodeGenerator() {
+CodeGeneratorManager::~CodeGeneratorManager() {
     for (ProgramNode* program : _parsedPrograms) {
         delete program;
     }
@@ -15,11 +15,11 @@ CodeGenerator::~CodeGenerator() {
 
 /*-METHODS-*/
 
-void CodeGenerator::addProgram( ProgramNode* program ) {
+void CodeGeneratorManager::addProgram( ProgramNode* program ) {
     _parsedPrograms.push_back(program);
 }
 
-void CodeGenerator::writeFullProgramCode() {
+void CodeGeneratorManager::writeFullProgramCode() {
     std::ofstream outDataFile("asm/data.asm", std::ios::out | std::ios::trunc);
     std::ofstream outCodeFile("asm/code.asm", std::ios::out | std::ios::trunc);
 
@@ -35,7 +35,7 @@ void CodeGenerator::writeFullProgramCode() {
     }
 }
 
-void CodeGenerator::nodeHandler( ASTNode* node ) {
+void CodeGeneratorManager::nodeHandler( ASTNode* node ) {
     std::cout << "Node type = " << node->getType() << std::endl;
     switch (node->getType()) {
         case NodeType::Program: {
@@ -110,55 +110,55 @@ void CodeGenerator::nodeHandler( ASTNode* node ) {
     }
 }
 
-void    CodeGenerator::writeFuncDeclNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeFuncDeclNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeFuncCallNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeFuncCallNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeConditionNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeConditionNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeIfStatementNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeIfStatementNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeWhileLoopNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeWhileLoopNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeForLoopNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeForLoopNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeBinOpNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeBinOpNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeUnaryOpNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeUnaryOpNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeVarDeclNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeVarDeclNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeAssignNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeAssignNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeLiteralNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeLiteralNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeIdentifierNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeIdentifierNode( ASTNode* node ) {
     (void)node;
 }
 
-void    CodeGenerator::writeReturnNode( ASTNode* node ) {
+void    CodeGeneratorManager::writeReturnNode( ASTNode* node ) {
     (void)node;
 }
 

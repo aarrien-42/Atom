@@ -2,7 +2,7 @@
 
 /*-CONSTRUCTOR-*/
 
-Config::Config( char** arguments ) {
+ConfigManager::ConfigManager( char** arguments ) {
     setDebug = false;
     setVerbose = false;
     setExecuteTillLexer = false;
@@ -70,19 +70,19 @@ Config::Config( char** arguments ) {
 
 /*-DESTRUCTOR-*/
 
-Config::~Config() {
+ConfigManager::~ConfigManager() {
     std::cout << setDebug << setVerbose << setExecuteTillLexer << setExecuteTillParser << setColorful << std::endl;
     if (setExecutableName) std::cout << executableName << std::endl;
 }
 
 /*-METHODS-*/
 
-void Config::printDebug( std::string str ) {
+void ConfigManager::printDebug( std::string str ) {
     // Will only print if it's set to debug
     (void)str;
 }
 
-void Config::printVerbose( std::string str ) {
+void ConfigManager::printVerbose( std::string str ) {
     // Will only print if it's set to vebose
     (void)str;
 }

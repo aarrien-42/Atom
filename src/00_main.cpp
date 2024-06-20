@@ -8,8 +8,8 @@ int main(int ac, char** av) {
         std::string fileName;
         size_t fileExtLen = strlen(FILE_EXT);
 
-        Config C(&av[1]);
-        CodeGenerator CG((C.isSetExecutableName()) ? C.getExecutableName() : "atom.exe");
+        ConfigManager Config(&av[1]);
+        CodeGeneratorManager CodeGen((Config.isSetExecutableName()) ? Config.getExecutableName() : "atom.exe");
 
         for (int fileNumber = 1; fileNumber < ac; fileNumber++) {
             fileName = av[fileNumber];
@@ -19,25 +19,25 @@ int main(int ac, char** av) {
                 fileReadError(FileReadError::INV_FILE);
 
             /*-LEXER-*/
-            Lexer L(fileName);
+            LexerManager Lexer(fileName);
             std::cout << BOLDBLUE << "\nTOKEN LIST:\n\n" << RESET;
             std::cout << " * Before clean up:\n";
-            L.printTokens();
+            Lexer.printTokens();
             std::cout << " * After clean up:\n";
-            L.cleanTokens();
-            L.printTokens();
+            Lexer.cleanTokens();
+            Lexer.printTokens();
             std::cout << "\n";
 
             /*-PARSER-*/
             std::cout << BOLDBLUE << "\nPARSER:\n\n" << RESET;
-            Parser P(L.getTokens(), fileName);
-            ProgramNode* program = P.getProgram();
+            ParserManager Parser(Lexer.getTokens(), fileName);
+            ProgramNode* program = Parser.getProgram();
 
             /*-CODE GENERATOR-*/
-            CG.addProgram(program);
+            CodeGen.addProgram(program);
         }
         std::cout << BOLDBLUE << "\nCODE GENERATOR:\n\n" << RESET;
-        CG.writeFullProgramCode();
+        CodeGen.writeFullProgramCode();
     }
 
     return 0;

@@ -22,7 +22,7 @@
         - 'c' => Adds color to certain comments
         - 'o' => After it determine final executable name
 */
-class Config {
+class ConfigManager {
     private:
         bool setDebug;
         bool setVerbose;
@@ -33,8 +33,8 @@ class Config {
         bool setExecutableName;
         std::string executableName;
     public:
-        Config( char** );
-        ~Config();
+        ConfigManager( char** );
+        ~ConfigManager();
 
         bool isSetExecutableName() { return setExecutableName; }
         std::string getExecutableName() { return executableName; }

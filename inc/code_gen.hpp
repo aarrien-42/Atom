@@ -12,13 +12,13 @@
 struct ASTNode;
 struct ProgramNode;
 
-class CodeGenerator {
+class CodeGeneratorManager {
     private:
         std::string _outputFile;
         std::vector<ProgramNode*> _parsedPrograms;
     public:
-        CodeGenerator( std::string );
-        ~CodeGenerator();
+        CodeGeneratorManager( std::string );
+        ~CodeGeneratorManager();
 
         void addProgram( ProgramNode* );
 

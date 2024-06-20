@@ -4,7 +4,7 @@ size_t currentTabs = 0, currentRow = 1, currentColumn = 1;
 
 /*-CONSTRUCTOR-*/
 
-Lexer::Lexer( const std::string& fileName ) : _index(0) {
+LexerManager::LexerManager( const std::string& fileName ) : _index(0) {
     std::ifstream inputFile(fileName);
 
     if (!inputFile.is_open())
@@ -23,13 +23,13 @@ Lexer::Lexer( const std::string& fileName ) : _index(0) {
 
 /*-DESTRUCTOR-*/
 
-Lexer::~Lexer() {}
+LexerManager::~LexerManager() {}
 
 /*-METHODS-*/
 
-std::vector<Token> Lexer::getTokens() { return _tokens; }
+std::vector<Token> LexerManager::getTokens() { return _tokens; }
 
-void Lexer::setToken( std::string& buffer, TokenType tokenType) {
+void LexerManager::setToken( std::string& buffer, TokenType tokenType) {
     Token token = {.type = tokenType, .value = buffer, .tabCount = currentTabs, .row = (tokenType == enter ? 0 : currentRow), .column = (tokenType == enter ? 0 : currentColumn)};
 
     static const std::vector<std::string> keywords = { KEYWORD_IF, KEYWORD_ELSE, KEYWORD_IF_ELSE, KEYWORD_WHILE, KEYWORD_FOR, KEYWORD_VARIABLE, KEYWORD_PRINT, KEYWORD_RETURN };
@@ -62,13 +62,13 @@ void Lexer::setToken( std::string& buffer, TokenType tokenType) {
     buffer.clear();
 }
 
-char Lexer::peek() {
+char LexerManager::peek() {
     if (_index < _sourceFileContent.size())
         return _sourceFileContent.at(_index);
     return 0;
 }
 
-char Lexer::consume() {
+char LexerManager::consume() {
     char currentChar = peek();
     _index++;
 
@@ -89,7 +89,7 @@ char Lexer::consume() {
     return currentChar;
 }
 
-void Lexer::tokenize() {
+void LexerManager::tokenize() {
     std::string buffer;
     char currentChar;
 
@@ -155,7 +155,7 @@ void Lexer::tokenize() {
 // Erases:
 // - Any repeated TokenType::enter tokens
 // - All the comment tokens and its respective enter and tabs
-void Lexer::cleanTokens() {
+void LexerManager::cleanTokens() {
     for (std::vector<Token>::iterator it = _tokens.begin(); it != _tokens.end(); it++) {
         // Repeated enter tokens
         if (it->type == TokenType::enter) {
@@ -183,7 +183,7 @@ void Lexer::cleanTokens() {
     }
 }
 
-void Lexer::printTokens() {
+void LexerManager::printTokens() {
     for (std::vector<Token>::const_iterator it = _tokens.begin(); it != _tokens.end(); it++) {
         std::string type;
 
