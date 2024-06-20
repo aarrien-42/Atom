@@ -9,11 +9,12 @@ int main(int ac, char** av) {
         size_t fileExtLen = strlen(FILE_EXT);
 
         Config C(&av[1]);
-        return 0;
         CodeGenerator CG((C.isSetExecutableName()) ? C.getExecutableName() : "atom.exe");
 
         for (int fileNumber = 1; fileNumber < ac; fileNumber++) {
             fileName = av[fileNumber];
+
+            if (fileName.size() == 0) continue;
             if (fileName.size() <= fileExtLen || fileName.compare(fileName.size() - fileExtLen, fileExtLen, FILE_EXT))
                 fileReadError(FileReadError::INV_FILE);
 

@@ -14,14 +14,13 @@
         - Reads initial arguments and sets compilation configuration
         - Prints colored comments if necesary
         - Can be accessed globally
-    Initial idea:
-        - '-d' or '--debug'   => Activate just debug comments
-        - '-v' or '--verbose' => Show detailed printings
-        - '-l' or '--lexer'   => Execute just Lexer
-        - '-p' or '--parser'  => Execute just Lexer and Parser
-        - '-c' or '--color'   => Adds color to certain comments
-        - '-o' or '--output'  => After it determine final executable name
-    Final idea: f:<flags>
+    Syntax: f:<flags>
+        - 'd' => Activate just debug comments
+        - 'v' => Show detailed printings
+        - 'l' => Execute just Lexer
+        - 'p' => Execute just Lexer and Parser
+        - 'c' => Adds color to certain comments
+        - 'o' => After it determine final executable name
 */
 class Config {
     private:

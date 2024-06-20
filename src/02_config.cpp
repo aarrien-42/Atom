@@ -10,60 +10,57 @@ Config::Config( char** arguments ) {
     setColorful = false;
     setExecutableName = false;
 
-
+    // Get argument count
     size_t argCount = 0;
-    for (argCount = 0; arguments[argCount] != NULL; argCount++) {
-        std::cout << arguments[argCount] << "\n";
+    while (arguments[argCount] != NULL) {
+        argCount++;
     }
 
+    // Loop each argument
     bool requestExecutableName = false;
     for (size_t argIndex = 0; argIndex < argCount; argIndex++) {
         std::string argument(arguments[argIndex]);
-        std::cout << "ARGUMENT " << argIndex << " : " << argument << std::endl;
 
         if (requestExecutableName) {
             requestExecutableName = false;
             setExecutableName = true;
             executableName = argument;
+            arguments[argIndex][0] = '\0'; // Discard it as program file
         } else {
             std::string flagReference("f:");
 
+            // Set flags
             if (argument.size() > flagReference.size() && argument.find(flagReference) == 0) {
                 std::string flags = argument.substr(2);
-                std::cout << "FLAGS = " << flags << std::endl;
+                arguments[argIndex][0] = '\0'; // Discard it as program file
 
                 for (size_t flagIndex = 0; flagIndex < flags.size(); flagIndex++) {
                     char flag = flags.at(flagIndex);
                     switch (flag) {
                         case 'd':
-                            std::cout << "  DEBUG" << std::endl;
                             setDebug = true;
                             break;
                         case 'v':
-                            std::cout << "  VERBOSE" << std::endl;
                             setVerbose = true;
                             break;
                         case 'l':
-                            std::cout << "  LEXER" << std::endl;
                             setExecuteTillLexer = true;
                             break;
                         case 'p':
-                            std::cout << "  PARSER" << std::endl;
+                            setExecuteTillLexer = false;
                             setExecuteTillParser = true;
                             break;
                         case 'c':
-                            std::cout << "  COLOR" << std::endl;
                             setColorful = true;
                             break;
                         case 'o':
-                            std::cout << "  OUTPUT" << std::endl;
                             if (argIndex + 1 != argCount) {
                                 requestExecutableName = true;
                             } else {
-                                std::cout << "No executable name found" << std::endl;
+                                std::cerr << "No executable name found" << std::endl;
                             }
                             break;
-                        default: std::cout << "  UNKNOWN" << std::endl; break;
+                        default: std::cerr << "Unknown flag used" << std::endl; break;
                     }
                 }
             }
