@@ -17,7 +17,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential
-        chmod -R +r atm
+        chmod -R +r atm test
 
     - name: Compile program
       run: make re
