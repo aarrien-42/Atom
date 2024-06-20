@@ -73,7 +73,7 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
     - [ ] Error management correctly shown and without any crashes
 - [x] Multiple file compilation
 - [ ] Generate the target code in assembly:
-    - [ ] Code generator class
+    - [x] Code generator class
     - [ ] Generate code for every node:
         - [ ] Function nodes
         - [ ] Conditional nodes
@@ -82,7 +82,8 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
         - [ ] Return node
 - [ ] Testing:
     - [x] Add a way to develop tests for each compilation step using GitHub workflows
-    - [ ] Create a reliable and simple way of creating new tests
+    - [x] Create a reliable and simple way of creating new tests
+    - [ ] Add some color and readability
 - [ ] Final executable:
     - [ ] Compile the assembly code and generate a single executable
     - [x] Add a flag system for little settings as customizing executable name
