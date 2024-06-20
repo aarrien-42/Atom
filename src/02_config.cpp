@@ -5,8 +5,9 @@
 ConfigManager::ConfigManager( char** arguments ) {
     setDebug = false;
     setVerbose = false;
-    setExecuteTillLexer = false;
-    setExecuteTillParser = false;
+    setExecuteLexer = true;
+    setExecuteParser = true;
+    setExecuteCodeGen = true;
     setColorful = false;
     setExecutableName = false;
 
@@ -44,11 +45,14 @@ ConfigManager::ConfigManager( char** arguments ) {
                             setVerbose = true;
                             break;
                         case 'l':
-                            setExecuteTillLexer = true;
+                            setExecuteLexer = true;
+                            setExecuteParser = false;
+                            setExecuteCodeGen = false;
                             break;
                         case 'p':
-                            setExecuteTillLexer = false;
-                            setExecuteTillParser = true;
+                            setExecuteLexer = true;
+                            setExecuteParser = true;
+                            setExecuteCodeGen = false;
                             break;
                         case 'c':
                             setColorful = true;
@@ -71,7 +75,7 @@ ConfigManager::ConfigManager( char** arguments ) {
 /*-DESTRUCTOR-*/
 
 ConfigManager::~ConfigManager() {
-    std::cout << setDebug << setVerbose << setExecuteTillLexer << setExecuteTillParser << setColorful << std::endl;
+    std::cout << setDebug << setVerbose << setExecuteLexer << setExecuteParser << setColorful << std::endl;
     if (setExecutableName) std::cout << executableName << std::endl;
 }
 

@@ -26,8 +26,9 @@ class ConfigManager {
     private:
         bool setDebug;
         bool setVerbose;
-        bool setExecuteTillLexer;
-        bool setExecuteTillParser;
+        bool setExecuteLexer;
+        bool setExecuteParser;
+        bool setExecuteCodeGen;
         bool setColorful;
 
         bool setExecutableName;
@@ -39,8 +40,9 @@ class ConfigManager {
         bool isSetExecutableName() { return setExecutableName; }
         std::string getExecutableName() { return executableName; }
 
-        bool canExecuteLexer() { return setExecuteTillLexer;}
-        bool canExecuteParser() { return setExecuteTillParser;}
+        bool canExecuteLexer() { return setExecuteLexer;}
+        bool canExecuteParser() { return setExecuteParser;}
+        bool canExecuteCodeGen() { return setExecuteCodeGen;}
 
         void printDebug( std::string );
         void printVerbose( std::string );

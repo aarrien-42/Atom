@@ -18,26 +18,37 @@ int main(int ac, char** av) {
             if (fileName.size() <= fileExtLen || fileName.compare(fileName.size() - fileExtLen, fileExtLen, FILE_EXT))
                 fileReadError(FileReadError::INV_FILE);
 
-            /*-LEXER-*/
-            LexerManager Lexer(fileName);
-            std::cout << BOLDBLUE << "\nTOKEN LIST:\n\n" << RESET;
-            std::cout << " * Before clean up:\n";
-            Lexer.printTokens();
-            std::cout << " * After clean up:\n";
-            Lexer.cleanTokens();
-            Lexer.printTokens();
-            std::cout << "\n";
+            if (Config.canExecuteLexer()) {
+                /*-LEXER-*/
+                std::cout << BOLDBLUE << "\nLEXER:\n\n" << RESET;
+                LexerManager Lexer(fileName);
+                std::cout << BOLDBLUE << "\nTOKEN LIST:\n\n" << RESET;
+                std::cout << " * Before clean up:\n";
+                Lexer.printTokens();
+                std::cout << " * After clean up:\n";
+                Lexer.cleanTokens();
+                Lexer.printTokens();
+                std::cout << "\n";
 
-            /*-PARSER-*/
-            std::cout << BOLDBLUE << "\nPARSER:\n\n" << RESET;
-            ParserManager Parser(Lexer.getTokens(), fileName);
-            ProgramNode* program = Parser.getProgram();
+                if (Config.canExecuteParser()) {
+                    /*-PARSER-*/
+                    std::cout << BOLDBLUE << "\nPARSER:\n\n" << RESET;
+                    ParserManager Parser(Lexer.getTokens(), fileName);
+                    ProgramNode* program = Parser.getProgram();
 
-            /*-CODE GENERATOR-*/
-            CodeGen.addProgram(program);
+                    if (Config.canExecuteCodeGen()) {
+                        /*-CODE GENERATOR-*/
+                        CodeGen.addProgram(program);
+                    }
+                }
+            }
         }
-        std::cout << BOLDBLUE << "\nCODE GENERATOR:\n\n" << RESET;
-        CodeGen.writeFullProgramCode();
+        // After Compiling every file
+        if (Config.canExecuteCodeGen()) {
+            /*-CODE GENERATOR-*/
+            std::cout << BOLDBLUE << "\nCODE GENERATOR:\n\n" << RESET;
+            CodeGen.writeFullProgramCode();
+        }
     }
 
     return 0;
