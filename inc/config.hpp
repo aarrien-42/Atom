@@ -15,8 +15,7 @@
         - Prints colored comments if necesary
         - Can be accessed globally
     Syntax: f:<flags>
-        - 'd' => Activate just debug comments
-        - 'v' => Show detailed printings
+        - 'd' => Activate debug mode
         - 'l' => Execute just Lexer
         - 'p' => Execute just Lexer and Parser
         - 'c' => Adds color to certain comments
@@ -24,8 +23,7 @@
 */
 class ConfigManager {
     private:
-        bool setDebug;
-        bool setVerbose;
+        bool setDebug; // TODO: add a way to just debug certain compilation states
         bool setExecuteLexer;
         bool setExecuteParser;
         bool setExecuteCodeGen;
@@ -44,8 +42,7 @@ class ConfigManager {
         bool canExecuteParser() { return setExecuteParser;}
         bool canExecuteCodeGen() { return setExecuteCodeGen;}
 
-        void printDebug( std::string );
-        void printVerbose( std::string );
+        void printDebug( std::string, char* );
 
 };
 
