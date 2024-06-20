@@ -221,17 +221,13 @@ void LexerManager::printTokens() {
         // print
         std::string strToPrint = "";
 
-        strToPrint += "[", type, " ", (it->value == "\n" ? "\\n" : it->value), "]";
-        //std::cout << "[" << type << " " << (it->value == "\n" ? "\\n" : it->value) << "]";
+        strToPrint += "[" + type, " " + it->value == "\n" ? "\\n" : it->value + "]";
         if (it->type != enter && it->type != tab) {
-            strToPrint += "[t", it->tabCount, " ", it->row, ":", it->column, "]";
-            //std::cout << "[t" << it->tabCount << " " << it->row << ":" << it->column << "]";
+            strToPrint += "[t" + std::to_string(it->tabCount) + " " + std::to_string(it->row) + ":" + std::to_string(it->column) + "]";
         }
         strToPrint += " ";
-        //std::cout << " ";
         if (it->type == enter) {
             strToPrint += "\n";
-            //std::cout << "\n";
         }
         strToPrint += "\n";
         Config.printDebug(strToPrint);

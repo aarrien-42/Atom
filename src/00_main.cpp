@@ -21,7 +21,7 @@ int main(int ac, char** av) {
             if (Config.canExecuteLexer()) {
                 /*-LEXER-*/
                 Config.printDebug("\nLEXER:\n\n", BOLDBLUE); // Print state
-                LexerManager Lexer(fileName);
+                LexerManager Lexer(fileName, Config);
                 Config.printDebug("\nTOKEN LIST:\n\n", BOLDBLUE);
                 Config.printDebug(" * Before clean up:\n");
                 Lexer.printTokens();
@@ -33,7 +33,7 @@ int main(int ac, char** av) {
                 if (Config.canExecuteParser()) {
                     /*-PARSER-*/
                     Config.printDebug("\nPARSER:\n\n", BOLDBLUE); // Print state
-                    ParserManager Parser(Lexer.getTokens(), fileName);
+                    ParserManager Parser(Lexer.getTokens(), fileName, Config);
                     ProgramNode* program = Parser.getProgram();
 
                     if (Config.canExecuteCodeGen()) {

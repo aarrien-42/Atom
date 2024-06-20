@@ -80,17 +80,18 @@ struct Token {
 
 class LexerManager {
     private:
+        ConfigManager& Config;
+
         std::string _sourceFileContent;
         std::vector<Token> _tokens;
         size_t _index;
 
-        ConfigManager& Config;
     public:
-        LexerManager( const std::string& fileName, ConfigManager& );
+        LexerManager( const std::string&, ConfigManager& );
         ~LexerManager();
 
         std::vector<Token> getTokens();
-        void setToken( std::string& buffer , TokenType tokenType = unknown );
+        void setToken( std::string& , TokenType = unknown );
 
         char peek();
         char consume();
