@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Description: Run tests based in the entry arguments
+
 # Get the first parameter
 test_type="$1"
 
@@ -22,7 +24,7 @@ case "$test_type" in
     ;;
     "clean")
         echo "Cleaning tests..."
-        
+        # TODO
     ;;
     *)
         echo "Invalid test type. Please use 'lexer', 'parser' or 'code_gen'."

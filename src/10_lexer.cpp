@@ -219,9 +219,9 @@ void LexerManager::printTokens() {
         }
 
         // print
-        std::string strToPrint = "";
+        std::string strToPrint;
 
-        strToPrint += "[" + type, " " + it->value == "\n" ? "\\n" : it->value + "]";
+        strToPrint += "[" + type + " " + (it->value == "\n" ? "\\n" : it->value) + "]";
         if (it->type != enter && it->type != tab) {
             strToPrint += "[t" + std::to_string(it->tabCount) + " " + std::to_string(it->row) + ":" + std::to_string(it->column) + "]";
         }
@@ -229,8 +229,6 @@ void LexerManager::printTokens() {
         if (it->type == enter) {
             strToPrint += "\n";
         }
-        strToPrint += "\n";
         Config.printDebug(strToPrint);
     }
-    //std::cout << std::endl;
 }

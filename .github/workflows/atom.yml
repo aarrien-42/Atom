@@ -24,11 +24,6 @@ jobs:
 
     - name: Run tests
       run: |
-        make run atm/test/test_01.atm
-        make run atm/test/test_02.atm
-        make run atm/test/test_03.atm
-        make run atm/test/test_04.atm
-        make run atm/test/test_05.atm
-        make run atm/test/test_06.atm
-        make run atm/test/test_07.atm
-        make run atm/test/test_08.atm
+        ./test/run_test.sh lexer
+        ./test/run_test.sh parser
+        ./test/run_test.sh code_gen

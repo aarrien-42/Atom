@@ -22,10 +22,10 @@ int main(int ac, char** av) {
                 /*-LEXER-*/
                 Config.printDebug("\nLEXER:\n\n", BOLDBLUE); // Print state
                 LexerManager Lexer(fileName, Config);
-                Config.printDebug("\nTOKEN LIST:\n\n", BOLDBLUE);
-                Config.printDebug(" * Before clean up:\n");
+                Config.printDebug("TOKEN LIST:\n", BOLDMAGENTA);
+                Config.printDebug("Before clean up:\n", BOLDWHITE);
                 Lexer.printTokens();
-                Config.printDebug(" * After clean up:\n");
+                Config.printDebug("After clean up:\n", BOLDWHITE);
                 Lexer.cleanTokens();
                 Lexer.printTokens();
                 std::cout << "\n";

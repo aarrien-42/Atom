@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Description: Copies actual_results into expected_results
+
 # Get the first parameter
 test_type="$1"
 
