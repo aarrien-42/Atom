@@ -77,6 +77,9 @@ ConfigManager::~ConfigManager() {
 
 /*-METHODS-*/
 
-void ConfigManager::printDebug( std::string str, char* strColor ) {
-    std::cout << strColor << str << RESET << std::endl;
+void ConfigManager::printDebug( std::string str, std::string strColor ) {
+    if (setColorful) {
+        std::cout << strColor;
+    }
+    std::cout << str << RESET;
 }

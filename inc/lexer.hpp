@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include "utils.hpp"
 #include "error.hpp"
+#include "config.hpp"
 
 #define KEYWORD_IF                  "i."
 #define KEYWORD_ELSE                "e."
@@ -82,8 +83,10 @@ class LexerManager {
         std::string _sourceFileContent;
         std::vector<Token> _tokens;
         size_t _index;
+
+        ConfigManager& Config;
     public:
-        LexerManager( const std::string& fileName );
+        LexerManager( const std::string& fileName, ConfigManager& );
         ~LexerManager();
 
         std::vector<Token> getTokens();

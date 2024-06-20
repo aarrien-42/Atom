@@ -20,19 +20,19 @@ int main(int ac, char** av) {
 
             if (Config.canExecuteLexer()) {
                 /*-LEXER-*/
-                std::cout << BOLDBLUE << "\nLEXER:\n\n" << RESET;
+                Config.printDebug("\nLEXER:\n\n", BOLDBLUE); // Print state
                 LexerManager Lexer(fileName);
-                std::cout << BOLDBLUE << "\nTOKEN LIST:\n\n" << RESET;
-                std::cout << " * Before clean up:\n";
+                Config.printDebug("\nTOKEN LIST:\n\n", BOLDBLUE);
+                Config.printDebug(" * Before clean up:\n");
                 Lexer.printTokens();
-                std::cout << " * After clean up:\n";
+                Config.printDebug(" * After clean up:\n");
                 Lexer.cleanTokens();
                 Lexer.printTokens();
                 std::cout << "\n";
 
                 if (Config.canExecuteParser()) {
                     /*-PARSER-*/
-                    std::cout << BOLDBLUE << "\nPARSER:\n\n" << RESET;
+                    Config.printDebug("\nPARSER:\n\n", BOLDBLUE); // Print state
                     ParserManager Parser(Lexer.getTokens(), fileName);
                     ProgramNode* program = Parser.getProgram();
 
@@ -46,7 +46,7 @@ int main(int ac, char** av) {
         // After Compiling every file
         if (Config.canExecuteCodeGen()) {
             /*-CODE GENERATOR-*/
-            std::cout << BOLDBLUE << "\nCODE GENERATOR:\n\n" << RESET;
+            Config.printDebug("\nCODE GENERATOR:\n\n", BOLDBLUE); // Print state
             CodeGen.writeFullProgramCode();
         }
     }

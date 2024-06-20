@@ -9,6 +9,10 @@
 #include <string>
 #include <cstring>
 
+enum DebugMode {
+    Default, ShowLexer, 
+};
+
 /*
     Description:
         - Reads initial arguments and sets compilation configuration
@@ -23,11 +27,13 @@
 */
 class ConfigManager {
     private:
-        bool setDebug; // TODO: add a way to just debug certain compilation states
         bool setExecuteLexer;
         bool setExecuteParser;
         bool setExecuteCodeGen;
         bool setColorful;
+
+        bool setDebug; // TODO: add a way to just debug certain compilation states
+        DebugMode debugMode;
 
         bool setExecutableName;
         std::string executableName;
@@ -42,7 +48,7 @@ class ConfigManager {
         bool canExecuteParser() { return setExecuteParser;}
         bool canExecuteCodeGen() { return setExecuteCodeGen;}
 
-        void printDebug( std::string, char* );
+        void printDebug( std::string, std::string = RESET );
 
 };
 

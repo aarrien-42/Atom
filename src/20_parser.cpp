@@ -2,7 +2,7 @@
 
 /*-CONSTRUCTOR-*/
 
-ParserManager::ParserManager( const std::vector<Token>& tokens, std::string fileName ) : _tokens(tokens), _index(0) {
+ParserManager::ParserManager( const std::vector<Token>& tokens, std::string fileName, ConfigManager& config ) : Config(config), _tokens(tokens), _index(0) {
     _tree = new ProgramNode(*this, fileName);
 
     std::cout << "\nPROGRAM ABSTRACT SINTAX TREE:\n\n";

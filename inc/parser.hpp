@@ -7,6 +7,7 @@
 #include "utils.hpp"
 #include "nodes.hpp"
 #include "error.hpp"
+#include "config.hpp"
 
 struct Token;
 struct ASTNode;
@@ -17,8 +18,10 @@ class ParserManager {
         ProgramNode* _tree;
         std::vector<Token> _tokens;
         size_t _index;
+
+        ConfigManager& Config;
     public:
-        ParserManager( const std::vector<Token>&, std::string fileName );
+        ParserManager( const std::vector<Token>&, std::string, ConfigManager& );
         ~ParserManager();
 
         ProgramNode* getProgram();

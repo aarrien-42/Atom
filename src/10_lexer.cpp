@@ -4,7 +4,7 @@ size_t currentTabs = 0, currentRow = 1, currentColumn = 1;
 
 /*-CONSTRUCTOR-*/
 
-LexerManager::LexerManager( const std::string& fileName ) : _index(0) {
+LexerManager::LexerManager( const std::string& fileName, ConfigManager& config ) : Config(config), _index(0) {
     std::ifstream inputFile(fileName);
 
     if (!inputFile.is_open())
@@ -219,12 +219,22 @@ void LexerManager::printTokens() {
         }
 
         // print
-        std::cout << "[" << type << " " << (it->value == "\n" ? "\\n" : it->value) << "]";
-        if (it->type != enter && it->type != tab)
-            std::cout << "[t" << it->tabCount << " " << it->row << ":" << it->column << "]";
-        std::cout << " ";
-        if (it->type == enter)
-            std::cout << "\n";
+        std::string strToPrint = "";
+
+        strToPrint += "[", type, " ", (it->value == "\n" ? "\\n" : it->value), "]";
+        //std::cout << "[" << type << " " << (it->value == "\n" ? "\\n" : it->value) << "]";
+        if (it->type != enter && it->type != tab) {
+            strToPrint += "[t", it->tabCount, " ", it->row, ":", it->column, "]";
+            //std::cout << "[t" << it->tabCount << " " << it->row << ":" << it->column << "]";
+        }
+        strToPrint += " ";
+        //std::cout << " ";
+        if (it->type == enter) {
+            strToPrint += "\n";
+            //std::cout << "\n";
+        }
+        strToPrint += "\n";
+        Config.printDebug(strToPrint);
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
 }
