@@ -82,7 +82,6 @@ BoxNode::BoxNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Box,
             index++;
         }
         if (validBox) {
-            printf("Is Valid\n");
             parser.consume();
             if (parser.peek().value == "(") {
                 // Another BoxNode at the start
