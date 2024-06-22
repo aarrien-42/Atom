@@ -4,7 +4,7 @@ size_t currentTabs = 0, currentRow = 1, currentColumn = 1;
 
 /*-CONSTRUCTOR-*/
 
-LexerManager::LexerManager( const std::string& fileName, ConfigManager& config ) : Config(config), _index(0) {
+LexerManager::LexerManager( const std::string& fileName ) : _index(0) {
     std::ifstream inputFile(fileName);
 
     if (!inputFile.is_open())
@@ -219,6 +219,7 @@ void LexerManager::printTokens() {
         }
 
         // print
+        ConfigManager& config = ConfigManager::getInstance();
         std::string strToPrint;
 
         strToPrint += "[" + type + " " + (it->value == "\n" ? "\\n" : it->value) + "]";
@@ -229,6 +230,6 @@ void LexerManager::printTokens() {
         if (it->type == enter) {
             strToPrint += "\n";
         }
-        Config.printDebug(strToPrint);
+        config.printDebug(strToPrint);
     }
 }

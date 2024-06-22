@@ -2,10 +2,10 @@
 
 /*-CONSTRUCTOR-*/
 
-ParserManager::ParserManager( const std::vector<Token>& tokens, std::string fileName, ConfigManager& config ) : Config(config), _tokens(tokens), _index(0) {
+ParserManager::ParserManager( const std::vector<Token>& tokens, std::string fileName ) : _tokens(tokens), _index(0) {
     _tree = new ProgramNode(*this, fileName);
 
-    Config.printDebug("\nPROGRAM ABSTRACT SINTAX TREE:\n", BOLDMAGENTA);
+    ConfigManager::getInstance().printDebug("\nPROGRAM ABSTRACT SINTAX TREE:\n", BOLDMAGENTA);
     _tree->printNode();
 }
 

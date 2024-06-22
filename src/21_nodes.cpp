@@ -3,7 +3,7 @@
 /*-PROGRAM-*/
 
 ProgramNode::ProgramNode( ParserManager& parser, std::string file, size_t level ) : ASTNode(NodeType::Program, level) {
-    std::cout << "  **PROGRAM NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("ProgramNode created\n", CYAN);
 
     fileName = file;
 
@@ -25,7 +25,7 @@ ProgramNode::ProgramNode( ParserManager& parser, std::string file, size_t level 
 /*-BLOCK-*/
 
 BlockNode::BlockNode( ParserManager& parser, size_t initialTabs, size_t level ) : ASTNode(NodeType::Block, level) {
-    std::cout << "  **BLOCK NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("BlockNode created\n", CYAN);
     bool newValidLine = true;
 
     do {
@@ -65,7 +65,7 @@ BlockNode::BlockNode( ParserManager& parser, size_t initialTabs, size_t level ) 
 }
 
 BoxNode::BoxNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Box, level) {
-    std::cout << "  **BOX NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("BoxNode created\n", CYAN);
     int nestedParen = 0, index = 0;
     bool validBox = false;
 
@@ -142,7 +142,7 @@ BoxNode::BoxNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Box,
 /*-FUNCTION-*/
 
 FuncDeclNode::FuncDeclNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::FuncDecl, level), body(nullptr) {
-    std::cout << "  **FUNC DECL NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("FuncDeclNode created\n", CYAN);
 
     functionName = parser.consume().value;
     if (parser.peek().type != enter) { // Function has parameters
@@ -168,7 +168,7 @@ FuncCallNode::FuncCallNode( ParserManager& parser, size_t level ) : ASTNode(Node
 
 // More conditional types need to be implemented
 ConditionNode::ConditionNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Condition, level), leftComp(nullptr), rightComp(nullptr) {
-    std::cout << "  **CONDITIONAL NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("ConditionNode created\n", CYAN);
     bool withParen = false;
 
     if (parser.peek().type == TokenType::paren) {
@@ -211,7 +211,7 @@ ConditionNode::ConditionNode( ParserManager& parser, size_t level ) : ASTNode(No
 }
 
 IfStatementNode::IfStatementNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::IfStatement, level), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
-    std::cout << "  **IF NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("IfStatementNode created\n", CYAN);
     size_t initialTabs = parser.peek().tabCount;
 
     if (parser.peek().value == "i.") {
@@ -232,19 +232,19 @@ IfStatementNode::IfStatementNode( ParserManager& parser, size_t level ) : ASTNod
 }
 
 WhileLoopNode::WhileLoopNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::WhileLoop, level), condition(nullptr), body(nullptr) {
-    std::cout << "  **WHILE LOOP NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("WhileLoopNode created\n", CYAN);
     (void)parser;
 }
 
 ForLoopNode::ForLoopNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::ForLoop, level), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
-    std::cout << "  **FOR LOOP NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("ForLoopNode created\n", CYAN);
     (void)parser;
 }
 
 /*-OPERATION-*/
 
 BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::BinOp, level), leftOp(nullptr), rightOp(nullptr) {
-    std::cout << "  **BIN OP NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("BinOpNode created\n", CYAN);
 
     ASTNode** opNode;
     while (true) {
@@ -277,14 +277,14 @@ BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::
 }
 
 UnaryOpNode::UnaryOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::UnaryOp, level), operand(nullptr) {
-    std::cout << "  **UNARY OP NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("UnaryOpNode created\n", CYAN);
     (void)parser;
 }
 
 /*-VARAIBLE-*/
 
 VarDeclNode::VarDeclNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::VarDecl, level), initialValue(nullptr) {
-    std::cout << "  **VAR DECL NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("VarDeclNode created\n", CYAN);
 
     if (parser.peek().value == "v.")
         parser.consume();
@@ -305,7 +305,7 @@ VarDeclNode::VarDeclNode( ParserManager& parser, size_t level ) : ASTNode(NodeTy
 }
 
 AssignNode::AssignNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Assign, level), value(nullptr) {
-    std::cout << "  **ASSIGN NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("AssignNode created\n", CYAN);
 
     if (parser.peek().type == identifier) {
         variableName = parser.consume().value;
@@ -339,7 +339,7 @@ AssignNode::AssignNode( ParserManager& parser, size_t level ) : ASTNode(NodeType
 }
 
 LiteralNode::LiteralNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Literal, level) {
-    std::cout << "  **LITERAL NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("LiteralNode created\n", CYAN);
 
     if (parser.peek().type != literal)
         parserNodeError(INV_LITERAL_NODE, parser.consume(), "Invalid Literal Node");
@@ -348,7 +348,7 @@ LiteralNode::LiteralNode( ParserManager& parser, size_t level ) : ASTNode(NodeTy
 }
 
 IdentifierNode::IdentifierNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Identifier, level) {
-    std::cout << "  **IDENTIFIER NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("IdentifierNode created\n", CYAN);
 
     if (parser.peek().type != identifier)
         parserNodeError(INV_IDENTIFIER_NODE, parser.consume(), "Invalid Identifier Node");
@@ -359,7 +359,7 @@ IdentifierNode::IdentifierNode( ParserManager& parser, size_t level ) : ASTNode(
 /*-RETURN-*/
 
 ReturnNode::ReturnNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Return, level), returnValue(nullptr) {
-    std::cout << "  **RETURN NODE CREATED**\n";
+    ConfigManager::getInstance().printDebug("ReturnNode created\n", CYAN);
 
     if (parser.peek().value != "r.")
         parserNodeError(INV_RETURN_NODE, parser.consume(), "Invalid Return Node");

@@ -8,7 +8,8 @@ int main(int ac, char** av) {
         std::string fileName;
         size_t fileExtLen = strlen(FILE_EXT);
 
-        ConfigManager Config(&av[1]);
+        ConfigManager& Config = ConfigManager::getInstance();
+        Config.initConfig(&av[1]);
         CodeGeneratorManager CodeGen((Config.isSetExecutableName()) ? Config.getExecutableName() : "atom.exe");
 
         for (int fileNumber = 1; fileNumber < ac; fileNumber++) {
@@ -21,19 +22,18 @@ int main(int ac, char** av) {
             if (Config.canExecuteLexer()) {
                 /*-LEXER-*/
                 Config.printDebug("\nLEXER:\n\n", BOLDBLUE); // Print state
-                LexerManager Lexer(fileName, Config);
+                LexerManager Lexer(fileName);
                 Config.printDebug("TOKEN LIST:\n", BOLDMAGENTA);
                 Config.printDebug("Before clean up:\n", BOLDWHITE);
                 Lexer.printTokens();
                 Config.printDebug("After clean up:\n", BOLDWHITE);
                 Lexer.cleanTokens();
                 Lexer.printTokens();
-                std::cout << "\n";
 
                 if (Config.canExecuteParser()) {
                     /*-PARSER-*/
                     Config.printDebug("\nPARSER:\n\n", BOLDBLUE); // Print state
-                    ParserManager Parser(Lexer.getTokens(), fileName, Config);
+                    ParserManager Parser(Lexer.getTokens(), fileName);
                     ProgramNode* program = Parser.getProgram();
 
                     if (Config.canExecuteCodeGen()) {

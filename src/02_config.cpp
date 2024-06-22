@@ -2,14 +2,23 @@
 
 /*-CONSTRUCTOR-*/
 
-ConfigManager::ConfigManager( char** arguments ) {
+ConfigManager::ConfigManager() {
     setDebug = false;
     setExecuteLexer = true;
     setExecuteParser = true;
     setExecuteCodeGen = true;
     setColorful = false;
     setExecutableName = false;
+}
 
+/*-METHODS-*/
+
+ConfigManager& ConfigManager::getInstance() {
+    static ConfigManager instance;
+    return instance;
+}
+
+void ConfigManager::initConfig( char** arguments ) {
     // Get argument count
     size_t argCount = 0;
     while (arguments[argCount] != NULL) {
@@ -67,15 +76,6 @@ ConfigManager::ConfigManager( char** arguments ) {
         }
     }
 }
-
-/*-DESTRUCTOR-*/
-
-ConfigManager::~ConfigManager() {
-    std::cout << setDebug << setExecuteLexer << setExecuteParser << setColorful << std::endl;
-    if (setExecutableName) std::cout << executableName << std::endl;
-}
-
-/*-METHODS-*/
 
 void ConfigManager::printDebug( std::string str, std::string strColor ) {
     if (setDebug) {

@@ -15,13 +15,11 @@ struct ProgramNode;
 
 class ParserManager {
     private:
-        ConfigManager& Config;
-        
         ProgramNode* _tree;
         std::vector<Token> _tokens;
         size_t _index;
     public:
-        ParserManager( const std::vector<Token>&, std::string, ConfigManager& );
+        ParserManager( const std::vector<Token>&, std::string );
         ~ParserManager();
 
         ProgramNode* getProgram();

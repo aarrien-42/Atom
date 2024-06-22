@@ -17,7 +17,7 @@ enum DebugMode {
     Description:
         - Reads initial arguments and sets compilation configuration
         - Prints colored comments if necesary
-        - Can be accessed globally
+        - Can be accessed globally (singleton instance)
     Syntax: f:<flags>
         - 'd' => Activate debug mode
         - 'l' => Execute just Lexer
@@ -37,9 +37,11 @@ class ConfigManager {
 
         bool setExecutableName;
         std::string executableName;
+
+        ConfigManager();
     public:
-        ConfigManager( char** );
-        ~ConfigManager();
+        static ConfigManager& getInstance();
+        void initConfig( char** );
 
         bool isSetExecutableName() { return setExecutableName; }
         std::string getExecutableName() { return executableName; }

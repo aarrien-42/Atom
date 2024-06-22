@@ -43,38 +43,40 @@ struct ASTNode {
         NodeType getType() { return type; }
 
         virtual void putSpaces(bool isNode = false) const {
+            ConfigManager& Config = ConfigManager::getInstance();
             size_t spaceSize = 2;
 
             for (size_t i = 0; i < level + !isNode; i++) {
                 for (size_t j = 0; j < spaceSize; j++) {
-                    std::cout << " ";
+                    Config.printDebug(" ");
                 }
             }
         }
 
         virtual void printNode() const {
             putSpaces(true);
-            std::cout << getColor(level) << "[";
+            std::string textColor = getColor(level);
+            std::string nodeName;
             switch (type) {
-                case NodeType::Program:     std::cout << "ProgramNode";     break;
-                case NodeType::Block:       std::cout << "BlockNode";       break;
-                case NodeType::Box:         std::cout << "BoxNode";         break;
-                case NodeType::FuncDecl:    std::cout << "FuncDeclNode";    break;
-                case NodeType::FuncCall:    std::cout << "FuncCallNode";    break;
-                case NodeType::Condition:   std::cout << "ConditionNode";   break;
-                case NodeType::IfStatement: std::cout << "IfStatementNode"; break;
-                case NodeType::WhileLoop:   std::cout << "WhileLoopNode";   break;
-                case NodeType::ForLoop:     std::cout << "ForLoopNode";     break;
-                case NodeType::BinOp:       std::cout << "BinOpNode";       break;
-                case NodeType::UnaryOp:     std::cout << "UnaryOpNode";     break;
-                case NodeType::VarDecl:     std::cout << "VarDeclNode";     break;
-                case NodeType::Assign:      std::cout << "AssignNode";      break;
-                case NodeType::Literal:     std::cout << "LiteralNode";     break;
-                case NodeType::Identifier:  std::cout << "IdentifierNode";  break;
-                case NodeType::Return:      std::cout << "ReturnNode";      break;
-                default: std::cout << "Unknown";
+                case NodeType::Program:     nodeName = "ProgramNode";     break;
+                case NodeType::Block:       nodeName = "BlockNode";       break;
+                case NodeType::Box:         nodeName = "BoxNode";         break;
+                case NodeType::FuncDecl:    nodeName = "FuncDeclNode";    break;
+                case NodeType::FuncCall:    nodeName = "FuncCallNode";    break;
+                case NodeType::Condition:   nodeName = "ConditionNode";   break;
+                case NodeType::IfStatement: nodeName = "IfStatementNode"; break;
+                case NodeType::WhileLoop:   nodeName = "WhileLoopNode";   break;
+                case NodeType::ForLoop:     nodeName = "ForLoopNode";     break;
+                case NodeType::BinOp:       nodeName = "BinOpNode";       break;
+                case NodeType::UnaryOp:     nodeName = "UnaryOpNode";     break;
+                case NodeType::VarDecl:     nodeName = "VarDeclNode";     break;
+                case NodeType::Assign:      nodeName = "AssignNode";      break;
+                case NodeType::Literal:     nodeName = "LiteralNode";     break;
+                case NodeType::Identifier:  nodeName = "IdentifierNode";  break;
+                case NodeType::Return:      nodeName = "ReturnNode";      break;
+                default: nodeName = "Unknown";
             }
-            std::cout << "]:\n" << RESET;
+            ConfigManager::getInstance().printDebug("[" + nodeName + "]:\n", textColor);
         }
 };
 
@@ -95,7 +97,7 @@ struct ProgramNode : public ASTNode {
     void printNode() const override {
         ASTNode::printNode();
 
-        std::cout << "File name = " << fileName << std::endl;
+        ConfigManager::getInstance().printDebug("File name = " + fileName + "\n");
         for (ASTNode* function : functions) {
             function->printNode();
         }
@@ -158,18 +160,20 @@ struct FuncDeclNode : public ASTNode {
     void printNode() const override {
         ASTNode::printNode();
 
+        ConfigManager& Config = ConfigManager::getInstance();
+
         ASTNode::putSpaces();
-        std::cout << "Function name = " << functionName << std::endl;
+        Config.printDebug("Function name = " + functionName + "\n");
         if (!parameters.empty()) {
             ASTNode::putSpaces();
-            std::cout << "Parameters:" << std::endl;
+            Config.printDebug("Parameters:\n");
             for (ASTNode* param : parameters) {
                 param->printNode();
-                std::cout << " ";
+                Config.printDebug(" ");
             }
         }
         ASTNode::putSpaces();
-        std::cout << "Body:" << std::endl;
+        Config.printDebug("Body:\n");
         body->printNode();
     }
 };
@@ -189,14 +193,16 @@ struct FuncCallNode : public ASTNode {
     void printNode() const override {
         ASTNode::printNode();
 
+        ConfigManager& Config = ConfigManager::getInstance();
+
         ASTNode::putSpaces();
-        std::cout << "Function name = " << functionName << std::endl;
+        Config.printDebug("Function name = " + functionName + "\n");
         if (!parameters.empty()) {
             ASTNode::putSpaces();
-            std::cout << "Parameters:" << std::endl;
+            Config.printDebug("Parameters:\n");
             for (ASTNode* param : parameters) {
                 param->printNode();
-                std::cout << " ";
+                Config.printDebug(" ");
             }
         }
     }
@@ -217,13 +223,15 @@ struct ConditionNode : public ASTNode {
     void printNode() const override {
         ASTNode::printNode();
 
+        ConfigManager& Config = ConfigManager::getInstance();
+
         putSpaces();
-        std::cout << "Comparator: " << comparation << std::endl;
+        Config.printDebug("Comparator: " + comparation + "\n");
         putSpaces();
-        std::cout << "Left node:" << std::endl;
+        Config.printDebug("Left node: " + comparation + "\n");
         leftComp->printNode();
         putSpaces();
-        std::cout << "Right node:" << std::endl;
+        Config.printDebug("Right node: " + comparation + "\n");
         rightComp->printNode();
     }
 };
@@ -242,20 +250,22 @@ struct IfStatementNode : public ASTNode {
     void printNode() const override {
         ASTNode::printNode();
 
+        ConfigManager& Config = ConfigManager::getInstance();
+
         putSpaces();
-        std::cout << "Condition:" << std::endl;
+        Config.printDebug("Condition:\n");
         condition->printNode();
         putSpaces();
-        std::cout << "Body:" << std::endl;
+        Config.printDebug("Body:\n");
         body->printNode();
         if (ifBranch != nullptr) {
             putSpaces();
-            std::cout << "If branch:" << std::endl;
+            Config.printDebug("If branch:\n");
             ifBranch->printNode();
         }
         if (elseBranch != nullptr) {
             putSpaces();
-            std::cout << "Else branch:" << std::endl;
+            Config.printDebug("Else branch:\n");
             elseBranch->printNode();
         }
     }
@@ -306,13 +316,15 @@ struct BinOpNode : public ASTNode {
     void printNode() const override {
         ASTNode::printNode();
 
+        ConfigManager& Config = ConfigManager::getInstance();
+
         ASTNode::putSpaces();
-        std::cout << "Operator: " << operation << std::endl;
+        Config.printDebug("Operator: " + operation + "\n");
         ASTNode::putSpaces();
-        std::cout << "Left Operand: " << std::endl;
+        Config.printDebug("Left Operand:\n");
         leftOp->printNode();
         ASTNode::putSpaces();
-        std::cout << "Right Operand: " << std::endl;
+        Config.printDebug("Right Operand:\n");
         rightOp->printNode();
     }
 };
@@ -330,7 +342,7 @@ struct UnaryOpNode : public ASTNode {
         ASTNode::printNode();
 
         operand->printNode();
-        std::cout << operation;
+        ConfigManager::getInstance().printDebug(operation);
     }
 };
 
@@ -348,11 +360,13 @@ struct VarDeclNode : public ASTNode {
     void printNode() const override {
         ASTNode::printNode();
 
+        ConfigManager& Config = ConfigManager::getInstance();
+
         putSpaces();
-        std::cout << "Variable name: " << name << std::endl;
+        Config.printDebug("Variable name: " + name + "\n");
         if (initialValue != nullptr) {
             putSpaces();
-            std::cout << "Initial value:" << std::endl;
+            Config.printDebug("Initial value:\n");
             initialValue->printNode();
         }
     }
@@ -371,7 +385,7 @@ struct AssignNode : public ASTNode {
         ASTNode::printNode();
 
         putSpaces();
-        std::cout << "Variable name: " << variableName << std::endl;
+        ConfigManager::getInstance().printDebug("Variable name: " + variableName + "\n");
         value->printNode();
     }
 };
@@ -387,7 +401,7 @@ struct LiteralNode : public ASTNode {
         ASTNode::printNode();
 
         putSpaces();
-        std::cout << value << std::endl;
+        ConfigManager::getInstance().printDebug(value + "\n");
     }
 };
 
@@ -402,7 +416,7 @@ struct IdentifierNode : public ASTNode {
         ASTNode::printNode();
 
         putSpaces();
-        std::cout << name << std::endl;
+        ConfigManager::getInstance().printDebug(name + "\n");
     }
 };
 
