@@ -1,0 +1,8 @@
+
+LEXER:
+
+TOKEN LIST:
+Before clean up:
+[literal 321][t0 1:4] [literal "sadasd asdsf3244355 \' 324"][t0 1:33] [literal 961879][t0 1:40] [enter \n] 
+After clean up:
+[literal 321][t0 1:4] [literal "sadasd asdsf3244355 \' 324"][t0 1:33] [literal 961879][t0 1:40] [enter \n] 

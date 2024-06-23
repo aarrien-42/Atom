@@ -1,0 +1,17 @@
+
+LEXER:
+
+TOKEN LIST:
+Before clean up:
+[keyword i.][t0 1:3] [keyword e.][t0 1:6] [keyword ie.][t0 1:10] [keyword w.][t0 1:19] [enter \n] 
+[enter \n] 
+[enter \n] 
+[keyword f.][t0 4:3] [enter \n] 
+[keyword v.][t0 5:3] [identifier x][t0 5:5] [enter \n] 
+[enter \n] 
+[keyword r.][t0 7:3] [literal 0][t0 7:5] [enter \n] 
+After clean up:
+[keyword i.][t0 1:3] [keyword e.][t0 1:6] [keyword ie.][t0 1:10] [keyword w.][t0 1:19] [enter \n] 
+[keyword f.][t0 4:3] [enter \n] 
+[keyword v.][t0 5:3] [identifier x][t0 5:5] [enter \n] 
+[keyword r.][t0 7:3] [literal 0][t0 7:5] [enter \n] 

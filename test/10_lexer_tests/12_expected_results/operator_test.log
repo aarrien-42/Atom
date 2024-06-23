@@ -1,0 +1,8 @@
+
+LEXER:
+
+TOKEN LIST:
+Before clean up:
+[operation +][t0 1:2] [operation -][t0 1:4] [operation *][t0 1:6] [operation /][t0 1:8] [operation %][t0 1:10] [operation +][t0 1:12] [operation +][t0 1:13] [operation -][t0 1:15] [operation -][t0 1:16] [comparison ==][t0 1:19] [comparison !=][t0 1:22] [comparison <=][t0 1:25] [comparison >=][t0 1:28] [unknown !][t0 1:30] [enter \n] 
+After clean up:
+[operation +][t0 1:2] [operation -][t0 1:4] [operation *][t0 1:6] [operation /][t0 1:8] [operation %][t0 1:10] [operation +][t0 1:12] [operation +][t0 1:13] [operation -][t0 1:15] [operation -][t0 1:16] [comparison ==][t0 1:19] [comparison !=][t0 1:22] [comparison <=][t0 1:25] [comparison >=][t0 1:28] [unknown !][t0 1:30] [enter \n] 

@@ -219,7 +219,7 @@ void LexerManager::printTokens() {
         }
 
         // print
-        ConfigManager& config = ConfigManager::getInstance();
+        ConfigManager& Config = ConfigManager::getInstance();
         std::string strToPrint;
 
         strToPrint += "[" + type + " " + (it->value == "\n" ? "\\n" : it->value) + "]";
@@ -230,6 +230,6 @@ void LexerManager::printTokens() {
         if (it->type == enter) {
             strToPrint += "\n";
         }
-        config.printDebug(strToPrint);
+        Config.printDebug(strToPrint);
     }
 }
