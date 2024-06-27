@@ -28,12 +28,18 @@ void CodeGeneratorManager::writeFullProgramCode() {
 
     if (_outCodeFile.is_open()) {
         /*-CODE-*/
-        _outCodeFile << "section .text\n  global _start\n\n";
+        _outCodeFile << "bits 64\nglobal _start\n";
         for (size_t progCount = 0; progCount < _parsedPrograms.size(); progCount++) {
             nodeHandler(_parsedPrograms[progCount]);
         }
+
         ConfigManager::getInstance().printDebug("\nCOMPILING AND LINKING CODE:\n\n", BOLDBLUE);
         assembleAndLink();
+
+        ConfigManager::getInstance().printDebug("\nEXECUTING CODE:\n\n", BOLDBLUE);
+        int exitCode = std::system(("./" + _outputFileName).c_str());
+        ConfigManager::getInstance().printDebug("Exit code = ", MAGENTA);
+        ConfigManager::getInstance().printDebug(std::to_string(exitCode) + "\n");
     }
 }
 
@@ -206,11 +212,14 @@ void CodeGeneratorManager::writeReturnNode( ReturnNode* node ) {
 
 
 void CodeGeneratorManager::assembleAndLink() {
+    // Remove any existing same name executable
+    std::filesystem::remove(_outputFileName);
+
     // Assemble the assembly file using NASM
     std::string asmFile = _assemblyCodeFileName + ".asm";
     std::string objFile = _assemblyCodeFileName + ".o";
 
-    std::string nasmCommand = "/usr/bin/nasm -f elf64 " + asmFile + " -o " + objFile;
+    std::string nasmCommand = "nasm -f elf64 -g " + asmFile + " -o " + objFile;
     ConfigManager::getInstance().printDebug("Nasm command : " + nasmCommand + "\n", RED);
     int nasmResult = std::system(nasmCommand.c_str());
 
@@ -220,7 +229,7 @@ void CodeGeneratorManager::assembleAndLink() {
     }
 
     // Link the object file using LD
-    std::string ldCommand = "/usr/bin/ld " + objFile + " -o " + _outputFileName;
+    std::string ldCommand = "ld " + objFile + " -o " + _outputFileName;
     ConfigManager::getInstance().printDebug("Ld command : " + ldCommand + "\n", RED);
     int ldResult = std::system(ldCommand.c_str());
 
@@ -230,6 +239,6 @@ void CodeGeneratorManager::assembleAndLink() {
     }
 
     // Remove not executable files
-    //std::filesystem::remove(asmFile);
-    //std::filesystem::remove(objFile);
+    std::filesystem::remove(asmFile);
+    std::filesystem::remove(objFile);
 }
