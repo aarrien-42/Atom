@@ -2,6 +2,7 @@
 #define CODE_GEN_HPP
 
 #include <iostream>
+#include <cstdlib>
 #include <filesystem>
 
 #include <string>
@@ -11,10 +12,25 @@
 
 struct ASTNode;
 struct ProgramNode;
+struct FuncDeclNode;
+struct FuncCallNode;
+struct ConditionNode;
+struct IfStatementNode;
+struct WhileLoopNode;
+struct ForLoopNode;
+struct BinOpNode;
+struct UnaryOpNode;
+struct VarDeclNode;
+struct AssignNode;
+struct LiteralNode;
+struct IdentifierNode;
+struct ReturnNode;
 
 class CodeGeneratorManager {
     private:
-        std::string _outputFile;
+        std::string _assemblyCodeFileName;
+        std::string _outputFileName;
+        std::ofstream _outCodeFile;
         std::vector<ProgramNode*> _parsedPrograms;
     public:
         CodeGeneratorManager( std::string );
@@ -27,19 +43,21 @@ class CodeGeneratorManager {
         // void writeProgramNode( ASTNode* );
         // void writeBlockNode( ASTNode* );
         // void writeBoxNode( ASTNode* );
-        void writeFuncDeclNode( ASTNode* );
-        void writeFuncCallNode( ASTNode* );
-        void writeConditionNode( ASTNode* );
-        void writeIfStatementNode( ASTNode* );
-        void writeWhileLoopNode( ASTNode* );
-        void writeForLoopNode( ASTNode* );
-        void writeBinOpNode( ASTNode* );
-        void writeUnaryOpNode( ASTNode* );
-        void writeVarDeclNode( ASTNode* );
-        void writeAssignNode( ASTNode* );
-        void writeLiteralNode( ASTNode* );
-        void writeIdentifierNode( ASTNode* );
-        void writeReturnNode( ASTNode* );
+        void writeFuncDeclNode( FuncDeclNode* );
+        void writeFuncCallNode( FuncCallNode* );
+        void writeConditionNode( ConditionNode* );
+        void writeIfStatementNode( IfStatementNode* );
+        void writeWhileLoopNode( WhileLoopNode* );
+        void writeForLoopNode( ForLoopNode* );
+        void writeBinOpNode( BinOpNode* );
+        void writeUnaryOpNode( UnaryOpNode* );
+        void writeVarDeclNode( VarDeclNode* );
+        void writeAssignNode( AssignNode* );
+        void writeLiteralNode( LiteralNode* );
+        void writeIdentifierNode( IdentifierNode* );
+        void writeReturnNode( ReturnNode* );
+
+        void assembleAndLink();
 };
 
 #endif

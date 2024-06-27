@@ -2,12 +2,15 @@
 
 /*-CONSTRUCTOR-*/
 
-CodeGeneratorManager::CodeGeneratorManager( std::string outputFile ) : _outputFile(outputFile) {
-}
+CodeGeneratorManager::CodeGeneratorManager( std::string outputFile ) : _assemblyCodeFileName("code"), _outputFileName(outputFile) {}
 
 /*-DESTRUCTOR-*/
 
 CodeGeneratorManager::~CodeGeneratorManager() {
+    // Close assembly code files
+    _outCodeFile.close();
+
+    // Delete all AST structures
     for (ProgramNode* program : _parsedPrograms) {
         delete program;
     }
@@ -20,25 +23,25 @@ void CodeGeneratorManager::addProgram( ProgramNode* program ) {
 }
 
 void CodeGeneratorManager::writeFullProgramCode() {
-    std::ofstream outDataFile("asm/data.asm", std::ios::out | std::ios::trunc);
-    std::ofstream outCodeFile("asm/code.asm", std::ios::out | std::ios::trunc);
+    ConfigManager::getInstance().printDebug("Output program = " + _outputFileName + "\n", MAGENTA);
+    _outCodeFile.open(_assemblyCodeFileName + ".asm", std::ios::out | std::ios::trunc);
 
-    if (outDataFile.is_open() && outCodeFile.is_open()) {
-        /*-DATA-*/
-        outDataFile << "section .data\n";
-
+    if (_outCodeFile.is_open()) {
         /*-CODE-*/
-        outCodeFile << "%include 'data.asm'\n\nsection .text\n  global _start\n\n";
+        _outCodeFile << "section .text\n  global _start\n\n";
         for (size_t progCount = 0; progCount < _parsedPrograms.size(); progCount++) {
             nodeHandler(_parsedPrograms[progCount]);
         }
+        ConfigManager::getInstance().printDebug("\nCOMPILING AND LINKING CODE:\n\n", BOLDBLUE);
+        assembleAndLink();
     }
 }
 
 void CodeGeneratorManager::nodeHandler( ASTNode* node ) {
-    std::cout << "Node type = " << node->getType() << std::endl;
+    ConfigManager::getInstance().printDebug("Node type = " + std::to_string(node->getType()) + "\n");
     switch (node->getType()) {
         case NodeType::Program: {
+            ConfigManager::getInstance().printDebug("  ProgramNode:\n", GREEN);
             ProgramNode* programNode = dynamic_cast<ProgramNode*>(node);
             for (ASTNode* function : programNode->functions) {
                 nodeHandler(function);
@@ -46,6 +49,7 @@ void CodeGeneratorManager::nodeHandler( ASTNode* node ) {
             break;
         }
         case NodeType::Block: {
+            ConfigManager::getInstance().printDebug("  BlockNode:\n", GREEN);
             BlockNode* programNode = dynamic_cast<BlockNode*>(node);
             for (ASTNode* statement : programNode->statements) {
                 nodeHandler(statement);
@@ -53,112 +57,179 @@ void CodeGeneratorManager::nodeHandler( ASTNode* node ) {
             break;
         }
         case NodeType::Box: {
+            ConfigManager::getInstance().printDebug("  BoxNode:\n", GREEN);
+            BoxNode* boxNode = dynamic_cast<BoxNode*>(node);
+            (void)boxNode;
             break;
         }
         case NodeType::FuncDecl: {
-            writeFuncDeclNode(node);
+            ConfigManager::getInstance().printDebug("  FuncDeclNode:\n", GREEN);
+            FuncDeclNode* funcDeclNode = dynamic_cast<FuncDeclNode*>(node);
+            writeFuncDeclNode(funcDeclNode);
+            nodeHandler(funcDeclNode->body);
             break;
         }
         case NodeType::FuncCall: {
-            writeFuncCallNode(node);
+            ConfigManager::getInstance().printDebug("  FuncCallNode:\n", GREEN);
+            FuncCallNode* funcCallNode = dynamic_cast<FuncCallNode*>(node);
+            writeFuncCallNode(funcCallNode);
             break;
         }
         case NodeType::Condition: {
-            writeConditionNode(node);
+            ConfigManager::getInstance().printDebug("  ConditionNode:\n", GREEN);
+            ConditionNode* conditionNode = dynamic_cast<ConditionNode*>(node);
+            writeConditionNode(conditionNode);
             break;
         }
         case NodeType::IfStatement: {
-            writeIfStatementNode(node);
+            ConfigManager::getInstance().printDebug("  IfStatementNode:\n", GREEN);
+            IfStatementNode* ifStatementNode = dynamic_cast<IfStatementNode*>(node);
+            writeIfStatementNode(ifStatementNode);
             break;
         }
         case NodeType::WhileLoop: {
-            writeWhileLoopNode(node);
+            ConfigManager::getInstance().printDebug("  WhileLoopNode:\n", GREEN);
+            WhileLoopNode* whileLoopNode = dynamic_cast<WhileLoopNode*>(node);
+            writeWhileLoopNode(whileLoopNode);
             break;
         }
         case NodeType::ForLoop: {
-            writeForLoopNode(node);
+            ConfigManager::getInstance().printDebug("  ForLoopNode:\n", GREEN);
+            ForLoopNode* forLoopNode = dynamic_cast<ForLoopNode*>(node);
+            writeForLoopNode(forLoopNode);
             break;
         }
         case NodeType::BinOp: {
-            writeBinOpNode(node);
+            ConfigManager::getInstance().printDebug("  BinOpNode:\n", GREEN);
+            BinOpNode* binOpNode = dynamic_cast<BinOpNode*>(node);
+            writeBinOpNode(binOpNode);
             break;
         }
         case NodeType::UnaryOp: {
-            writeUnaryOpNode(node);
+            ConfigManager::getInstance().printDebug("  UnaryOpNode:\n", GREEN);
+            UnaryOpNode* unaryOpNode = dynamic_cast<UnaryOpNode*>(node);
+            writeUnaryOpNode(unaryOpNode);
             break;
         }
         case NodeType::VarDecl: {
-            writeVarDeclNode(node);
+            ConfigManager::getInstance().printDebug("  VarDeclNode:\n", GREEN);
+            VarDeclNode* varDeclNode = dynamic_cast<VarDeclNode*>(node);
+            writeVarDeclNode(varDeclNode);
             break;
         }
         case NodeType::Assign: {
-            writeAssignNode(node);
+            ConfigManager::getInstance().printDebug("  AssignNode:\n", GREEN);
+            AssignNode* assignNode = dynamic_cast<AssignNode*>(node);
+            writeAssignNode(assignNode);
             break;
         }
         case NodeType::Literal: {
-            writeLiteralNode(node);
+            ConfigManager::getInstance().printDebug("  LiteralNode:\n", GREEN);
+            LiteralNode* literalNode = dynamic_cast<LiteralNode*>(node);
+            writeLiteralNode(literalNode);
             break;
         }
         case NodeType::Identifier: {
-            writeIdentifierNode(node);
+            ConfigManager::getInstance().printDebug("  IdentifierNode:\n", GREEN);
+            IdentifierNode* identifierNode = dynamic_cast<IdentifierNode*>(node);
+            writeIdentifierNode(identifierNode);
             break;
         }
         case NodeType::Return: {
-            writeReturnNode(node);
+            ConfigManager::getInstance().printDebug("  ReturnNode:\n", GREEN);
+            ReturnNode* returnNode = dynamic_cast<ReturnNode*>(node);
+            writeReturnNode(returnNode);
             break;
         }
     }
 }
 
-void    CodeGeneratorManager::writeFuncDeclNode( ASTNode* node ) {
+void CodeGeneratorManager::writeFuncDeclNode( FuncDeclNode* node ) {
+    if (node->functionName == "main:") {
+        _outCodeFile << "_start:\n";
+    } else {
+        _outCodeFile << node->functionName << "\n";
+    }
     (void)node;
 }
 
-void    CodeGeneratorManager::writeFuncCallNode( ASTNode* node ) {
+void CodeGeneratorManager::writeFuncCallNode( FuncCallNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeConditionNode( ASTNode* node ) {
+void CodeGeneratorManager::writeConditionNode( ConditionNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeIfStatementNode( ASTNode* node ) {
+void CodeGeneratorManager::writeIfStatementNode( IfStatementNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeWhileLoopNode( ASTNode* node ) {
+void CodeGeneratorManager::writeWhileLoopNode( WhileLoopNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeForLoopNode( ASTNode* node ) {
+void CodeGeneratorManager::writeForLoopNode( ForLoopNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeBinOpNode( ASTNode* node ) {
+void CodeGeneratorManager::writeBinOpNode( BinOpNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeUnaryOpNode( ASTNode* node ) {
+void CodeGeneratorManager::writeUnaryOpNode( UnaryOpNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeVarDeclNode( ASTNode* node ) {
+void CodeGeneratorManager::writeVarDeclNode( VarDeclNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeAssignNode( ASTNode* node ) {
+void CodeGeneratorManager::writeAssignNode( AssignNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeLiteralNode( ASTNode* node ) {
+void CodeGeneratorManager::writeLiteralNode( LiteralNode* node ) {
+    _outCodeFile << "  mov rax, " << node->value << "\n";
+}
+
+void CodeGeneratorManager::writeIdentifierNode( IdentifierNode* node ) {
     (void)node;
 }
 
-void    CodeGeneratorManager::writeIdentifierNode( ASTNode* node ) {
-    (void)node;
+void CodeGeneratorManager::writeReturnNode( ReturnNode* node ) {
+    nodeHandler(node->returnValue);
+    _outCodeFile << "  mov rdi, rax\n"; // Set exit value
+    _outCodeFile << "  mov rax, 60\n"; // Set exit syscall
+    _outCodeFile << "  syscall\n";
 }
 
-void    CodeGeneratorManager::writeReturnNode( ASTNode* node ) {
-    (void)node;
-}
 
+void CodeGeneratorManager::assembleAndLink() {
+    // Assemble the assembly file using NASM
+    std::string asmFile = _assemblyCodeFileName + ".asm";
+    std::string objFile = _assemblyCodeFileName + ".o";
+
+    std::string nasmCommand = "/usr/bin/nasm -f elf64 " + asmFile + " -o " + objFile;
+    ConfigManager::getInstance().printDebug("Nasm command : " + nasmCommand + "\n", RED);
+    int nasmResult = std::system(nasmCommand.c_str());
+
+    if (nasmResult != 0) {
+        std::cerr << "Error: NASM assembler failed with code " << nasmResult << std::endl;
+        return;
+    }
+
+    // Link the object file using LD
+    std::string ldCommand = "/usr/bin/ld " + objFile + " -o " + _outputFileName;
+    ConfigManager::getInstance().printDebug("Ld command : " + ldCommand + "\n", RED);
+    int ldResult = std::system(ldCommand.c_str());
+
+    if (ldResult != 0) {
+        std::cerr << "Error: LD linker failed with code " << ldResult << std::endl;
+        return;
+    }
+
+    // Remove not executable files
+    //std::filesystem::remove(asmFile);
+    //std::filesystem::remove(objFile);
+}

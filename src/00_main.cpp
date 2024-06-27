@@ -10,7 +10,7 @@ int main(int ac, char** av) {
 
         ConfigManager& Config = ConfigManager::getInstance();
         Config.initConfig(&av[1]);
-        CodeGeneratorManager CodeGen((Config.isSetExecutableName()) ? Config.getExecutableName() : "atom.exe");
+        CodeGeneratorManager CodeGen((Config.isSetExecutableName()) ? Config.getExecutableName() : "atom_out.exe");
 
         for (int fileNumber = 1; fileNumber < ac; fileNumber++) {
             fileName = av[fileNumber];
