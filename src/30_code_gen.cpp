@@ -71,7 +71,7 @@ void CodeGeneratorManager::nodeHandler( ASTNode* node ) {
         case NodeType::Box: {
             ConfigManager::getInstance().printDebug("  BoxNode:\n", GREEN);
             BoxNode* boxNode = dynamic_cast<BoxNode*>(node);
-            (void)boxNode;
+            nodeHandler(boxNode->node);
             break;
         }
         case NodeType::FuncDecl: {
@@ -186,7 +186,25 @@ void CodeGeneratorManager::writeForLoopNode( ForLoopNode* node ) {
 }
 
 void CodeGeneratorManager::writeBinOpNode( BinOpNode* node ) {
-    (void)node;
+    ConfigManager::getInstance().printDebug("Operation: [" + node->operation + "]\n", BLUE);
+    nodeHandler(node->leftOp);
+    nodeHandler(node->rightOp);
+
+    _outCodeFile << "  pop rdx\n";
+    _outCodeFile << "  pop rax\n";
+
+    if (node->operation.size() == 1) {
+        char op = node->operation.at(0);
+        switch (op) {
+            case '+':
+                _outCodeFile << "  add rax, rdx\n";
+                break;
+            case '-':
+                _outCodeFile << "  sub rax, rdx\n";
+                break;
+        }
+    }
+    _outCodeFile << "  push rax\n\n";
 }
 
 void CodeGeneratorManager::writeUnaryOpNode( UnaryOpNode* node ) {
@@ -202,7 +220,7 @@ void CodeGeneratorManager::writeAssignNode( AssignNode* node ) {
 }
 
 void CodeGeneratorManager::writeLiteralNode( LiteralNode* node ) {
-    _outCodeFile << "  mov rax, " << node->value << "\n";
+    _outCodeFile << "  push " << node->value << "\n";
 }
 
 void CodeGeneratorManager::writeIdentifierNode( IdentifierNode* node ) {
@@ -211,7 +229,7 @@ void CodeGeneratorManager::writeIdentifierNode( IdentifierNode* node ) {
 
 void CodeGeneratorManager::writeReturnNode( ReturnNode* node ) {
     nodeHandler(node->returnValue);
-    _outCodeFile << "  mov rdi, rax\n"; // Set exit value
+    _outCodeFile << "  pop rdi\n"; // Set exit value
     _outCodeFile << "  mov rax, 60\n"; // Set exit syscall
     _outCodeFile << "  syscall\n";
 }
@@ -245,6 +263,6 @@ void CodeGeneratorManager::assembleAndLink() {
     }
 
     // Remove not executable files
-    std::filesystem::remove(asmFile);
+    // std::filesystem::remove(asmFile);
     std::filesystem::remove(objFile);
 }
