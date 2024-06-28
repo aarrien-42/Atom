@@ -7,9 +7,6 @@ CodeGeneratorManager::CodeGeneratorManager( std::string outputFile ) : _assembly
 /*-DESTRUCTOR-*/
 
 CodeGeneratorManager::~CodeGeneratorManager() {
-    // Close assembly code files
-    _outCodeFile.close();
-
     // Delete all AST structures
     for (ProgramNode* program : _parsedPrograms) {
         delete program;
@@ -28,17 +25,26 @@ void CodeGeneratorManager::writeFullProgramCode() {
 
     if (_outCodeFile.is_open()) {
         /*-CODE-*/
-        _outCodeFile << "bits 64\nglobal _start\n";
+        _outCodeFile << "global _start\n";
         for (size_t progCount = 0; progCount < _parsedPrograms.size(); progCount++) {
             nodeHandler(_parsedPrograms[progCount]);
         }
 
+        // Close assembly code files
+        _outCodeFile.close();
+
+        // Compile and link assembly code
         ConfigManager::getInstance().printDebug("\nCOMPILING AND LINKING CODE:\n\n", BOLDBLUE);
         assembleAndLink();
 
+        // Execute code
         ConfigManager::getInstance().printDebug("\nEXECUTING CODE:\n\n", BOLDBLUE);
+        ConfigManager::getInstance().printDebug("Execution result:\n", MAGENTA);
+
         int exitCode = std::system(("./" + _outputFileName).c_str());
-        ConfigManager::getInstance().printDebug("Exit code = ", MAGENTA);
+        exitCode = WIFEXITED(exitCode) ? WEXITSTATUS(exitCode) : -1;
+
+        ConfigManager::getInstance().printDebug("Exit code:\n", MAGENTA);
         ConfigManager::getInstance().printDebug(std::to_string(exitCode) + "\n");
     }
 }

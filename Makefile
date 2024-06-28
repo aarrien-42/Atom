@@ -14,7 +14,7 @@ OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 SRC_ASM = code
 
 # COMPILATION
-CC = c++
+CC = g++
 CFLAGS = -Wall -Wextra -Werror #-g3 -fsanitize=address
 RM = rm -rf
 
