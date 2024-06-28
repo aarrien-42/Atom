@@ -19,7 +19,6 @@ The goal of this project is to develop my own programming language. It is a very
 
 ## File Structure
  - Project Directory
-    - `conf/`            # Conf file (.conf)
     - `inc/`             # Header files (.hpp)
     - `src/`             # Source files (.cpp)
     - `obj/`             # Object files (.o)
@@ -29,9 +28,7 @@ The goal of this project is to develop my own programming language. It is a very
     - `atm/`             # Own language files (.atm)
 
 ## How to use
-`make run atm/<file>.atm` *(Compiles files and Writes a valid assembly code)*
-
-`make asm` *(Compiles the assembly code)*
+`make run atm/<file>.atm` *(Compiles files and Execute the code)*
 
 ## Theory
 Programming languages can be either interpreted or compiled. Interpreted languages are executed line by line, while compiled languages, as the name suggests, directly translate the source code into machine code.
@@ -84,8 +81,8 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
     - [x] Add a way to develop tests for each compilation step using GitHub workflows
     - [x] Create a reliable and simple way of creating new tests
     - [ ] Add some color and readability
-- [ ] Final executable:
-    - [ ] Compile the assembly code and generate a single executable
+- [x] Final executable:
+    - [x] Compile the assembly code and generate a single executable
     - [x] Add a flag system for little settings as customizing executable name
 
 ## How to Contribute
