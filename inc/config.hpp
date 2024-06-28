@@ -24,6 +24,7 @@ enum DebugMode {
         - 'p' => Execute just Lexer and Parser
         - 'c' => Adds color to certain comments
         - 'o' => After it determine final executable name
+        - 'r' => Doesn't remove the .asm file after compiling and linking
 */
 class ConfigManager {
     private:
@@ -31,6 +32,7 @@ class ConfigManager {
         bool setExecuteParser;
         bool setExecuteCodeGen;
         bool setColorful;
+        bool setRaw;
 
         bool setDebug; // TODO: add a way to just debug certain compilation states
         DebugMode debugMode;
@@ -49,6 +51,8 @@ class ConfigManager {
         bool canExecuteLexer() { return setExecuteLexer;}
         bool canExecuteParser() { return setExecuteParser;}
         bool canExecuteCodeGen() { return setExecuteCodeGen;}
+
+        bool canRemoveAssemblyCode() { return !setRaw;}
 
         void printDebug( std::string, std::string = RESET );
 

@@ -237,7 +237,7 @@ void CodeGeneratorManager::writeReturnNode( ReturnNode* node ) {
 
 void CodeGeneratorManager::assembleAndLink() {
     // Remove any existing same name executable
-    std::filesystem::remove(_outputFileName);
+    std::remove(_outputFileName.c_str());
 
     // Assemble the assembly file using NASM
     std::string asmFile = _assemblyCodeFileName + ".asm";
@@ -263,6 +263,8 @@ void CodeGeneratorManager::assembleAndLink() {
     }
 
     // Remove not executable files
-    // std::filesystem::remove(asmFile);
-    std::filesystem::remove(objFile);
+    if (ConfigManager::getInstance().canRemoveAssemblyCode()) {
+        std::remove(asmFile.c_str());
+    }
+    std::remove(objFile.c_str());
 }

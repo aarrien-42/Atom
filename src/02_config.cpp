@@ -8,6 +8,7 @@ ConfigManager::ConfigManager() {
     setExecuteParser = true;
     setExecuteCodeGen = true;
     setColorful = false;
+    setRaw = false;
     setExecutableName = false;
 }
 
@@ -68,6 +69,9 @@ void ConfigManager::initConfig( char** arguments ) {
                             } else {
                                 std::cerr << "No executable name found" << std::endl;
                             }
+                            break;
+                        case 'r':
+                            setRaw = true;
                             break;
                         default: std::cerr << "Unknown flag used" << std::endl; break;
                     }
