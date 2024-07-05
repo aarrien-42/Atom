@@ -2,8 +2,8 @@ global _start
 _start:
   push 1
   push 2
-  push 3
-  push 4
+  push 6
+  push 7
   pop rdx
   pop rax
   add rax, rdx
@@ -11,7 +11,7 @@ _start:
 
   pop rdx
   pop rax
-  add rax, rdx
+  sub rax, rdx
   push rax
 
   pop rdx

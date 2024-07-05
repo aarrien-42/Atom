@@ -3,7 +3,8 @@
 /*-PROGRAM-*/
 
 ProgramNode::ProgramNode( ParserManager& parser, std::string file, size_t level ) : ASTNode(NodeType::Program, level) {
-    ConfigManager::getInstance().printDebug("ProgramNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] ProgramNode created\n", BOLDMAGENTA);
 
     fileName = file;
 
@@ -25,9 +26,10 @@ ProgramNode::ProgramNode( ParserManager& parser, std::string file, size_t level 
 /*-BLOCK-*/
 
 BlockNode::BlockNode( ParserManager& parser, size_t initialTabs, size_t level ) : ASTNode(NodeType::Block, level) {
-    ConfigManager::getInstance().printDebug("BlockNode created\n", CYAN);
-    bool newValidLine = true;
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] BlockNode created\n", BOLDMAGENTA);
 
+    bool newValidLine = true;
     do {
         if (parser.peek().type == TokenType::enter || parser.peek().type == TokenType::tab) {
             if (parser.peek().type == TokenType::enter)
@@ -65,84 +67,61 @@ BlockNode::BlockNode( ParserManager& parser, size_t initialTabs, size_t level ) 
 }
 
 BoxNode::BoxNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Box, level) {
-    ConfigManager::getInstance().printDebug("BoxNode created\n", CYAN);
-    int nestedParen = 0, index = 0;
-    bool validBox = false;
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] BoxNode created\n", BOLDMAGENTA);
 
-    if (parser.peek().value == "(") {
-        // Check if the parenthesis closes, validBox will be set to true
-        while (!validBox && (parser.peek(index).type != enter && !parser.peek(index).value.empty())) {
-            if (parser.peek(index).value == "(") {
-                nestedParen++;
-            } else if (parser.peek(index).value == ")") {
-                nestedParen--;
-                if (nestedParen == 0)
-                    validBox = true;
+    // Check if box parenthesis closes
+    const int tokensTillBoxEnd = isParenthesisClosed(parser);
+    config.printDebug("Tokens until end of the box: " + std::to_string(tokensTillBoxEnd) + "\n");
+
+    if (tokensTillBoxEnd > 0) {
+        // Check if Box Node is valid, should only contain: paren, operation, literal
+        bool validBox = true;
+        for (int index = 0; index < tokensTillBoxEnd; index++) {
+            Token token = parser.peek(index);
+            if (token.type != TokenType::paren && token.type != TokenType::operation && token.type != TokenType::literal) {
+                parserNodeError(INV_BOX_NODE, parser.peek(), "Invalid token inside parenthesis detected");
+                validBox = false;
             }
-            index++;
         }
+
         if (validBox) {
-            parser.consume();
-            if (parser.peek().value == "(") {
-                // Another BoxNode at the start
-                int closeIndex = isParenthesisClosed(parser);
-                if (closeIndex != 0) {
-                    if (parser.peek(closeIndex + 1).type == TokenType::operation) {
-                        node = new BinOpNode(parser, level + 1);
-                    } else if (parser.peek(closeIndex + 1).type == TokenType::comparison) {
-                        node = new ConditionNode(parser, level + 1);
-                    } else {
-                        parserNodeError(INV_BOX_NODE, parser.consume(), "Not implemented yet");
-                    }
-                } else {
-                    parserNodeError(INV_BOX_NODE, parser.consume(), "Parenthesis not closed");
+            config.printDebug("Valid BoxNode\n", YELLOW);
+
+            // Check for a valid operation box
+            bool literal = false, operation = false;
+            for (int index = 0; index < tokensTillBoxEnd; index++) {
+                Token token = parser.peek(index);
+
+                if (token.type == TokenType::literal) {
+                    literal = true;
                 }
-            } else if (parser.peek().value == ")") {
-                parserNodeError(INV_BOX_NODE, parser.consume(), "Nothing between parenthesis");
-            } else {
-                // Another BoxNode at the end
-                if (parser.peek(1).value != ")") {
-                    if (parser.peek(2).value != ")") {
-                        if (parser.peek(1).type == TokenType::operation) {
-                            node = new BinOpNode(parser, level + 1);
-                        } else if (parser.peek(1).type == TokenType::comparison) {
-                            node = new ConditionNode(parser, level + 1);
-                        } else {
-                            parserNodeError(INV_BOX_NODE, parser.consume(), "Not implemented yet");
-                        }
-                    } else {
-                        parserNodeError(INV_BOX_NODE, parser.consume(), "Expected second operand");
-                    }
-                } else {
-                    // Just a literal or identifier between parenthesis
-                    if (parser.peek().type == TokenType::literal || parser.peek().type == TokenType::identifier) {
-                        if (parser.peek().type == TokenType::literal) {
-                            node = new LiteralNode(parser, level + 1);
-                        } else {
-                            node = new IdentifierNode(parser, level + 1);
-                        }
-                    } else {
-                        parserNodeError(INV_BOX_NODE, parser.consume(), "Invalid operation between parenthesis");
-                    }
+                if (token.type == TokenType::operation) {
+                    operation = true;
                 }
             }
-            // Consume last paren from box
-            if (parser.peek().value == ")") {
-                parser.consume();
-            } else {
-                parserNodeError(INV_BOX_NODE, parser.consume(), "Expecting close parenthesis");
+
+            parser.consume(); // Consume first box parenthesis
+            if (literal && operation) {
+                config.printDebug("Operation\n", GREEN);
+                node = new BinOpNode(parser, level + 1);
+            } else if (literal && !operation) {
+                config.printDebug("Literal\n", GREEN);
+                node = new LiteralNode(parser, level + 1);
             }
-        } else {
-            parserNodeError(INV_BOX_NODE, parser.consume(), "Parenthesis not closed");
+            parser.consume(); // Consume last box parenthesis
+
         }
-    } else
-        parserNodeError(INV_BOX_NODE, parser.consume(), "Invalid Box node");
+    } else {
+        parserNodeError(INV_BOX_NODE, parser.consume(), "Parenthesis not closed");
+    }
 }
 
 /*-FUNCTION-*/
 
 FuncDeclNode::FuncDeclNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::FuncDecl, level), body(nullptr) {
-    ConfigManager::getInstance().printDebug("FuncDeclNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] FuncDeclNode created\n", BOLDMAGENTA);
 
     functionName = parser.consume().value;
     if (parser.peek().type != enter) { // Function has parameters
@@ -161,6 +140,8 @@ FuncDeclNode::FuncDeclNode( ParserManager& parser, size_t level ) : ASTNode(Node
 }
 
 FuncCallNode::FuncCallNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::FuncCall, level) {
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] FuncCallNode created\n", BOLDMAGENTA);
     (void)parser;
 }
 
@@ -168,7 +149,8 @@ FuncCallNode::FuncCallNode( ParserManager& parser, size_t level ) : ASTNode(Node
 
 // More conditional types need to be implemented
 ConditionNode::ConditionNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Condition, level), leftComp(nullptr), rightComp(nullptr) {
-    ConfigManager::getInstance().printDebug("ConditionNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] ConditionNode created\n", BOLDMAGENTA);
     bool withParen = false;
 
     if (parser.peek().type == TokenType::paren) {
@@ -211,7 +193,8 @@ ConditionNode::ConditionNode( ParserManager& parser, size_t level ) : ASTNode(No
 }
 
 IfStatementNode::IfStatementNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::IfStatement, level), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
-    ConfigManager::getInstance().printDebug("IfStatementNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] IfStatementNode created\n", BOLDMAGENTA);
     size_t initialTabs = parser.peek().tabCount;
 
     if (parser.peek().value == "i.") {
@@ -232,59 +215,79 @@ IfStatementNode::IfStatementNode( ParserManager& parser, size_t level ) : ASTNod
 }
 
 WhileLoopNode::WhileLoopNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::WhileLoop, level), condition(nullptr), body(nullptr) {
-    ConfigManager::getInstance().printDebug("WhileLoopNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] WhileLoopNode created\n", BOLDMAGENTA);
     (void)parser;
 }
 
 ForLoopNode::ForLoopNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::ForLoop, level), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
-    ConfigManager::getInstance().printDebug("ForLoopNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] ForLoopNode created\n", BOLDMAGENTA);
     (void)parser;
 }
 
 /*-OPERATION-*/
 
 BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::BinOp, level), leftOp(nullptr), rightOp(nullptr) {
-    ConfigManager::getInstance().printDebug("BinOpNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] BinOpNode created\n", BOLDMAGENTA);
 
     ASTNode** opNode;
     while (true) {
-        leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp) ;
-        if (leftOp == nullptr || (leftOp != nullptr && !operation.empty() && rightOp == nullptr)) {
-            // Multiple continous operations
-            if (leftOp != nullptr && !operation.empty() && rightOp == nullptr) {
-                if (parser.peek(1).type == TokenType::operation) {
-                    rightOp = new BinOpNode(parser, level + 1);
+        leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp);
+        bool isLeft = (leftOp == nullptr);
+        bool isRigth = (leftOp != nullptr && !operation.empty() && rightOp == nullptr);
+
+        // If right operator is substitute, check if there are more operations
+        bool multipleOperations = false;
+        if (isRigth) {
+            Token token = parser.peek(isParenthesisClosed(parser) + 1);
+            config.printDebug("    Check for multiple operations\n");
+            config.printDebug("    Token after valid operand [" + token.value + "]\n");
+            if (token.type == TokenType::operation) {
+                config.printDebug("New binary operation\n", GREEN);
+                *opNode = new BinOpNode(parser, level + 1);
+                multipleOperations = true;
+            }
+        }
+
+        if (!multipleOperations) {
+            if (parser.peek().type != TokenType::literal && parser.peek().type != TokenType::paren) {
+                if (isLeft || isRigth) {
+                    parserNodeError(INV_BIN_OP_NODE, parser.peek(), "Invalid operation");
                 }
             }
-            // Simple binary operation
-            if (parser.peek().type == TokenType::identifier) {
-                *opNode = new IdentifierNode(parser, this->level + 1);
-            } else if (parser.peek().type == TokenType::literal) {
-                *opNode = new LiteralNode(parser, this->level + 1);
-            } else if (parser.peek().value == "(") {
-                *opNode = new BoxNode(parser, this->level + 1);
-            }
-        } else if (operation.empty()) {
-            if (parser.peek().type == TokenType::operation) {
+
+            // Check for literal, operator, parenthesis or operation end
+            if (parser.peek().type == TokenType::literal) {
+                *opNode = new LiteralNode(parser, level + 1);
+            } else if (parser.peek().type == TokenType::operation) {
                 operation = parser.consume().value;
+                config.printDebug("  Operation: [" + operation + "]\n");
+            } else if (parser.peek().type == TokenType::paren) {
+                if (parser.peek().value == "(") {
+                    *opNode = new BoxNode(parser, level + 1);
+                } else {
+                    break;
+                }
             } else {
-                parserNodeError(INV_BIN_OP_NODE, parser.consume(), "No operation operator used");
+                break;
             }
-        } else {
-            break;
         }
     }
 }
 
 UnaryOpNode::UnaryOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::UnaryOp, level), operand(nullptr) {
-    ConfigManager::getInstance().printDebug("UnaryOpNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] UnaryOpNode created\n", BOLDMAGENTA);
     (void)parser;
 }
 
 /*-VARAIBLE-*/
 
 VarDeclNode::VarDeclNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::VarDecl, level), initialValue(nullptr) {
-    ConfigManager::getInstance().printDebug("VarDeclNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] VarDeclNode created\n", BOLDMAGENTA);
 
     if (parser.peek().value == "v.")
         parser.consume();
@@ -305,7 +308,8 @@ VarDeclNode::VarDeclNode( ParserManager& parser, size_t level ) : ASTNode(NodeTy
 }
 
 AssignNode::AssignNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Assign, level), value(nullptr) {
-    ConfigManager::getInstance().printDebug("AssignNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] AssignNode created\n", BOLDMAGENTA);
 
     if (parser.peek().type == identifier) {
         variableName = parser.consume().value;
@@ -339,27 +343,34 @@ AssignNode::AssignNode( ParserManager& parser, size_t level ) : ASTNode(NodeType
 }
 
 LiteralNode::LiteralNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Literal, level) {
-    ConfigManager::getInstance().printDebug("LiteralNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] LiteralNode created\n", BOLDCYAN);
 
-    if (parser.peek().type != literal)
-        parserNodeError(INV_LITERAL_NODE, parser.consume(), "Invalid Literal Node");
-    else
+    if (parser.peek().type == literal) {
         value = parser.consume().value;
+        config.printDebug("  Literal: [" + value + "]\n");
+    } else {
+        parserNodeError(INV_LITERAL_NODE, parser.consume(), "Invalid Literal Node");
+    }
 }
 
 IdentifierNode::IdentifierNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Identifier, level) {
-    ConfigManager::getInstance().printDebug("IdentifierNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] IdentifierNode created\n", BOLDCYAN);
 
-    if (parser.peek().type != identifier)
-        parserNodeError(INV_IDENTIFIER_NODE, parser.consume(), "Invalid Identifier Node");
-    else
+    if (parser.peek().type == identifier) {
         name = parser.consume().value;
+        config.printDebug("  Identifier: [" + name + "]\n");
+    } else {
+        parserNodeError(INV_IDENTIFIER_NODE, parser.consume(), "Invalid Identifier Node");
+    }
 }
 
 /*-RETURN-*/
 
 ReturnNode::ReturnNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Return, level), returnValue(nullptr) {
-    ConfigManager::getInstance().printDebug("ReturnNode created\n", CYAN);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] ReturnNode created\n", BOLDMAGENTA);
 
     if (parser.peek().value != "r.")
         parserNodeError(INV_RETURN_NODE, parser.consume(), "Invalid Return Node");
@@ -412,8 +423,6 @@ int isParenthesisClosed( ParserManager& parser ) {
             }
             index++;
         }
-    } else {
-        std::cerr << "This is not a parenthesis block start\n";
     }
 
     if (isParenClosed) {
