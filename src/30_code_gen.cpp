@@ -187,6 +187,7 @@ void CodeGeneratorManager::writeForLoopNode( ForLoopNode* node ) {
 
 void CodeGeneratorManager::writeBinOpNode( BinOpNode* node ) {
     ConfigManager::getInstance().printDebug("Operation: [" + node->operation + "]\n", BLUE);
+
     nodeHandler(node->leftOp);
     nodeHandler(node->rightOp);
 

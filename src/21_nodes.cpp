@@ -236,11 +236,11 @@ BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::
     while (true) {
         leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp);
         bool isLeft = (leftOp == nullptr);
-        bool isRigth = (leftOp != nullptr && !operation.empty() && rightOp == nullptr);
+        bool isRight = (leftOp != nullptr && !operation.empty() && rightOp == nullptr);
 
         // If right operator is substitute, check if there are more operations
         bool multipleOperations = false;
-        if (isRigth) {
+        if (isRight) {
             Token token = parser.peek(isParenthesisClosed(parser) + 1);
             config.printDebug("    Check for multiple operations\n");
             config.printDebug("    Token after valid operand [" + token.value + "]\n");
@@ -253,7 +253,7 @@ BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::
 
         if (!multipleOperations) {
             if (parser.peek().type != TokenType::literal && parser.peek().type != TokenType::paren) {
-                if (isLeft || isRigth) {
+                if (isLeft || isRight) {
                     parserNodeError(INV_BIN_OP_NODE, parser.peek(), "Invalid operation");
                 }
             }

@@ -24,7 +24,7 @@ class ParserManager {
 
         ProgramNode* getProgram();
 
-        Token peek( int pos = 0);
+        Token peek( int pos = 0 );
         Token consume();
 
         void printTree();
