@@ -6,7 +6,6 @@ on:
       fileContent:
         description: "Content of the file to be compiled"
         required: true
-        type: string
 
 jobs:
   custom_execution:
