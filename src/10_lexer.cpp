@@ -188,6 +188,14 @@ void LexerManager::cleanTokens() {
                 (it+1)->value = "-" + (it+1)->value;
             }
         }
+
+        // Substitute: 1 / 2 => 1 * (1/2)
+        if (it->type == TokenType::operation && it->value == "/") {
+            if (it+1 != _tokens.end() && (it+1)->type == TokenType::literal) {
+                it->value = "*";
+                (it+1)->value = std::to_string(1 / std::stod((it+1)->value));
+            }
+        }
     }
 }
 
@@ -227,10 +235,10 @@ void LexerManager::printTokens() {
         }
 
         // print
-        ConfigManager& Config = ConfigManager::getInstance();
+        ConfigManager& config = ConfigManager::getInstance();
         std::string strToPrint;
 
-        strToPrint += "[" + type + " " + (it->value == "\n" ? "\\n" : it->value) + "]";
+        config.printDebug("[" + type + " " + (it->value == "\n" ? "\\n" : it->value) + "]", BOLDCYAN);
         if (it->type != enter && it->type != tab) {
             strToPrint += "[t" + std::to_string(it->tabCount) + " " + std::to_string(it->row) + ":" + std::to_string(it->column) + "]";
         }
@@ -238,6 +246,6 @@ void LexerManager::printTokens() {
         if (it->type == enter) {
             strToPrint += "\n";
         }
-        Config.printDebug(strToPrint);
+        config.printDebug(strToPrint);
     }
 }
