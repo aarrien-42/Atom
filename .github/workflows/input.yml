@@ -22,7 +22,7 @@ jobs:
         sudo apt-get install -y build-essential
 
     - name: Create input file
-      run: echo "${{ inputs.fileContent }}"" > program.atm
+      run: echo "${{ inputs.fileContent }}" > program.atm
 
     - name: Run compilation
       run: make run f:dc program.atm
