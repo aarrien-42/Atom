@@ -240,7 +240,7 @@ BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::
             config.printDebug("    Check for multiple operations\n");
             if (parser.peek().type == TokenType::operation) {
                 config.printDebug("New binary operation\n", GREEN);
-                leftOp = new BinOpNode(*this, level);
+                leftOp = new BinOpNode(*this, level++);
                 rightOp = nullptr;
                 operation.erase();
             } else {

@@ -40,6 +40,8 @@ struct ASTNode {
         ASTNode(NodeType t, size_t l = 0) : type(t), level(l) {}
         virtual ~ASTNode() {}
 
+        virtual void deleteNode() = 0;
+
         NodeType getType() { return type; }
 
         virtual void putSpaces(bool isNode = false) const {
@@ -89,9 +91,13 @@ struct ProgramNode : public ASTNode {
     std::vector<ASTNode*> functions;
 
     ProgramNode( ParserManager&, std::string, size_t = 0 );
-    ~ProgramNode() {
+    ~ProgramNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting ProgramNode\n", RED);
+
         for (ASTNode* function : functions)
-            delete function;
+            function->deleteNode();
     }
 
     void printNode() const override {
@@ -112,9 +118,13 @@ struct BlockNode : public ASTNode {
     std::vector<ASTNode*> statements;
 
     BlockNode( ParserManager&, size_t, size_t );
-    ~BlockNode() {
+    ~BlockNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting BlockNode\n", RED);
+
         for (ASTNode* statement : statements)
-            delete statement;
+            statement->deleteNode();
     }
 
     void printNode() const override {
@@ -132,7 +142,13 @@ struct BoxNode : public ASTNode {
     ASTNode* node;
 
     BoxNode( ParserManager&, size_t );
-    ~BoxNode() { delete node; }
+    ~BoxNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting BoxNode\n", RED);
+
+        node->deleteNode();
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -151,10 +167,14 @@ struct FuncDeclNode : public ASTNode {
     ASTNode* body;
 
     FuncDeclNode( ParserManager&, size_t );
-    ~FuncDeclNode() {
+    ~FuncDeclNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting FuncDeclNode\n", RED);
+
         for (ASTNode* param : parameters)
-            delete param;
-        delete body;
+            param->deleteNode();
+        body->deleteNode();
     }
 
     void printNode() const override {
@@ -185,9 +205,13 @@ struct FuncCallNode : public ASTNode {
     std::vector<ASTNode*> parameters;
 
     FuncCallNode( ParserManager&, size_t );
-    ~FuncCallNode() {
+    ~FuncCallNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting FuncCallNode\n", RED);
+
         for (ASTNode* param : parameters)
-            delete param;
+            param->deleteNode();
     }
 
     void printNode() const override {
@@ -218,7 +242,14 @@ struct ConditionNode : public ASTNode {
     ASTNode* rightComp;
 
     ConditionNode( ParserManager&, size_t );
-    ~ConditionNode() { delete leftComp; delete rightComp; }
+    ~ConditionNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting ConditionNode\n", RED);
+
+        leftComp->deleteNode();
+        rightComp->deleteNode(); 
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -245,7 +276,16 @@ struct IfStatementNode : public ASTNode {
     ASTNode* elseBranch; // just in case there's an else
 
     IfStatementNode( ParserManager&, size_t );
-    ~IfStatementNode() { delete condition; delete body; delete ifBranch; delete elseBranch; }
+    ~IfStatementNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting IfStatementNode\n", RED);
+
+        condition->deleteNode();
+        body->deleteNode();
+        ifBranch->deleteNode();
+        elseBranch->deleteNode();
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -278,7 +318,14 @@ struct WhileLoopNode : public ASTNode {
     ASTNode* body;
 
     WhileLoopNode( ParserManager&, size_t );
-    ~WhileLoopNode() { delete condition; delete body; }
+    ~WhileLoopNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting WhileLoopNode\n", RED);
+
+        condition->deleteNode();
+        body->deleteNode();
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -294,7 +341,16 @@ struct ForLoopNode : public ASTNode {
     ASTNode* body;
 
     ForLoopNode( ParserManager&, size_t );
-    ~ForLoopNode() { delete initialization; delete condition; delete iteration; delete body; }
+    ~ForLoopNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting ForLoopNode\n", RED);
+
+        initialization->deleteNode();
+        condition->deleteNode();
+        iteration->deleteNode();
+        body->deleteNode();
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -312,7 +368,14 @@ struct BinOpNode : public ASTNode {
 
     BinOpNode( ParserManager&, size_t );
     BinOpNode( const BinOpNode& other, size_t level );
-    ~BinOpNode() { /*delete leftOp; delete rightOp;*/ }
+    ~BinOpNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting BinOpNode\n", RED);
+
+        leftOp->deleteNode();
+        rightOp->deleteNode();
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -337,7 +400,13 @@ struct UnaryOpNode : public ASTNode {
     ASTNode* operand;
 
     UnaryOpNode( ParserManager&, size_t );
-    ~UnaryOpNode() { delete operand; }
+    ~UnaryOpNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting UnaryOpNode\n", RED);
+
+        operand->deleteNode();
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -356,7 +425,13 @@ struct VarDeclNode : public ASTNode {
     ASTNode* initialValue;
 
     VarDeclNode( ParserManager&, size_t );
-    ~VarDeclNode() { delete initialValue; }
+    ~VarDeclNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting VarDeclNode\n", RED);
+
+        initialValue->deleteNode();
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -380,7 +455,13 @@ struct AssignNode : public ASTNode {
     ASTNode* value;
 
     AssignNode( ParserManager&, size_t );
-    ~AssignNode() { delete value; }
+    ~AssignNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting AssignNode\n", RED);
+
+        value->deleteNode(); 
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -398,6 +479,12 @@ struct LiteralNode : public ASTNode {
 
     LiteralNode( ParserManager&, size_t );
 
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting LiteralNode\n", RED);
+
+
+    }
+
     void printNode() const override {
         ASTNode::printNode();
 
@@ -412,6 +499,12 @@ struct IdentifierNode : public ASTNode {
     std::string name;
 
     IdentifierNode( ParserManager&, size_t );
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting IdentifierNode\n", RED);
+
+
+    }
 
     void printNode() const override {
         ASTNode::printNode();
@@ -429,7 +522,13 @@ struct ReturnNode : public ASTNode {
     ASTNode* returnValue;
 
     ReturnNode( ParserManager&, size_t );
-    ~ReturnNode() { delete returnValue; }
+    ~ReturnNode() {}
+
+    void deleteNode() override {
+        ConfigManager::getInstance().printDebug("Deleting ReturnNode\n", RED);
+
+        returnValue->deleteNode();
+    }
 
     void	printNode() const override {
         ASTNode::printNode();
