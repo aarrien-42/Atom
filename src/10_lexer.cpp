@@ -180,22 +180,6 @@ void LexerManager::cleanTokens() {
                 it = _tokens.erase(it-1);
             it--;
         }
-
-        // Substitute: 1 - 2 => 1 + (-2)
-        if (it->type == TokenType::operation && it->value == "-") {
-            if (it+1 != _tokens.end() && (it+1)->type == TokenType::literal) {
-                it->value = "+";
-                (it+1)->value = "-" + (it+1)->value;
-            }
-        }
-
-        // Substitute: 1 / 2 => 1 * (1/2)
-        if (it->type == TokenType::operation && it->value == "/") {
-            if (it+1 != _tokens.end() && (it+1)->type == TokenType::literal) {
-                it->value = "*";
-                (it+1)->value = std::to_string(1 / std::stod((it+1)->value));
-            }
-        }
     }
 }
 

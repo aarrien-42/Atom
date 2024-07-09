@@ -311,7 +311,8 @@ struct BinOpNode : public ASTNode {
     ASTNode* rightOp;
 
     BinOpNode( ParserManager&, size_t );
-    ~BinOpNode() { delete leftOp; delete rightOp; }
+    BinOpNode( const BinOpNode& other, size_t level );
+    ~BinOpNode() { /*delete leftOp; delete rightOp;*/ }
 
     void printNode() const override {
         ASTNode::printNode();

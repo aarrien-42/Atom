@@ -235,46 +235,44 @@ BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::
     ASTNode** opNode;
     while (true) {
         leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp);
-        bool isLeft = (leftOp == nullptr);
-        bool isRight = (leftOp != nullptr && !operation.empty() && rightOp == nullptr);
 
-        // If right operator is substitute, check if there are more operations
-        bool multipleOperations = false;
-        if (isRight) {
-            Token token = parser.peek(isParenthesisClosed(parser) + 1);
+        if (leftOp != nullptr && rightOp != nullptr) {
             config.printDebug("    Check for multiple operations\n");
-            config.printDebug("    Token after valid operand [" + token.value + "]\n");
-            if (token.type == TokenType::operation) {
+            if (parser.peek().type == TokenType::operation) {
                 config.printDebug("New binary operation\n", GREEN);
-                *opNode = new BinOpNode(parser, level + 1);
-                multipleOperations = true;
-            }
-        }
-
-        if (!multipleOperations) {
-            if (parser.peek().type != TokenType::literal && parser.peek().type != TokenType::paren) {
-                if (isLeft || isRight) {
-                    parserNodeError(INV_BIN_OP_NODE, parser.peek(), "Invalid operation");
-                }
-            }
-
-            // Check for literal, operator, parenthesis or operation end
-            if (parser.peek().type == TokenType::literal) {
-                *opNode = new LiteralNode(parser, level + 1);
-            } else if (parser.peek().type == TokenType::operation) {
-                operation = parser.consume().value;
-                config.printDebug("  Operation: [" + operation + "]\n");
-            } else if (parser.peek().type == TokenType::paren) {
-                if (parser.peek().value == "(") {
-                    *opNode = new BoxNode(parser, level + 1);
-                } else {
-                    break;
-                }
+                leftOp = new BinOpNode(*this, level);
+                rightOp = nullptr;
+                operation.erase();
             } else {
                 break;
             }
         }
+
+        if (!(leftOp == nullptr) && operation.empty()) {
+            if (parser.peek().type == TokenType::operation) {
+                operation = parser.consume().value;
+            }
+        }
+
+        // Check for literal or parenthesis
+        if (parser.peek().type == TokenType::literal) {
+            *opNode = new LiteralNode(parser, level + 1);
+        } else if (parser.peek().type == TokenType::paren) {
+            if (parser.peek().value == "(") {
+                *opNode = new BoxNode(parser, level + 1);
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
     }
+}
+
+BinOpNode::BinOpNode( const BinOpNode& other, size_t level ) : ASTNode(NodeType::BinOp, level) {
+    operation = other.operation;
+    leftOp = other.leftOp;
+    rightOp = other.rightOp;
 }
 
 UnaryOpNode::UnaryOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::UnaryOp, level), operand(nullptr) {
