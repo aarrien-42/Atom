@@ -191,21 +191,27 @@ void CodeGeneratorManager::writeBinOpNode( BinOpNode* node ) {
     nodeHandler(node->leftOp);
     nodeHandler(node->rightOp);
 
-    _outCodeFile << "  pop rdx\n";
-    _outCodeFile << "  pop rax\n";
+    _outCodeFile << "  POP rcx\n";
+    _outCodeFile << "  POP rax\n";
 
     if (node->operation.size() == 1) {
         char op = node->operation.at(0);
         switch (op) {
             case '+':
-                _outCodeFile << "  add rax, rdx\n";
+                _outCodeFile << "  ADD rax, rcx\n";
                 break;
             case '-':
-                _outCodeFile << "  sub rax, rdx\n";
+                _outCodeFile << "  SUB rax, rcx\n";
+                break;
+            case '*':
+                _outCodeFile << "  MUL rcx\n";
+                break;
+            case '/':
+                _outCodeFile << "  DIV rcx\n";
                 break;
         }
     }
-    _outCodeFile << "  push rax\n\n";
+    _outCodeFile << "  PUSH rax\n\n";
 }
 
 void CodeGeneratorManager::writeUnaryOpNode( UnaryOpNode* node ) {
@@ -221,7 +227,7 @@ void CodeGeneratorManager::writeAssignNode( AssignNode* node ) {
 }
 
 void CodeGeneratorManager::writeLiteralNode( LiteralNode* node ) {
-    _outCodeFile << "  push " << node->value << "\n";
+    _outCodeFile << "  PUSH " << node->value << "\n";
 }
 
 void CodeGeneratorManager::writeIdentifierNode( IdentifierNode* node ) {
@@ -230,8 +236,8 @@ void CodeGeneratorManager::writeIdentifierNode( IdentifierNode* node ) {
 
 void CodeGeneratorManager::writeReturnNode( ReturnNode* node ) {
     nodeHandler(node->returnValue);
-    _outCodeFile << "  pop rdi\n"; // Set exit value
-    _outCodeFile << "  mov rax, 60\n"; // Set exit syscall
+    _outCodeFile << "  POP rdi\n"; // Set exit value
+    _outCodeFile << "  MOV rax, 60\n"; // Set exit syscall
     _outCodeFile << "  syscall\n";
 }
 
