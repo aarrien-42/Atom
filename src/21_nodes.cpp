@@ -102,15 +102,33 @@ BoxNode::BoxNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Box,
             }
 
             parser.consume(); // Consume first box parenthesis
-            if (literal && operation) {
-                config.printDebug("Operation\n", GREEN);
-                node = new BinOpNode(parser, level + 1);
-            } else if (literal && !operation) {
-                config.printDebug("Literal\n", GREEN);
-                node = new LiteralNode(parser, level + 1);
-            }
-            parser.consume(); // Consume last box parenthesis
 
+            // Check if another BoxNode needs to be created inside this BoxNode
+            bool boxInsideBox = false;
+            if (parser.peek().type == TokenType::paren) {
+                config.printDebug("Another posible BoxNode\n", GREEN);
+
+                int tillParenClose =  isParenthesisClosed(parser);
+                if (parser.peek().value == "(" && parser.peek(tillParenClose + 1).type != TokenType::operation) {
+                    boxInsideBox = true;
+                }
+            }
+
+            if (boxInsideBox) {
+                config.printDebug("Another Box\n", GREEN);
+                node = new BoxNode(parser, level + 1);
+            } else {
+                // Check for BinOpNode or LiteralNode
+                if (literal && operation) {
+                    config.printDebug("Operation\n", GREEN);
+                    node = new BinOpNode(parser, level + 1);
+                } else if (literal && !operation) {
+                    config.printDebug("Literal\n", GREEN);
+                    node = new LiteralNode(parser, level + 1);
+                }
+            }
+
+            parser.consume(); // Consume last box parenthesis
         }
     } else {
         parserNodeError(INV_BOX_NODE, parser.consume(), "Parenthesis not closed");
@@ -151,45 +169,8 @@ FuncCallNode::FuncCallNode( ParserManager& parser, size_t level ) : ASTNode(Node
 ConditionNode::ConditionNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Condition, level), leftComp(nullptr), rightComp(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] ConditionNode created\n", BOLDMAGENTA);
-    bool withParen = false;
-
-    if (parser.peek().type == TokenType::paren) {
-        if (isParenthesisClosed(parser)) {
-            withParen = true;
-            parser.consume();
-        } else {
-            parserNodeError(INV_CONDITION_NODE, parser.consume(), "Parenthesis not closed");
-        }
-    }
-
-    ASTNode** compNode;
-    while (true) {
-        leftComp == nullptr ? (compNode = &leftComp) : (compNode = &rightComp) ;
-        if (leftComp == nullptr || (leftComp != nullptr && !comparation.empty() && rightComp == nullptr)) {
-            if (parser.peek().type == TokenType::identifier) {
-                *compNode = new IdentifierNode(parser, this->level + 1);
-            } else if (parser.peek().type == TokenType::literal) {
-                *compNode = new LiteralNode(parser, this->level + 1);
-            } else if (parser.peek().value == "(") {
-                *compNode = new BoxNode(parser, this->level + 1);
-            }
-        } else if (comparation.empty()) {
-            if (parser.peek().type == TokenType::comparison) {
-                comparation = parser.consume().value;
-            } else {
-                parserNodeError(INV_CONDITION_NODE, parser.consume(), "No comparation operator used");
-            }
-        } else {
-            break;
-        }
-    }
-
-    if (withParen) parser.consume();
-    if (parser.peek().type == TokenType::enter) {
-        parser.consume();
-    } else {
-        parserNodeError(INV_CONDITION_NODE, parser.consume(), "Condition should end in newline");
-    }
+    (void)parser;
+    /* STILL NOT IMPLEMENTED */
 }
 
 IfStatementNode::IfStatementNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::IfStatement, level), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
@@ -218,12 +199,14 @@ WhileLoopNode::WhileLoopNode( ParserManager& parser, size_t level ) : ASTNode(No
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] WhileLoopNode created\n", BOLDMAGENTA);
     (void)parser;
+    /* STILL NOT IMPLEMENTED */
 }
 
 ForLoopNode::ForLoopNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::ForLoop, level), initialization(nullptr), condition(nullptr), iteration(nullptr), body(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] ForLoopNode created\n", BOLDMAGENTA);
     (void)parser;
+    /* STILL NOT IMPLEMENTED */
 }
 
 /*-OPERATION-*/
@@ -232,23 +215,57 @@ BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] BinOpNode created\n", BOLDMAGENTA);
 
+    fillData(parser);
+}
+
+BinOpNode::BinOpNode( const BinOpNode& other, size_t level ) : ASTNode(NodeType::BinOp, level) {
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("[*] BinOpNode copied\n", BOLDMAGENTA);
+
+    operation = other.operation;
+    leftOp = other.leftOp;
+    rightOp = other.rightOp;
+}
+
+void BinOpNode::fillData( ParserManager& parser ) {
+    ConfigManager& config = ConfigManager::getInstance();
     ASTNode** opNode;
+
     while (true) {
         leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp);
 
+        // Check for subsequent operations
         if (leftOp != nullptr && rightOp != nullptr) {
             config.printDebug("    Check for multiple operations\n");
             if (parser.peek().type == TokenType::operation) {
-                config.printDebug("New binary operation\n", GREEN);
-                leftOp = new BinOpNode(*this, level++);
-                rightOp = nullptr;
-                operation.erase();
+                config.printDebug("New binary operation: ", GREEN);
+                if (parser.peek().value == "+" || parser.peek().value == "-") {
+                    config.printDebug("[" + parser.peek().value + "]\n", CYAN);
+                    leftOp = new BinOpNode(*this, level++);
+                    rightOp = nullptr;
+                    operation.erase();
+                } else if (parser.peek().value == "*" || parser.peek().value == "/") {
+                    config.printDebug("[" + parser.peek().value + "]\n", CYAN);
+                    config.printDebug("Current Op [" + operation + "]\n", CYAN);
+                    if (operation != "*" && operation != "/") {
+                        BinOpNode* newNode = new BinOpNode(*this, level + 1); // level needs to be check
+                        rightOp = newNode;
+                        newNode->operation = parser.consume().value;
+                        newNode->leftOp = newNode->rightOp;
+                        newNode->rightOp = nullptr;
+                        newNode->fillData(parser);
+                    } else {
+                        leftOp = new BinOpNode(*this, level++);
+                        rightOp = nullptr;
+                        operation.erase();
+                    }
+                }
             } else {
                 break;
             }
         }
 
-        if (!(leftOp == nullptr) && operation.empty()) {
+        if (leftOp != nullptr && operation.empty()) {
             if (parser.peek().type == TokenType::operation) {
                 operation = parser.consume().value;
             }
@@ -269,16 +286,11 @@ BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::
     }
 }
 
-BinOpNode::BinOpNode( const BinOpNode& other, size_t level ) : ASTNode(NodeType::BinOp, level) {
-    operation = other.operation;
-    leftOp = other.leftOp;
-    rightOp = other.rightOp;
-}
-
 UnaryOpNode::UnaryOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::UnaryOp, level), operand(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] UnaryOpNode created\n", BOLDMAGENTA);
     (void)parser;
+    /* STILL NOT IMPLEMENTED */
 }
 
 /*-VARAIBLE-*/

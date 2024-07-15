@@ -370,6 +370,8 @@ struct BinOpNode : public ASTNode {
     BinOpNode( const BinOpNode& other, size_t level );
     ~BinOpNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting BinOpNode\n", RED);
 
