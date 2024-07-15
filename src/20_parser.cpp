@@ -13,6 +13,10 @@ ParserManager::ParserManager( const std::vector<Token>& tokens, std::string file
 
 ParserManager::~ParserManager() {
     ConfigManager::getInstance().printDebug("\nDELETE ABSTRACT SINTAX TREE:\n", BOLDMAGENTA);
+
+    for (Function* function : _functions) {
+        delete function;
+    }
     _tree->deleteNode();
 }
 
