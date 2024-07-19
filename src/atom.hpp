@@ -1,5 +1,4 @@
-#ifndef ATOM_HPP
-#define ATOM_HPP
+#pragma once
 
 #include <iostream>
 #include <cstring>
@@ -12,5 +11,3 @@
 
 #define FILE_EXT   ".atm"
 #define EXECUTABLE "atom"
-
-#endif

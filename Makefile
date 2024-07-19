@@ -1,16 +1,22 @@
 # PROGRAM
-NAME = atom
+EXECUTABLE := atom
 
 # FOLDERS
-SRC_DIR = src
-OBJ_DIR = obj
-INC_DIR = inc
-ASM_DIR = asm
-BIN_DIR = bin
+SRC_DIR := src
+OBJ_DIR := obj
+ASM_DIR := asm
+BIN_DIR := bin
 
 # FILES
-SRC = $(wildcard $(SRC_DIR)/*cpp)
-OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+SOURCES := $(shell find $(SRC_DIR) -name '*.cpp')
+HEADERS := $(shell find $(SRC_DIR) -name '*.hpp')
+OBJECTS := $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+
+# INCLUDES
+SUB_DIR := $(shell find $(SRC_DIR) -type d)
+INC_FLAGS := $(addprefix -I, $(SUB_DIR))
+
+# ASSEMBLY
 SRC_ASM = code
 
 # COMPILATION
@@ -30,33 +36,32 @@ CYAN = \033[0;96m
 WHITE = \033[0;97m
 
 # RULES
-
 RULES = all run asm clean fclean re
 
 .SILENT:
 
-all: $(NAME)
+all: $(EXECUTABLE)
 
-run: $(NAME)
-	./$(BIN_DIR)/$(NAME) $(filter-out $(RULES) ,$(MAKECMDGOALS))
+run: $(EXECUTABLE)
+	./$(BIN_DIR)/$(EXECUTABLE) $(filter-out $(RULES) ,$(MAKECMDGOALS))
 %:
 	@:
 
-$(NAME) : $(OBJ)
+$(EXECUTABLE) : $(OBJECTS)
 	mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) $(OBJ) -I $(INC_DIR) -o $(BIN_DIR)/$(NAME)
+	$(CC) $(OBJECTS) -o $(BIN_DIR)/$(EXECUTABLE)
 	echo "$(YELLOW)Program compiled!$(DEF_COLOR)"
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
-	mkdir -p $(OBJ_DIR)
+	mkdir -p $(dir $@)
 	printf "$(BLUE)Compiling: $< $(DEF_COLOR)"
-	$(CC) $(CFLAGS) -o $@ -c $< -I $(INC_DIR)
+	$(CC) $(CFLAGS) $(INC_FLAGS) -o $@ -c $<
 	echo "$(GREEN)OK$(DEF_COLOR)"
 
 asm:
 	mkdir -p $(BIN_DIR)
 	nasm -f elf64 $(ASM_DIR)/$(SRC_ASM).asm -o $(ASM_DIR)/$(SRC_ASM).o
-	ld $(ASM_DIR)/$(SRC_ASM).o -o $(BIN_DIR)/$(NAME)
+	ld $(ASM_DIR)/$(SRC_ASM).o -o $(BIN_DIR)/$(EXECUTABLE)
 	rm $(ASM_DIR)/$(SRC_ASM).o
 
 clean:

@@ -1,5 +1,4 @@
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#pragma once
 
 #include "colors.hpp"
 
@@ -57,5 +56,3 @@ class ConfigManager {
         void printDebug( std::string, std::string = RESET );
 
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ERROR_HPP
-#define ERROR_HPP
+#pragma once
 
 #include <iostream>
 #include "atom.hpp"
@@ -23,5 +22,3 @@ void printError( const std::string& str );
 
 void fileReadError( const FileReadError& error, std::string aditionalInfo = "" );
 void parserNodeError( const ParserNodeError& error, Token errorToken, std::string aditionalInfo = "" );
-
-#endif

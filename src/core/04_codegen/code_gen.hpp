@@ -1,5 +1,4 @@
-#ifndef CODE_GEN_HPP
-#define CODE_GEN_HPP
+#pragma once
 
 #include <iostream>
 #include <cstdlib>
@@ -58,5 +57,3 @@ class CodeGeneratorManager {
 
         void assembleAndLink();
 };
-
-#endif

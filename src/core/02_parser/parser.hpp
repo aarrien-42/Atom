@@ -1,5 +1,4 @@
-#ifndef PARSER_HPP
-#define PARSER_HPP
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -25,10 +24,10 @@ struct Function {
 class ParserManager {
     private:
         ProgramNode* _tree;
+        std::vector<Function*> _functions;
+
         std::vector<Token> _tokens;
         size_t _index;
-
-        std::vector<Function*> _functions;
     public:
         ParserManager( const std::vector<Token>&, std::string );
         ~ParserManager();
@@ -55,5 +54,3 @@ class ParserManager {
 
         void printTree();
 };
-
-#endif

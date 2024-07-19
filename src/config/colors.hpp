@@ -1,5 +1,4 @@
-#ifndef COLORS_HPP
-#define COLORS_HPP
+#pragma once
 
 #include <string>
 
@@ -30,5 +29,3 @@ inline std::string getColor( size_t value ) {
         default: return RESET;
     }
 }
-
-#endif

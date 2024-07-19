@@ -1,5 +1,4 @@
-#ifndef LEXER_HPP
-#define LEXER_HPP
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -97,5 +96,3 @@ class LexerManager {
         void cleanTokens();
         void printTokens();
 };
-
-#endif

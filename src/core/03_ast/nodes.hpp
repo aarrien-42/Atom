@@ -1,5 +1,4 @@
-#ifndef NODES_HPP
-#define NODES_HPP
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -542,5 +541,3 @@ struct ReturnNode : public ASTNode {
 /*-UTILS-*/
 
 int isParenthesisClosed( ParserManager& );
-
-#endif
