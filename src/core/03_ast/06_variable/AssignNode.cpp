@@ -4,6 +4,12 @@ AssignNode::AssignNode( ParserManager& parser, size_t level ) : ASTNode(NodeType
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] AssignNode created\n", BOLDMAGENTA);
 
+    fillData(parser);
+}
+
+void AssignNode::fillData( ParserManager& parser ) {
+    ConfigManager& config = ConfigManager::getInstance();
+
     if (parser.peek().type == identifier) {
         variableName = parser.consume().value;
         if (parser.peek().value == "=") {

@@ -11,6 +11,8 @@ struct VarDeclNode : public ASTNode {
     VarDeclNode( ParserManager&, size_t );
     ~VarDeclNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting VarDeclNode\n", RED);
 

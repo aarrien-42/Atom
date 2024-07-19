@@ -9,6 +9,8 @@ struct IdentifierNode : public ASTNode {
 
     IdentifierNode( ParserManager&, size_t );
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting IdentifierNode\n", RED);
 

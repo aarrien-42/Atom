@@ -10,6 +10,8 @@ struct BoxNode : public ASTNode {
     BoxNode( ParserManager&, size_t );
     ~BoxNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting BoxNode\n", RED);
 

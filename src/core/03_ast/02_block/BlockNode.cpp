@@ -1,8 +1,14 @@
 #include "BlockNode.hpp"
 
-BlockNode::BlockNode( ParserManager& parser, size_t initialTabs, size_t level ) : ASTNode(NodeType::Block, level) {
+BlockNode::BlockNode( ParserManager& parser, size_t tabs, size_t level ) : ASTNode(NodeType::Block, level), initialTabs(tabs) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] BlockNode created\n", BOLDMAGENTA);
+
+    fillData(parser);
+}
+
+void BlockNode::fillData( ParserManager& parser ) {
+    ConfigManager& config = ConfigManager::getInstance();
 
     bool newValidLine = true;
     do {

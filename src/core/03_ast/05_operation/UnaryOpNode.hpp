@@ -11,6 +11,8 @@ struct UnaryOpNode : public ASTNode {
     UnaryOpNode( ParserManager&, size_t );
     ~UnaryOpNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting UnaryOpNode\n", RED);
 

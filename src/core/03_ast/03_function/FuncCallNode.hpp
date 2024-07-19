@@ -11,6 +11,8 @@ struct FuncCallNode : public ASTNode {
     FuncCallNode( ParserManager&, size_t );
     ~FuncCallNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting FuncCallNode\n", RED);
 

@@ -12,6 +12,8 @@ struct FuncDeclNode : public ASTNode {
     FuncDeclNode( ParserManager&, size_t );
     ~FuncDeclNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting FuncDeclNode\n", RED);
 

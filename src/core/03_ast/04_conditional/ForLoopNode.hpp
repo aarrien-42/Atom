@@ -13,6 +13,8 @@ struct ForLoopNode : public ASTNode {
     ForLoopNode( ParserManager&, size_t );
     ~ForLoopNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting ForLoopNode\n", RED);
 

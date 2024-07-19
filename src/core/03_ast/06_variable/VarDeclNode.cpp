@@ -4,6 +4,12 @@ VarDeclNode::VarDeclNode( ParserManager& parser, size_t level ) : ASTNode(NodeTy
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] VarDeclNode created\n", BOLDMAGENTA);
 
+    fillData(parser);
+}
+
+void VarDeclNode::fillData( ParserManager& parser ) {
+    ConfigManager& config = ConfigManager::getInstance();
+
     if (parser.peek().value == "v.")
         parser.consume();
     if (parser.peek().type == TokenType::identifier) {

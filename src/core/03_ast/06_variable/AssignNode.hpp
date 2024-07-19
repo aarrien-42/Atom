@@ -11,6 +11,8 @@ struct AssignNode : public ASTNode {
     AssignNode( ParserManager&, size_t );
     ~AssignNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting AssignNode\n", RED);
 

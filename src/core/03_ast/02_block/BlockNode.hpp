@@ -6,9 +6,12 @@
 // Data: Function or Conditional content
 struct BlockNode : public ASTNode {
     std::vector<ASTNode*> statements;
+    size_t initialTabs;
 
     BlockNode( ParserManager&, size_t, size_t );
     ~BlockNode() {}
+
+    void fillData( ParserManager& );
 
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting BlockNode\n", RED);

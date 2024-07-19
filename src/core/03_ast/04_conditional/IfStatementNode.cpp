@@ -3,6 +3,12 @@
 IfStatementNode::IfStatementNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::IfStatement, level), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] IfStatementNode created\n", BOLDMAGENTA);
+
+    fillData(parser);
+}
+
+void IfStatementNode::fillData( ParserManager& parser ) {
+    ConfigManager& config = ConfigManager::getInstance();
     size_t initialTabs = parser.peek().tabCount;
 
     if (parser.peek().value == "i.") {

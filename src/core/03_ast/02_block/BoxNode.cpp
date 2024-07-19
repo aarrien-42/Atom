@@ -4,6 +4,12 @@ BoxNode::BoxNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Box,
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] BoxNode created\n", BOLDMAGENTA);
 
+    fillData(parser);
+}
+
+void BoxNode::fillData( ParserManager& parser ) {
+    ConfigManager& config = ConfigManager::getInstance();
+
     // Check if box parenthesis closes
     const int tokensTillBoxEnd = isParenthesisClosed(parser);
     config.printDebug("Tokens until end of the box: " + std::to_string(tokensTillBoxEnd) + "\n");

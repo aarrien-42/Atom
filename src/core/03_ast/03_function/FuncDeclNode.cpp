@@ -4,6 +4,12 @@ FuncDeclNode::FuncDeclNode( ParserManager& parser, size_t level ) : ASTNode(Node
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] FuncDeclNode created\n", BOLDMAGENTA);
 
+    fillData(parser);
+}
+
+void FuncDeclNode::fillData( ParserManager& parser ) {
+    ConfigManager& config = ConfigManager::getInstance();
+
     // Set the function name
     functionName = parser.consume().value;
     if (parser.peek().type != enter) { // Function has parameters

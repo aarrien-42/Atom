@@ -10,6 +10,8 @@ struct ReturnNode : public ASTNode {
     ReturnNode( ParserManager&, size_t );
     ~ReturnNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting ReturnNode\n", RED);
 

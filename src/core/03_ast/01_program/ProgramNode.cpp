@@ -1,12 +1,14 @@
 #include "ProgramNode.hpp"
 
-/*-PROGRAM-*/
-
-ProgramNode::ProgramNode( ParserManager& parser, std::string file, size_t level ) : ASTNode(NodeType::Program, level) {
+ProgramNode::ProgramNode( ParserManager& parser, std::string file, size_t level ) : ASTNode(NodeType::Program, level), fileName(file) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] ProgramNode created\n", BOLDMAGENTA);
 
-    fileName = file;
+    fillData(parser);
+}
+
+void ProgramNode::fillData( ParserManager& parser ) {
+    ConfigManager& config = ConfigManager::getInstance();
 
     while (!parser.peek().value.empty()) {
         if (parser.peek().type == tab || parser.peek().type == enter) {

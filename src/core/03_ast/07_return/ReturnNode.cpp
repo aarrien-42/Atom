@@ -4,6 +4,12 @@ ReturnNode::ReturnNode( ParserManager& parser, size_t level ) : ASTNode(NodeType
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] ReturnNode created\n", BOLDMAGENTA);
 
+    fillData(parser);
+}
+
+void ReturnNode::fillData( ParserManager& parser ) {
+    ConfigManager& config = ConfigManager::getInstance();
+
     if (parser.peek().value != "r.")
         parserNodeError(INV_RETURN_NODE, parser.consume(), "Invalid Return Node");
     else {

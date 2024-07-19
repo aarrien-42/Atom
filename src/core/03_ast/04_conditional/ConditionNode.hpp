@@ -12,6 +12,8 @@ struct ConditionNode : public ASTNode {
     ConditionNode( ParserManager&, size_t );
     ~ConditionNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting ConditionNode\n", RED);
 

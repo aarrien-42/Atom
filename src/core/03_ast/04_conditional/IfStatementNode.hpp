@@ -13,6 +13,8 @@ struct IfStatementNode : public ASTNode {
     IfStatementNode( ParserManager&, size_t );
     ~IfStatementNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting IfStatementNode\n", RED);
 

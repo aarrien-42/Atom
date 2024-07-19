@@ -11,6 +11,8 @@ struct ProgramNode : public ASTNode {
     ProgramNode( ParserManager&, std::string, size_t = 0 );
     ~ProgramNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting ProgramNode\n", RED);
 

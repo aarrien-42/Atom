@@ -11,6 +11,8 @@ struct WhileLoopNode : public ASTNode {
     WhileLoopNode( ParserManager&, size_t );
     ~WhileLoopNode() {}
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting WhileLoopNode\n", RED);
 

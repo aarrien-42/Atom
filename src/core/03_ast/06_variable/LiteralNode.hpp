@@ -9,6 +9,8 @@ struct LiteralNode : public ASTNode {
 
     LiteralNode( ParserManager&, size_t );
 
+    void fillData( ParserManager& );
+
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting LiteralNode\n", RED);
 
