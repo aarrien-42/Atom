@@ -1,3 +1,4 @@
 main:
-	v. x
-	r. 0
+	v. x = 3
+	x = 1 + x
+	r. x

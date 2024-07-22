@@ -35,13 +35,14 @@ void CodeGeneratorManager::writeFullProgramCode() {
                 config.printDebug("  - Function [" + funcNode->functionName + "]:\n", YELLOW);
                 for (std::vector<std::string>::const_iterator it = funcNode->funcVariables.begin(); it != funcNode->funcVariables.end(); it++) {
                     config.printDebug("    - " + *it + "\n", YELLOW);
-                    _outCodeFile << *it << " resb 8\n";
+                    _outCodeFile << "  " << *it << " resb 8\n";
                 }
             }
         }
 
         // Start writting the program
-        _outCodeFile << "global _start\n";
+        _outCodeFile << "section .text\n";
+        _outCodeFile << "  global _start\n";
         for (size_t progCount = 0; progCount < _parsedPrograms.size(); progCount++) {
             nodeHandler(_parsedPrograms[progCount]);
         }
@@ -66,6 +67,10 @@ void CodeGeneratorManager::writeFullProgramCode() {
 }
 
 void CodeGeneratorManager::nodeHandler( ASTNode* node ) {
+    if (node == nullptr) {
+        return;
+    }
+
     ConfigManager::getInstance().printDebug("Node type = " + std::to_string(node->getType()) + "\n");
     switch (node->getType()) {
         case NodeType::Program: {
@@ -235,26 +240,36 @@ void CodeGeneratorManager::writeUnaryOpNode( UnaryOpNode* node ) {
 }
 
 void CodeGeneratorManager::writeVarDeclNode( VarDeclNode* node ) {
-    (void)node;
+    if (node->initialValue != nullptr) {
+        nodeHandler(node->initialValue);
+    }
 }
 
 void CodeGeneratorManager::writeAssignNode( AssignNode* node ) {
-    (void)node;
+    nodeHandler(node->value);
+    _outCodeFile << "; Assign value to " << node->variableName << "\n";
+    _outCodeFile << "  POP rax\n";
+    _outCodeFile << "  MOV qword [" << node->variableName << "], rax\n\n";
 }
 
 void CodeGeneratorManager::writeLiteralNode( LiteralNode* node ) {
-    _outCodeFile << "  PUSH " << node->value << "\n";
+    _outCodeFile << "; Get literal value\n";
+
+    _outCodeFile << "  PUSH " << node->value << "\n\n";
 }
 
 void CodeGeneratorManager::writeIdentifierNode( IdentifierNode* node ) {
-    (void)node;
+    _outCodeFile << "; Get identifier value\n";
+
+    _outCodeFile << "  MOV qword [" << node->name << "], rax\n";
+    _outCodeFile << "  PUSH rax\n\n";
 }
 
 void CodeGeneratorManager::writeReturnNode( ReturnNode* node ) {
     nodeHandler(node->returnValue);
     _outCodeFile << "  POP rdi\n"; // Set exit value
     _outCodeFile << "  MOV rax, 60\n"; // Set exit syscall
-    _outCodeFile << "  syscall\n";
+    _outCodeFile << "  syscall\n\n";
 }
 
 
