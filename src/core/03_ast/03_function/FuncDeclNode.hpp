@@ -9,6 +9,8 @@ struct FuncDeclNode : public ASTNode {
     std::vector<ASTNode*> parameters;
     ASTNode* body;
 
+    std::vector<std::string> funcVariables;
+
     FuncDeclNode( ParserManager&, size_t );
     ~FuncDeclNode() {}
 

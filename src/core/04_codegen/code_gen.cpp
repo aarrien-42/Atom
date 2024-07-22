@@ -20,11 +20,27 @@ void CodeGeneratorManager::addProgram( ProgramNode* program ) {
 }
 
 void CodeGeneratorManager::writeFullProgramCode() {
-    ConfigManager::getInstance().printDebug("Output program = " + _outputFileName + "\n", MAGENTA);
+    ConfigManager& config = ConfigManager::getInstance();
+    config.printDebug("Output program = " + _outputFileName + "\n", MAGENTA);
+
     _outCodeFile.open(_assemblyCodeFileName + ".asm", std::ios::out | std::ios::trunc);
 
     if (_outCodeFile.is_open()) {
         /*-CODE-*/
+        _outCodeFile << "section .bss\n";
+        config.printDebug("Variables:\n", YELLOW);
+        for (size_t progCount = 0; progCount < _parsedPrograms.size(); progCount++) {
+            for (auto function : _parsedPrograms[progCount]->functions) {
+                FuncDeclNode* funcNode = dynamic_cast<FuncDeclNode*>(function);
+                config.printDebug("  - Function [" + funcNode->functionName + "]:\n", YELLOW);
+                for (std::vector<std::string>::const_iterator it = funcNode->funcVariables.begin(); it != funcNode->funcVariables.end(); it++) {
+                    config.printDebug("    - " + *it + "\n", YELLOW);
+                    _outCodeFile << *it << " resb 8\n";
+                }
+            }
+        }
+
+        // Start writting the program
         _outCodeFile << "global _start\n";
         for (size_t progCount = 0; progCount < _parsedPrograms.size(); progCount++) {
             nodeHandler(_parsedPrograms[progCount]);

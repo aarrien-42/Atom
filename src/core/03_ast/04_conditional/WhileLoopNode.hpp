@@ -8,7 +8,9 @@ struct WhileLoopNode : public ASTNode {
     ASTNode* condition;
     ASTNode* body;
 
-    WhileLoopNode( ParserManager&, size_t );
+    std::vector<std::string>& scopedVariables;
+
+    WhileLoopNode( ParserManager&, std::vector<std::string>&, size_t );
     ~WhileLoopNode() {}
 
     void fillData( ParserManager& );

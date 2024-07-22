@@ -8,7 +8,9 @@ struct VarDeclNode : public ASTNode {
     std::string name;
     ASTNode* initialValue;
 
-    VarDeclNode( ParserManager&, size_t );
+    std::vector<std::string>& scopedVariables;
+
+    VarDeclNode( ParserManager&, std::vector<std::string>&, size_t );
     ~VarDeclNode() {}
 
     void fillData( ParserManager& );
@@ -16,7 +18,8 @@ struct VarDeclNode : public ASTNode {
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting VarDeclNode\n", RED);
 
-        initialValue->deleteNode();
+        if (initialValue != nullptr)
+            initialValue->deleteNode();
     }
 
     void printNode() const override {

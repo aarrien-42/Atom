@@ -7,7 +7,9 @@
 struct ReturnNode : public ASTNode {
     ASTNode* returnValue;
 
-    ReturnNode( ParserManager&, size_t );
+    std::vector<std::string>& scopedVariables;
+
+    ReturnNode( ParserManager&, std::vector<std::string>&, size_t );
     ~ReturnNode() {}
 
     void fillData( ParserManager& );

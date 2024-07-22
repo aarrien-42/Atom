@@ -1,6 +1,6 @@
 #include "ReturnNode.hpp"
 
-ReturnNode::ReturnNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Return, level), returnValue(nullptr) {
+ReturnNode::ReturnNode( ParserManager& parser, std::vector<std::string>& scopedVariables, size_t level ) : ASTNode(NodeType::Return, level), scopedVariables(scopedVariables), returnValue(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] ReturnNode created\n", BOLDMAGENTA);
 

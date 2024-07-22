@@ -10,7 +10,9 @@ struct ForLoopNode : public ASTNode {
     ASTNode* iteration;
     ASTNode* body;
 
-    ForLoopNode( ParserManager&, size_t );
+    std::vector<std::string>& scopedVariables;
+
+    ForLoopNode( ParserManager&, std::vector<std::string>&, size_t );
     ~ForLoopNode() {}
 
     void fillData( ParserManager& );

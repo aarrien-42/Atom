@@ -1,6 +1,6 @@
 #include "IfStatementNode.hpp"
 
-IfStatementNode::IfStatementNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::IfStatement, level), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
+IfStatementNode::IfStatementNode( ParserManager& parser, std::vector<std::string>& scopedVariables, size_t level ) : ASTNode(NodeType::IfStatement, level), scopedVariables(scopedVariables), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] IfStatementNode created\n", BOLDMAGENTA);
 
@@ -16,7 +16,7 @@ void IfStatementNode::fillData( ParserManager& parser ) {
         if (parser.peek().type != TokenType::enter ) {
             condition = new ConditionNode(parser, this->level + 1);
             if (parser.peek().tabCount > initialTabs) {
-                body = new BlockNode(parser, parser.peek().tabCount, this->level + 1);
+                body = new BlockNode(parser, scopedVariables, parser.peek().tabCount, this->level + 1);
             } else {
                 parserNodeError(INV_IF_NODE, parser.consume(), "Bad alignment for if statement body");
             }

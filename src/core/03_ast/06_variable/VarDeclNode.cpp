@@ -1,6 +1,6 @@
 #include "VarDeclNode.hpp"
 
-VarDeclNode::VarDeclNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::VarDecl, level), initialValue(nullptr) {
+VarDeclNode::VarDeclNode( ParserManager& parser, std::vector<std::string>& scopedVariables, size_t level ) : ASTNode(NodeType::VarDecl, level), scopedVariables(scopedVariables), initialValue(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] VarDeclNode created\n", BOLDMAGENTA);
 

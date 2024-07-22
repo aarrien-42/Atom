@@ -21,7 +21,7 @@ SRC_ASM = code
 
 # COMPILATION
 CC = g++
-CFLAGS = #-Wall -Wextra -Werror #-g3 -fsanitize=address
+CFLAGS = #-Wall -Wextra -Werror -g3 -fsanitize=address
 RM = rm -rf
 
 # COLORS

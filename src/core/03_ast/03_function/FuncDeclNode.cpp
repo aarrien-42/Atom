@@ -5,6 +5,9 @@ FuncDeclNode::FuncDeclNode( ParserManager& parser, size_t level ) : ASTNode(Node
     config.printDebug("[*] FuncDeclNode created\n", BOLDMAGENTA);
 
     fillData(parser);
+
+    config.printDebug("[FuncDeclNode] Final variables:\n", BOLDCYAN);
+    printScopedVariables(funcVariables);
 }
 
 void FuncDeclNode::fillData( ParserManager& parser ) {
@@ -31,5 +34,5 @@ void FuncDeclNode::fillData( ParserManager& parser ) {
     }
 
     // Set the function body
-    body = new BlockNode(parser, parser.peek().tabCount, this->level + 1);
+    body = new BlockNode(parser, funcVariables, parser.peek().tabCount, this->level + 1);
 }

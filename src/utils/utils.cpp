@@ -42,3 +42,14 @@ int isParenthesisClosed( ParserManager& parser ) {
     }
     return isParenClosed;
 }
+
+void printScopedVariables( std::vector<std::string>& scpVars ) {
+    ConfigManager& config = ConfigManager::getInstance();
+
+    if (scpVars.size() == 0) {
+        config.printDebug("  - empty\n", CYAN);
+    }
+    for (std::vector<std::string>::const_iterator it = scpVars.begin(); it != scpVars.end(); it++) {
+        config.printDebug("  - " + *it + "\n", CYAN);
+    }
+}

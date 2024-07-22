@@ -12,5 +12,6 @@ bool isStrInVector( const std::string& buffer , const std::vector<std::string>& 
 char getStrEndChar( const std::string& str );
 
 int isParenthesisClosed( ParserManager& );
+void printScopedVariables( std::vector<std::string>& );
 
 #endif

@@ -10,7 +10,9 @@ struct IfStatementNode : public ASTNode {
     ASTNode* ifBranch; // not above condition so else if
     ASTNode* elseBranch; // just in case there's an else
 
-    IfStatementNode( ParserManager&, size_t );
+    std::vector<std::string>& scopedVariables;
+
+    IfStatementNode( ParserManager&, std::vector<std::string>&, size_t );
     ~IfStatementNode() {}
 
     void fillData( ParserManager& );
