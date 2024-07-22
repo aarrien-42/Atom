@@ -60,9 +60,11 @@ void BinOpNode::fillData( ParserManager& parser ) {
             }
         }
 
-        // Check for literal or parenthesis
+        // Check for literal, identifier or parenthesis
         if (parser.peek().type == TokenType::literal) {
             *opNode = new LiteralNode(parser, level + 1);
+        } else if (parser.peek().type == TokenType::identifier) {
+            *opNode = new IdentifierNode(parser, level + 1);
         } else if (parser.peek().type == TokenType::paren) {
             if (parser.peek().value == "(") {
                 *opNode = new BoxNode(parser, level + 1);
