@@ -261,7 +261,7 @@ void CodeGeneratorManager::writeLiteralNode( LiteralNode* node ) {
 void CodeGeneratorManager::writeIdentifierNode( IdentifierNode* node ) {
     _outCodeFile << "; Get identifier value\n";
 
-    _outCodeFile << "  MOV qword [" << node->name << "], rax\n";
+    _outCodeFile << "  MOV rax, qword [" << node->name << "]\n";
     _outCodeFile << "  PUSH rax\n\n";
 }
 

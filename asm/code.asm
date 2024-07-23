@@ -44,8 +44,10 @@
 
 section .bss
     DEF_VAR x, 8
+    DEF_VAR y, 8
 
 section .data
+    scaling_factor dd 65536
     DEF_STR msg, "Hello world"
 
 section .text
@@ -53,7 +55,8 @@ section .text
 
 _start:
     ; Modify the reserved space
-    MOD_VAR x, 42, qword
+    MOD_VAR x, 10, qword
+    MOD_VAR y, 3, qword
 
     MOD_STR msg+3, 'X'
     MOD_STR msg, 'X'
