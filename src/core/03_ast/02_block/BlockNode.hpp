@@ -16,14 +16,14 @@ struct BlockNode : public ASTNode {
     void fillData( ParserManager& );
 
     void deleteNode() override {
-        ConfigManager::getInstance().printDebug("Deleting BlockNode:\n", RED);
+        ConfigManager::getInstance().printDebug("Deleting BlockNode: tabs(" + std::to_string(initialTabs) + ")\n", RED);
 
         for (ASTNode* statement : statements) {
             ConfigManager::getInstance().printDebug(" - ", RED);
             statement->deleteNode();
         }
 
-        ConfigManager::getInstance().printDebug("[-]\n", RED);
+        ConfigManager::getInstance().printDebug("[-] tabs(" + std::to_string(initialTabs) + ")\n", RED);
     }
 
     void printNode() const override {

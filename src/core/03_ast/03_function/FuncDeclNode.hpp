@@ -19,8 +19,12 @@ struct FuncDeclNode : public ASTNode {
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting FuncDeclNode\n", RED);
 
-        for (ASTNode* param : parameters)
+        ConfigManager::getInstance().printDebug(" Deleting parameters:\n", RED);
+        for (ASTNode* param : parameters) {
             param->deleteNode();
+        }
+
+        ConfigManager::getInstance().printDebug(" Deleting body:\n", RED);
         body->deleteNode();
     }
 

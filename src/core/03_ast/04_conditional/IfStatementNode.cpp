@@ -1,6 +1,6 @@
 #include "IfStatementNode.hpp"
 
-IfStatementNode::IfStatementNode( ParserManager& parser, std::vector<std::string>& scopedVariables, size_t level ) : ASTNode(NodeType::IfStatement, level), scopedVariables(scopedVariables), condition(nullptr), body(nullptr), ifBranch(nullptr), elseBranch(nullptr) {
+IfStatementNode::IfStatementNode( ParserManager& parser, std::vector<std::string>& scopedVariables, size_t level ) : ASTNode(NodeType::IfStatement, level), scopedVariables(scopedVariables), condition(nullptr), body(nullptr), elseBranch(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] IfStatementNode created\n", BOLDMAGENTA);
 

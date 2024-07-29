@@ -7,7 +7,6 @@
 struct IfStatementNode : public ASTNode {
     ASTNode* condition;
     ASTNode* body;
-    ASTNode* ifBranch; // not above condition so else if
     ASTNode* elseBranch; // just in case there's an else
 
     std::vector<std::string>& scopedVariables;
@@ -22,8 +21,9 @@ struct IfStatementNode : public ASTNode {
 
         condition->deleteNode();
         body->deleteNode();
-        ifBranch->deleteNode();
-        elseBranch->deleteNode();
+        if (elseBranch != nullptr) {
+            elseBranch->deleteNode();
+        }
     }
 
     void printNode() const override {
@@ -37,11 +37,6 @@ struct IfStatementNode : public ASTNode {
         putSpaces();
         Config.printDebug("Body:\n");
         body->printNode();
-        if (ifBranch != nullptr) {
-            putSpaces();
-            Config.printDebug("If branch:\n");
-            ifBranch->printNode();
-        }
         if (elseBranch != nullptr) {
             putSpaces();
             Config.printDebug("Else branch:\n");
