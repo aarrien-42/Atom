@@ -10,4 +10,6 @@ UnaryOpNode::UnaryOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeTy
 void UnaryOpNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
     (void)parser;
+
+    config.printDebug("[-] UnaryOpNode\n", RED);
 }

@@ -16,4 +16,6 @@ void IdentifierNode::fillData( ParserManager& parser ) {
     } else {
         parserNodeError(INV_IDENTIFIER_NODE, parser, "Invalid Identifier Node");
     }
+
+    config.printDebug("[-] IdentifierNode\n", RED);
 }

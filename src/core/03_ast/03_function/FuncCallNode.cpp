@@ -10,4 +10,6 @@ FuncCallNode::FuncCallNode( ParserManager& parser, size_t level ) : ASTNode(Node
 void FuncCallNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
     (void)parser;
+
+    config.printDebug("[-] FuncCallNode\n", RED);
 }

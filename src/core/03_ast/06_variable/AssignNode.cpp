@@ -39,4 +39,6 @@ void AssignNode::fillData( ParserManager& parser ) {
     } else {
         parserNodeError(INV_ASSIGN_NODE, parser, "Invalid assignation");
     }
+
+    config.printDebug("[-] AssignNode\n", RED);
 }

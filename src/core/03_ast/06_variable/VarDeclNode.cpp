@@ -26,4 +26,6 @@ void VarDeclNode::fillData( ParserManager& parser ) {
     } else {
         parserNodeError(INV_VARDECL_NODE, parser, "Variable needs an identifier");
     }
+
+    config.printDebug("[-] VarDeclNode\n", RED);
 }

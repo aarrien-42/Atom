@@ -47,4 +47,6 @@ void ConditionNode::fillData( ParserManager& parser ) {
             break;
         }
     }
+
+    config.printDebug("[-] ConditionNode\n", RED);
 }

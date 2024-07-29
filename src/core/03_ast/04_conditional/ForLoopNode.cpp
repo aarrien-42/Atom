@@ -10,4 +10,6 @@ ForLoopNode::ForLoopNode( ParserManager& parser, std::vector<std::string>& scope
 void ForLoopNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
     (void)parser;
+
+    config.printDebug("[-] ForLoopNode\n", RED);
 }

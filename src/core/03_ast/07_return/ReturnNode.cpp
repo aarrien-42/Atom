@@ -34,4 +34,6 @@ void ReturnNode::fillData( ParserManager& parser ) {
             parserNodeError(INV_RETURN_NODE, parser, "Expected a new line");
         }
     }
+
+    config.printDebug("[-] ReturnNode\n", RED);
 }

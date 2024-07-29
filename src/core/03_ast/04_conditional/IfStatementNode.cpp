@@ -38,4 +38,6 @@ void IfStatementNode::fillData( ParserManager& parser ) {
             parserNodeError(INV_IF_NODE, parser, "If statement node needs a condition");
         }
     }
+
+    config.printDebug("[-] IfStatementNode\n", RED);
 }

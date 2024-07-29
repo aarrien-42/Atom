@@ -75,4 +75,6 @@ void BinOpNode::fillData( ParserManager& parser ) {
             break;
         }
     }
+
+    config.printDebug("[-] BinOpNode\n", RED);
 }

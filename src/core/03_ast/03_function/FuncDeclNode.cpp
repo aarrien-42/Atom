@@ -35,4 +35,6 @@ void FuncDeclNode::fillData( ParserManager& parser ) {
 
     // Set the function body
     body = new BlockNode(parser, funcVariables, parser.peek().tabCount, this->level + 1);
+
+    config.printDebug("[-] FuncDeclNode\n", RED);
 }

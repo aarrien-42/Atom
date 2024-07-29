@@ -22,4 +22,6 @@ void ProgramNode::fillData( ParserManager& parser ) {
             }
         }
     }
+
+    config.printDebug("[-] ProgramNode\n", RED);
 }
