@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "lexer.hpp"
 #include "nodes.hpp"
 
 struct ASTNode;

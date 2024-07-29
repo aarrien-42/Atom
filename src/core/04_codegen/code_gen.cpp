@@ -191,11 +191,59 @@ void CodeGeneratorManager::writeFuncCallNode( FuncCallNode* node ) {
 }
 
 void CodeGeneratorManager::writeConditionNode( ConditionNode* node ) {
-    (void)node;
+    // Left and right comparation results inserted to the stack
+    nodeHandler(node->leftComp);
+    nodeHandler(node->rightComp);
+
+    _outCodeFile << "; Compare\n";
+    _outCodeFile << "  POP rcx\n"; // rightComp
+    _outCodeFile << "  POP rax\n"; // leftComp
+    _outCodeFile << "  CMP rax, rcx\n";
+
+    if (node->comparation == COMPARISON_EQUAL) {
+        _outCodeFile << "  JE .comp_true\n";
+    } else if (node->comparation == COMPARISON_NOT_EQUAL) {
+        _outCodeFile << "  JNE .comp_true\n";
+    } else if (node->comparation == COMPARISON_LESS) {
+        _outCodeFile << "  JL .comp_true\n";
+    } else if (node->comparation == COMPARISON_LESS_EQUAL) {
+        _outCodeFile << "  JLE .comp_true\n";
+    } else if (node->comparation == COMPARISON_GREATER) {
+        _outCodeFile << "  JG .comp_true\n";
+    } else if (node->comparation == COMPARISON_GREATER_EQUAL) {
+        _outCodeFile << "  JGE .comp_true\n";
+    }
+    _outCodeFile << "  JMP .comp_false\n";
+
+    _outCodeFile << "  .comp_true:\n";
+    _outCodeFile << "  PUSH 1\n";
+    _outCodeFile << "  JMP .end_comp\n";
+    _outCodeFile << "  .comp_false:\n";
+    _outCodeFile << "  PUSH 0\n";
+    _outCodeFile << "  .end_comp:\n\n";
 }
 
 void CodeGeneratorManager::writeIfStatementNode( IfStatementNode* node ) {
-    (void)node;
+    nodeHandler(node->condition); // condition result is saved in the stack
+
+    _outCodeFile << "; Get comparation result\n";
+    _outCodeFile << "  POP rax\n";
+    _outCodeFile << "  CMP rax, 0\n";
+    _outCodeFile << "  JE .else\n";
+    _outCodeFile << "  JMP .if\n\n";
+
+    _outCodeFile << "; IF\n";
+    _outCodeFile << "  .if:\n";
+    nodeHandler(node->body);
+    _outCodeFile << "  JMP .end_if\n\n";
+
+    _outCodeFile << "; ELSE\n";
+    _outCodeFile << "  .else:\n";
+    if (node->elseBranch != nullptr) {
+
+    }
+
+    _outCodeFile << "  .end_if:\n\n";
 }
 
 void CodeGeneratorManager::writeWhileLoopNode( WhileLoopNode* node ) {
