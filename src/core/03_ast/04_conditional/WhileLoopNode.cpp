@@ -10,4 +10,5 @@ WhileLoopNode::WhileLoopNode( ParserManager& parser, std::vector<std::string>& s
 void WhileLoopNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
     (void)parser;
+    (void)config;
 }

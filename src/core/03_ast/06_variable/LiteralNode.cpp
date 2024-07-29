@@ -14,6 +14,6 @@ void LiteralNode::fillData( ParserManager& parser ) {
         value = parser.consume().value;
         config.printDebug("  Literal: [" + value + "]\n");
     } else {
-        parserNodeError(INV_LITERAL_NODE, parser.consume(), "Invalid Literal Node");
+        parserNodeError(INV_LITERAL_NODE, parser, "Invalid Literal Node");
     }
 }

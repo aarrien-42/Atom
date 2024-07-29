@@ -11,7 +11,7 @@ void ReturnNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
     if (parser.peek().value != "r.")
-        parserNodeError(INV_RETURN_NODE, parser.consume(), "Invalid Return Node");
+        parserNodeError(INV_RETURN_NODE, parser, "Invalid Return Node");
     else {
         parser.consume();
 
@@ -31,7 +31,7 @@ void ReturnNode::fillData( ParserManager& parser ) {
 
         // Line must end by now
         if (parser.peek().type != TokenType::enter) {
-            parserNodeError(INV_RETURN_NODE, parser.consume(), "Expected a new line");
+            parserNodeError(INV_RETURN_NODE, parser, "Expected a new line");
         }
     }
 }

@@ -17,8 +17,7 @@ void ProgramNode::fillData( ParserManager& parser ) {
             if (parser.peek().type == identifier && getStrEndChar(parser.peek().value) == ':') {
                 functions.push_back(new FuncDeclNode(parser, this->level + 1));
             } else {
-                std::cerr << "Still not implemented\n";
-                std::cout << parser.peek().value << "\n";
+                config.printDebug("(" + parser.peek().value + ") Still not implemented\n", MAGENTA);
                 parser.consume();
             }
         }

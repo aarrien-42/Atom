@@ -3,6 +3,8 @@
 #include <iostream>
 #include "atom.hpp"
 
+class ParserManager;
+
 struct Token;
 
 // File read based errors
@@ -21,4 +23,4 @@ enum ParserNodeError {
 void printError( const std::string& str );
 
 void fileReadError( const FileReadError& error, std::string aditionalInfo = "" );
-void parserNodeError( const ParserNodeError& error, Token errorToken, std::string aditionalInfo = "" );
+void parserNodeError( const ParserNodeError& error, ParserManager& parser, std::string aditionalInfo = "" );

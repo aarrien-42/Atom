@@ -29,10 +29,10 @@ struct ConditionNode : public ASTNode {
         putSpaces();
         Config.printDebug("Comparator: " + comparation + "\n");
         putSpaces();
-        Config.printDebug("Left node: " + comparation + "\n");
+        Config.printDebug("Left node:\n");
         leftComp->printNode();
         putSpaces();
-        Config.printDebug("Right node: " + comparation + "\n");
+        Config.printDebug("Right node:\n");
         rightComp->printNode();
     }
 };

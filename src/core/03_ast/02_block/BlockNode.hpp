@@ -16,10 +16,14 @@ struct BlockNode : public ASTNode {
     void fillData( ParserManager& );
 
     void deleteNode() override {
-        ConfigManager::getInstance().printDebug("Deleting BlockNode\n", RED);
+        ConfigManager::getInstance().printDebug("Deleting BlockNode:\n", RED);
 
-        for (ASTNode* statement : statements)
+        for (ASTNode* statement : statements) {
+            ConfigManager::getInstance().printDebug(" - ", RED);
             statement->deleteNode();
+        }
+
+        ConfigManager::getInstance().printDebug("[-]\n", RED);
     }
 
     void printNode() const override {

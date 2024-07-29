@@ -22,7 +22,7 @@ void AssignNode::fillData( ParserManager& parser ) {
                 else if (parser.peek().type == literal)
                     value = new LiteralNode(parser, this->level + 1);
                 else {
-                    parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Invalid simple assignation");
+                    parserNodeError(INV_ASSIGN_NODE, parser, "Invalid simple assignation");
                 }
             } else { // advanced assignation
                 if (parser.peek().type == TokenType::identifier && parser.peek(1).type == TokenType::paren) { // function call
@@ -30,13 +30,13 @@ void AssignNode::fillData( ParserManager& parser ) {
                 } else if (parser.peek(1).type == TokenType::operation) {
                     value = new BinOpNode(parser, this->level + 1);
                 } else {
-                    parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Invalid advanced assignation");
+                    parserNodeError(INV_ASSIGN_NODE, parser, "Invalid advanced assignation");
                 }
             }
         } else {
-            parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Assignation not done");
+            parserNodeError(INV_ASSIGN_NODE, parser, "Assignation not done");
         }
     } else {
-        parserNodeError(INV_ASSIGN_NODE, parser.consume(), "Invalid assignation");
+        parserNodeError(INV_ASSIGN_NODE, parser, "Invalid assignation");
     }
 }

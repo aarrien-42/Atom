@@ -20,10 +20,10 @@ void VarDeclNode::fillData( ParserManager& parser ) {
             if (parser.peek(1).value == "=") {
                 initialValue = new AssignNode(parser, this->level + 1);
             } else {
-                parserNodeError(INV_VARDECL_NODE, parser.consume(), "Expected assignation");
+                parserNodeError(INV_VARDECL_NODE, parser, "Expected assignation");
             }
         }
     } else {
-        parserNodeError(INV_VARDECL_NODE, parser.consume(), "Variable needs an identifier");
+        parserNodeError(INV_VARDECL_NODE, parser, "Variable needs an identifier");
     }
 }

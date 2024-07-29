@@ -15,62 +15,32 @@ void BoxNode::fillData( ParserManager& parser ) {
     config.printDebug("Tokens until end of the box: " + std::to_string(tokensTillBoxEnd) + "\n");
 
     if (tokensTillBoxEnd > 0) {
-        // Check if Box Node is valid, should only contain: paren, operation, literal
-        bool validBox = true;
-        for (int index = 0; index < tokensTillBoxEnd; index++) {
-            Token token = parser.peek(index);
-            if (token.type != TokenType::paren && token.type != TokenType::operation && token.type != TokenType::literal) {
-                parserNodeError(INV_BOX_NODE, parser.peek(), "Invalid token inside parenthesis detected");
-                validBox = false;
-            }
-        }
+        parser.consume(); // Consume first BoxNode parenthesis
+        ASTNode* tempNode = nullptr;
+        while (true) {
+            config.printDebug("Current token [" + parser.peek().value + " (" + std::to_string(parser.peek().type) + ")" + "]\n");
 
-        if (validBox) {
-            config.printDebug("Valid BoxNode\n", YELLOW);
-
-            // Check for a valid operation box
-            bool literal = false, operation = false;
-            for (int index = 0; index < tokensTillBoxEnd; index++) {
-                Token token = parser.peek(index);
-
-                if (token.type == TokenType::literal) {
-                    literal = true;
-                }
-                if (token.type == TokenType::operation) {
-                    operation = true;
-                }
-            }
-
-            parser.consume(); // Consume first box parenthesis
-
-            // Check if another BoxNode needs to be created inside this BoxNode
-            bool boxInsideBox = false;
-            if (parser.peek().type == TokenType::paren) {
-                config.printDebug("Another posible BoxNode\n", GREEN);
-
-                int tillParenClose =  isParenthesisClosed(parser);
-                if (parser.peek().value == "(" && parser.peek(tillParenClose + 1).type != TokenType::operation) {
-                    boxInsideBox = true;
-                }
-            }
-
-            if (boxInsideBox) {
-                config.printDebug("Another Box\n", GREEN);
-                node = new BoxNode(parser, level + 1);
+            size_t opIndex = 0;
+            if (parser.peek().type == TokenType::paren && parser.peek().value == ")") {
+                break;
+            } else if (parser.peek().type == TokenType::paren && parser.peek().value == "(") {
+                opIndex = isParenthesisClosed(parser) + 1;
             } else {
-                // Check for BinOpNode or LiteralNode
-                if (literal && operation) {
-                    config.printDebug("Operation\n", GREEN);
-                    node = new BinOpNode(parser, level + 1);
-                } else if (literal && !operation) {
-                    config.printDebug("Literal\n", GREEN);
-                    node = new LiteralNode(parser, level + 1);
-                }
+                opIndex = 1;
             }
 
-            parser.consume(); // Consume last box parenthesis
+            config.printDebug("opNode value = " + parser.peek(opIndex).value + " (" + std::to_string(opIndex) + ")" + "\n");
+            if (parser.peek(opIndex).type == TokenType::operation) {
+                tempNode = new BinOpNode(parser, level + 1);
+            } else if (parser.peek(opIndex).type == TokenType::comparison) {
+                tempNode = new ConditionNode(parser, level + 1);
+                break;
+            }
         }
+        parser.consume(); // Consume last BoxNode parenthesis
+        node = tempNode;
     } else {
-        parserNodeError(INV_BOX_NODE, parser.consume(), "Parenthesis not closed");
+        parserNodeError(INV_BOX_NODE, parser, "Parenthesis not closed");
     }
+    config.printDebug("[-] BoxNode\n", RED);
 }

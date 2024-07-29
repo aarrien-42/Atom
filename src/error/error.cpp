@@ -21,7 +21,7 @@ void fileReadError( const FileReadError& error , std::string aditionalInfo ) {
     exit(100 + error);
 }
 
-void parserNodeError( const ParserNodeError& error, Token errorToken, std::string aditionalInfo ) {
+void parserNodeError( const ParserNodeError& error, ParserManager& parser, std::string aditionalInfo ) {
     switch (error) {
         case INV_BLOCK_NODE:
             printError("BlockNode: " + aditionalInfo); break;
@@ -55,6 +55,8 @@ void parserNodeError( const ParserNodeError& error, Token errorToken, std::strin
             printError("ReturnNode: " + aditionalInfo); break;
     }
 
-    std::cerr << "Error at -> " << errorToken.row << ":" << errorToken.column << std::endl;
-    exit(200 + error);
+    std::cerr << "Error at -> " << parser.peek().row << ":" << parser.peek().column << std::endl;
+
+    while (parser.consume().type != TokenType::enter)
+        ;
 }

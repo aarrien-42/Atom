@@ -11,19 +11,31 @@ void IfStatementNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
     size_t initialTabs = parser.peek().tabCount;
 
-    if (parser.peek().value == "i.") {
+    if (parser.peek().value != "i.") {
+        parserNodeError(INV_IF_NODE, parser, "Invalid if statement");
+    } else {
         parser.consume();
         if (parser.peek().type != TokenType::enter ) {
-            condition = new ConditionNode(parser, this->level + 1);
+            // Check for conditional
+            if (parser.peek().value == "(") {
+                condition = new BoxNode(parser, this->level + 1);
+            } else {
+                condition = new ConditionNode(parser, this->level + 1);
+            }
+
+            if (parser.peek().type == TokenType::enter) {
+                parser.consume();
+            }
+
+            // Check for IfStatement body
+            config.printDebug("Initial tab count: " + std::to_string(initialTabs) + ", New body tab count: " + std::to_string(parser.peek().tabCount) + "\n", YELLOW);
             if (parser.peek().tabCount > initialTabs) {
                 body = new BlockNode(parser, scopedVariables, parser.peek().tabCount, this->level + 1);
             } else {
-                parserNodeError(INV_IF_NODE, parser.consume(), "Bad alignment for if statement body");
+                parserNodeError(INV_IF_NODE, parser, "Bad alignment for if statement body");
             }
         } else {
-            parserNodeError(INV_IF_NODE, parser.consume(), "If statement node needs a condition");
+            parserNodeError(INV_IF_NODE, parser, "If statement node needs a condition");
         }
-    } else {
-        parserNodeError(INV_IF_NODE, parser.consume(), "Invalid if statement");
     }
 }
