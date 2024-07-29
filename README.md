@@ -19,7 +19,6 @@ The goal of this project is to develop my own programming language. It is a very
 
 ## File Structure
  - Project Directory
-    - `inc/`             # Header files (.hpp)
     - `src/`             # Source files (.cpp)
     - `obj/`             # Object files (.o)
     - `asm/`             # Assembly code files (.asm)
@@ -61,7 +60,7 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
     - [x] Make defined nodes for each situation posible
     - [x] Develop an easy way to visualize the resulting AST tree
     - [ ] Make sure it correctly saves every conditional structure:
-        - [ ] If statement
+        - [x] If statement
         - [ ] While loop
         - [ ] For loop
     - [x] Manage the parenthesis between operations or comparations correctly
@@ -74,9 +73,9 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
     - [ ] Generate code for every node:
         - [ ] Function nodes
         - [ ] Conditional nodes
-        - [ ] Operation nodes
-        - [ ] Variable nodes
-        - [ ] Return node
+        - [x] Operation nodes
+        - [x] Variable nodes
+        - [x] Return node
 - [ ] Testing:
     - [x] Add a way to develop tests for each compilation step using GitHub workflows
     - [x] Create a reliable and simple way of creating new tests
