@@ -7,6 +7,60 @@ AssignNode::AssignNode( ParserManager& parser, size_t level ) : ASTNode(NodeType
     fillData(parser);
 }
 
+bool AssignNode::isValid( ParserManager& parser, int& newPos ) {
+    int tmpNewPos = newPos;
+    bool isValid = false;
+
+    // Check for the equal
+    if (parser.peek(tmpNewPos++).value != "=") {
+        return false;
+    }
+
+    // Check for <operation(=)><box>
+    bool isAssignBox = false;
+    if (tmpNewPos == (newPos + 1)) {
+        if (BoxNode::isValid(parser, tmpNewPos)) {
+            isAssignBox = true;
+        }
+    }
+
+    // Check for <operation(=)><binOp>
+    bool isAssignBinOp = false;
+    if (tmpNewPos == (newPos + 1)) {
+        if (BinOpNode::isValid(parser, tmpNewPos)) {
+            isAssignBinOp = true;
+        }
+    }
+
+    // Check for <operation(=)><identifier>
+    bool isAssignIdentifier = false;
+    if (tmpNewPos == (newPos + 1)) {
+        if (IdentifierNode::isValid(parser, tmpNewPos)) {
+            isAssignIdentifier = true;
+        }
+    }
+
+    // Check for <operation(=)><literal>
+    bool isAssignLiteral = false;
+    if (tmpNewPos == (newPos + 1)) {
+        if (LiteralNode::isValid(parser, tmpNewPos)) {
+            isAssignLiteral = true;
+        }
+    }
+
+    if (isAssignBox||  isAssignBinOp || isAssignIdentifier || isAssignLiteral) {
+        if (parser.peek(tmpNewPos).type == TokenType::enter) {
+            isValid = true;
+        }
+    }
+
+    if (isValid) {
+        tmpNewPos = newPos;
+    }
+
+    return isValid;
+}
+
 void AssignNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
