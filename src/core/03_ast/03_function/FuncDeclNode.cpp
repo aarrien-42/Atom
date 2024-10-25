@@ -10,6 +10,35 @@ FuncDeclNode::FuncDeclNode( ParserManager& parser, size_t level ) : ASTNode(Node
     printScopedVariables(funcVariables);
 }
 
+bool FuncDeclNode::isValid( ParserManager& parser, int& newPos ) {
+    int tmpNewPos = newPos;
+    bool isValid = false;
+
+    // Check function name
+    if (parser.peek(tmpNewPos).type == TokenType::identifier && getStrEndChar(parser.peek(tmpNewPos).value) == ':') {
+        tmpNewPos++;
+        if (parser.peek(tmpNewPos).type == TokenType::enter) {
+            isValid = true;
+        } else {
+            // Check function parameters
+            while (parser.peek(tmpNewPos).type != TokenType::enter) {
+                if (IdentifierNode::isValid(parser, tmpNewPos)) {
+                    isValid = true;
+                } else {
+                    isValid = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (isValid) {
+        tmpNewPos = newPos;
+    }
+
+    return isValid;
+}
+
 void FuncDeclNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 

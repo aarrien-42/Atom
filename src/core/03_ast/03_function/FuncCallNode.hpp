@@ -11,6 +11,7 @@ struct FuncCallNode : public ASTNode {
     FuncCallNode( ParserManager&, size_t );
     ~FuncCallNode() {}
 
+    static bool isValid( ParserManager& parser, int& newPos );
     void fillData( ParserManager& );
 
     void deleteNode() override {
