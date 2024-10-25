@@ -25,12 +25,4 @@ struct BlockNode : public ASTNode {
 
         ConfigManager::getInstance().printDebug("[-] tabs(" + std::to_string(initialTabs) + ")\n", RED);
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        for (ASTNode* statement : statements) {
-            statement->printNode();
-        }
-    }
 };

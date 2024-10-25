@@ -19,13 +19,4 @@ struct ProgramNode : public ASTNode {
         for (ASTNode* function : functions)
             function->deleteNode();
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        ConfigManager::getInstance().printDebug("File name = " + fileName + "\n");
-        for (ASTNode* function : functions) {
-            function->printNode();
-        }
-    }
 };

@@ -64,6 +64,7 @@ Mine is meant to be compiled, so it requires a few more steps before executing. 
         - [ ] While loop
         - [ ] For loop
     - [x] Manage the parenthesis between operations or comparations correctly
+    - [ ] Manage scoped variables
     - [ ] Enable concatenation of conditions (ex.: (x < 100 && > 50))
     - [ ] Suport for multiple file compilation
     - [ ] Error management correctly shown and without any crashes

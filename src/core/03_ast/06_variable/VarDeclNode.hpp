@@ -21,18 +21,4 @@ struct VarDeclNode : public ASTNode {
         if (initialValue != nullptr)
             initialValue->deleteNode();
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        ConfigManager& Config = ConfigManager::getInstance();
-
-        putSpaces();
-        Config.printDebug("Variable name: " + name + "\n");
-        if (initialValue != nullptr) {
-            putSpaces();
-            Config.printDebug("Initial value:\n");
-            initialValue->printNode();
-        }
-    }
 };

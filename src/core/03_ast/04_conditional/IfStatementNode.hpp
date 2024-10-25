@@ -25,22 +25,4 @@ struct IfStatementNode : public ASTNode {
             elseBranch->deleteNode();
         }
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        ConfigManager& Config = ConfigManager::getInstance();
-
-        putSpaces();
-        Config.printDebug("Condition:\n");
-        condition->printNode();
-        putSpaces();
-        Config.printDebug("Body:\n");
-        body->printNode();
-        if (elseBranch != nullptr) {
-            putSpaces();
-            Config.printDebug("Else branch:\n");
-            elseBranch->printNode();
-        }
-    }
 };

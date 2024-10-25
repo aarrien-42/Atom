@@ -17,10 +17,4 @@ struct BoxNode : public ASTNode {
 
         node->deleteNode();
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        node->printNode();
-    }
 };

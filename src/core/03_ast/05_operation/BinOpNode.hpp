@@ -21,19 +21,4 @@ struct BinOpNode : public ASTNode {
         leftOp->deleteNode();
         rightOp->deleteNode();
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        ConfigManager& Config = ConfigManager::getInstance();
-
-        ASTNode::putSpaces();
-        Config.printDebug("Operator: " + operation + "\n");
-        ASTNode::putSpaces();
-        Config.printDebug("Left Operand:\n");
-        leftOp->printNode();
-        ASTNode::putSpaces();
-        Config.printDebug("Right Operand:\n");
-        rightOp->printNode();
-    }
 };

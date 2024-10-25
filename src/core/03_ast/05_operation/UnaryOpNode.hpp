@@ -18,11 +18,4 @@ struct UnaryOpNode : public ASTNode {
 
         operand->deleteNode();
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        operand->printNode();
-        ConfigManager::getInstance().printDebug(operation);
-    }
 };

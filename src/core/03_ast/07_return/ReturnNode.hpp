@@ -19,10 +19,4 @@ struct ReturnNode : public ASTNode {
 
         returnValue->deleteNode();
     }
-
-    void	printNode() const override {
-        ASTNode::printNode();
-
-        returnValue->printNode();
-    }
 };

@@ -7,6 +7,7 @@
 #include "nodes.hpp"
 #include "error.hpp"
 #include "config.hpp"
+#include "ASTPrinter.hpp"
 
 struct Token;
 struct ASTNode;

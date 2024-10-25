@@ -13,14 +13,5 @@ struct LiteralNode : public ASTNode {
 
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting LiteralNode\n", RED);
-
-
-    }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        putSpaces();
-        ConfigManager::getInstance().printDebug(value + "\n");
     }
 };

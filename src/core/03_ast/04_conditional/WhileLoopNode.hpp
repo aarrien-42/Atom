@@ -21,8 +21,4 @@ struct WhileLoopNode : public ASTNode {
         condition->deleteNode();
         body->deleteNode();
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-    }
 };

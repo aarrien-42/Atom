@@ -6,7 +6,7 @@ ParserManager::ParserManager( const std::vector<Token>& tokens, std::string file
     _tree = new ProgramNode(*this, fileName);
 
     ConfigManager::getInstance().printDebug("\nPROGRAM ABSTRACT SINTAX TREE:\n", BOLDMAGENTA);
-    _tree->printNode();
+    ASTPrinter::printNode(_tree);
 }
 
 /*-DESTRUCTOR-*/

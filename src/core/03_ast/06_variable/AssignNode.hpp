@@ -18,12 +18,4 @@ struct AssignNode : public ASTNode {
 
         value->deleteNode(); 
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        putSpaces();
-        ConfigManager::getInstance().printDebug("Variable name: " + variableName + "\n");
-        value->printNode();
-    }
 };

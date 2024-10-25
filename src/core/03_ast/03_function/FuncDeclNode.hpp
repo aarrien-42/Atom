@@ -27,24 +27,4 @@ struct FuncDeclNode : public ASTNode {
         ConfigManager::getInstance().printDebug(" Deleting body:\n", RED);
         body->deleteNode();
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        ConfigManager& Config = ConfigManager::getInstance();
-
-        ASTNode::putSpaces();
-        Config.printDebug("Function name = " + functionName + "\n");
-        if (!parameters.empty()) {
-            ASTNode::putSpaces();
-            Config.printDebug("Parameters:\n");
-            for (ASTNode* param : parameters) {
-                param->printNode();
-                Config.printDebug(" ");
-            }
-        }
-        ASTNode::putSpaces();
-        Config.printDebug("Body:\n");
-        body->printNode();
-    }
 };

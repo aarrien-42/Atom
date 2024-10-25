@@ -13,14 +13,5 @@ struct IdentifierNode : public ASTNode {
 
     void deleteNode() override {
         ConfigManager::getInstance().printDebug("Deleting IdentifierNode\n", RED);
-
-
-    }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        putSpaces();
-        ConfigManager::getInstance().printDebug(name + "\n");
     }
 };

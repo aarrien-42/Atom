@@ -20,19 +20,4 @@ struct ConditionNode : public ASTNode {
         leftComp->deleteNode();
         rightComp->deleteNode(); 
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-
-        ConfigManager& Config = ConfigManager::getInstance();
-
-        putSpaces();
-        Config.printDebug("Comparator: " + comparation + "\n");
-        putSpaces();
-        Config.printDebug("Left node:\n");
-        leftComp->printNode();
-        putSpaces();
-        Config.printDebug("Right node:\n");
-        rightComp->printNode();
-    }
 };

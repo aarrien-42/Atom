@@ -38,41 +38,4 @@ struct ASTNode {
         virtual void deleteNode() = 0;
 
         NodeType getType() { return type; }
-
-        virtual void putSpaces(bool isNode = false) const {
-            ConfigManager& Config = ConfigManager::getInstance();
-            size_t spaceSize = 2;
-
-            for (size_t i = 0; i < level + !isNode; i++) {
-                for (size_t j = 0; j < spaceSize; j++) {
-                    Config.printDebug(" ");
-                }
-            }
-        }
-
-        virtual void printNode() const {
-            putSpaces(true);
-            std::string textColor = getColor(level);
-            std::string nodeName;
-            switch (type) {
-                case NodeType::Program:     nodeName = "ProgramNode";     break;
-                case NodeType::Block:       nodeName = "BlockNode";       break;
-                case NodeType::Box:         nodeName = "BoxNode";         break;
-                case NodeType::FuncDecl:    nodeName = "FuncDeclNode";    break;
-                case NodeType::FuncCall:    nodeName = "FuncCallNode";    break;
-                case NodeType::Condition:   nodeName = "ConditionNode";   break;
-                case NodeType::IfStatement: nodeName = "IfStatementNode"; break;
-                case NodeType::WhileLoop:   nodeName = "WhileLoopNode";   break;
-                case NodeType::ForLoop:     nodeName = "ForLoopNode";     break;
-                case NodeType::BinOp:       nodeName = "BinOpNode";       break;
-                case NodeType::UnaryOp:     nodeName = "UnaryOpNode";     break;
-                case NodeType::VarDecl:     nodeName = "VarDeclNode";     break;
-                case NodeType::Assign:      nodeName = "AssignNode";      break;
-                case NodeType::Literal:     nodeName = "LiteralNode";     break;
-                case NodeType::Identifier:  nodeName = "IdentifierNode";  break;
-                case NodeType::Return:      nodeName = "ReturnNode";      break;
-                default: nodeName = "Unknown";
-            }
-            ConfigManager::getInstance().printDebug("[" + nodeName + "]:\n", textColor);
-        }
 };

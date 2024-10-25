@@ -25,8 +25,4 @@ struct ForLoopNode : public ASTNode {
         iteration->deleteNode();
         body->deleteNode();
     }
-
-    void printNode() const override {
-        ASTNode::printNode();
-    }
 };
