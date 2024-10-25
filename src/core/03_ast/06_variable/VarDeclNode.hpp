@@ -13,6 +13,7 @@ struct VarDeclNode : public ASTNode {
     VarDeclNode( ParserManager&, std::vector<std::string>&, size_t );
     ~VarDeclNode() {}
 
+    static bool isValid( ParserManager& parser, int& newPos );
     void fillData( ParserManager& );
 
     void deleteNode() override {

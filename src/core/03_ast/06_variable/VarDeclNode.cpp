@@ -7,6 +7,26 @@ VarDeclNode::VarDeclNode( ParserManager& parser, std::vector<std::string>& scope
     fillData(parser);
 }
 
+bool VarDeclNode::isValid( ParserManager& parser, int& newPos ) {
+    int tmpNewPos = newPos;
+    bool isValid = false;
+
+    // Check the keyword
+    if (parser.peek(tmpNewPos++).value != "v.") {
+        return false;
+    }
+
+    if (IdentifierNode::isValid(parser, tmpNewPos)) {
+        isValid = true;
+    }
+
+    if (isValid) {
+        tmpNewPos = newPos;
+    }
+
+    return isValid;
+}
+
 void VarDeclNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
