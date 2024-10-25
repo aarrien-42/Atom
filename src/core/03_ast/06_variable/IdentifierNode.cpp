@@ -7,6 +7,21 @@ IdentifierNode::IdentifierNode( ParserManager& parser, size_t level ) : ASTNode(
     fillData(parser);
 }
 
+bool IdentifierNode::isValid( ParserManager& parser, int& newPos ) {
+    int tmpNewPos = newPos;
+    bool isValid = false;
+
+    if (parser.peek(tmpNewPos++).type == TokenType::identifier) {
+        isValid = true;
+    }
+
+    if (isValid) {
+        tmpNewPos = newPos;
+    }
+
+    return isValid;
+}
+
 void IdentifierNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 

@@ -10,6 +10,7 @@ struct BoxNode : public ASTNode {
     BoxNode( ParserManager&, size_t );
     ~BoxNode() {}
 
+    static bool isValid( ParserManager&, int& newPos );
     void fillData( ParserManager& );
 
     void deleteNode() override {

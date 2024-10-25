@@ -7,6 +7,40 @@ BoxNode::BoxNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Box,
     fillData(parser);
 }
 
+bool BoxNode::isValid( ParserManager& parser, int& newPos ) {
+    ConfigManager& config = ConfigManager::getInstance();
+    int tmpNewPos = newPos;
+    bool isValid = false;
+    size_t parenLevel = 1;
+
+    // Check if parenthesis closes
+    if (parser.peek(tmpNewPos).type == TokenType::paren && parser.peek(tmpNewPos).value == "(") {
+        tmpNewPos++;
+        while (true) {
+            if (parser.peek(tmpNewPos).type == TokenType::paren) {
+                if (parser.peek(tmpNewPos).value == "(") {
+                    parenLevel++;
+                } else if (parser.peek(tmpNewPos).value == ")") {
+                    parenLevel--;
+                    if (parenLevel == 0) {
+                        isValid = true;
+                        break;
+                    }
+                }
+            } else if (parser.peek(tmpNewPos).type == TokenType::enter) {
+                break;
+            }
+            tmpNewPos++;
+        }
+    }
+
+    if (isValid) {
+        newPos = tmpNewPos;
+    }
+
+    return isValid;
+}
+
 void BoxNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 

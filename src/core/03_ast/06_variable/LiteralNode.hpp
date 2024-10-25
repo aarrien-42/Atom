@@ -9,6 +9,7 @@ struct LiteralNode : public ASTNode {
 
     LiteralNode( ParserManager&, size_t );
 
+    static bool isValid( ParserManager&, int& newPos );
     void fillData( ParserManager& );
 
     void deleteNode() override {

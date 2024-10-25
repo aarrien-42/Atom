@@ -7,6 +7,53 @@ ReturnNode::ReturnNode( ParserManager& parser, std::vector<std::string>& scopedV
     fillData(parser);
 }
 
+bool ReturnNode::isValid( ParserManager& parser, int& newPos ) {
+    ConfigManager& config = ConfigManager::getInstance();
+    int tmpNewPos = newPos;
+    bool isValid = false;
+
+    // Check keyword
+    if (parser.peek(tmpNewPos++).value != "r.") {
+        return false;
+    }
+
+    // Check if it's a BoxNode
+    bool isBoxNode = false;
+    if (tmpNewPos == (newPos + 1)) {
+        isBoxNode = BoxNode::isValid(parser, tmpNewPos);
+    }
+
+    // Check if it's a BinOpNode
+    bool isBinOpNode = false;
+    if (tmpNewPos == (newPos + 1)) {
+        isBinOpNode = BinOpNode::isValid(parser, tmpNewPos);
+    }
+
+    // Check if it's a LiteralNode
+    bool isLiteralNode = false;
+    if (tmpNewPos == (newPos + 1)) {
+        isLiteralNode = LiteralNode::isValid(parser, tmpNewPos);
+    }
+
+    // Check if it's a IdentifierNode
+    bool isIdentifierNode = false;
+    if (tmpNewPos == (newPos + 1)) {
+        isIdentifierNode = IdentifierNode::isValid(parser, tmpNewPos);
+    }
+
+    if (isBoxNode || isBinOpNode || isLiteralNode || isIdentifierNode) {
+        if (parser.peek(tmpNewPos).type == TokenType::enter) {
+            isValid = true;
+        }
+    }
+
+    if (isValid) {
+        newPos = tmpNewPos;
+    }
+
+    return isValid;
+}
+
 void ReturnNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 

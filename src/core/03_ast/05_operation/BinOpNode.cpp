@@ -16,6 +16,90 @@ BinOpNode::BinOpNode( const BinOpNode& other, size_t level ) : ASTNode(NodeType:
     rightOp = other.rightOp;
 }
 
+bool BinOpNode::isValid( ParserManager& parser, int& newPos ) {
+    ConfigManager& config = ConfigManager::getInstance();
+    int tmpNewPos = newPos;
+    bool isValid = false;
+
+    // Check for <box><operation><box>
+    bool isBoxOpBox = false;
+    if (tmpNewPos == newPos) {
+        if (BoxNode::isValid(parser, tmpNewPos)) {
+            if (parser.peek(tmpNewPos).type == TokenType::operation) {
+                tmpNewPos++;
+                if (BoxNode::isValid(parser, tmpNewPos)) {
+                    isBoxOpBox = true;
+                }
+            }
+        }
+    }
+
+    if (!isBoxOpBox) {
+        tmpNewPos = newPos;
+    }
+
+    // Check for <box><operation><literal>
+    bool isBoxOpLit = false;
+    if (tmpNewPos == newPos) {
+        if (BoxNode::isValid(parser, tmpNewPos)) {
+            if (parser.peek(tmpNewPos).type == TokenType::operation) {
+                tmpNewPos++;
+                if (LiteralNode::isValid(parser, tmpNewPos)) {
+                    isBoxOpLit = true;
+                }
+            }
+        }
+    }
+
+    if (!isBoxOpLit) {
+        tmpNewPos = newPos;
+    }
+
+    // Check for <literal><operation><box>
+    bool isLitOpBox = false;
+    if (tmpNewPos == newPos) {
+        if (LiteralNode::isValid(parser, tmpNewPos)) {
+            if (parser.peek(tmpNewPos).type == TokenType::operation) {
+                tmpNewPos++;
+                if (BoxNode::isValid(parser, tmpNewPos)) {
+                    isLitOpBox = true;
+                }
+            }
+        }
+    }
+
+    if (!isLitOpBox) {
+        tmpNewPos = newPos;
+    }
+
+    // Check for <literal><operation><literal>
+    bool isLitOpLit = false;
+    if (tmpNewPos == newPos) {
+        if (LiteralNode::isValid(parser, tmpNewPos)) {
+            if (parser.peek(tmpNewPos).type == TokenType::operation) {
+                tmpNewPos++;
+                if (LiteralNode::isValid(parser, tmpNewPos)) {
+                    isLitOpLit = true;
+                }
+            }
+        }
+    }
+
+    if (!isLitOpLit) {
+        tmpNewPos = newPos;
+    }
+
+    if (isBoxOpBox || isBoxOpLit || isLitOpBox || isLitOpLit) {
+        isValid = true;
+    }
+
+    if (isValid) {
+        newPos = tmpNewPos;
+    }
+
+    return isValid;
+}
+
 void BinOpNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
     ASTNode** opNode;

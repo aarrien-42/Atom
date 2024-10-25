@@ -7,6 +7,21 @@ LiteralNode::LiteralNode( ParserManager& parser, size_t level ) : ASTNode(NodeTy
     fillData(parser);
 }
 
+bool LiteralNode::isValid( ParserManager& parser, int& newPos ) {
+    int tmpNewPos = newPos;
+    bool isValid = false;
+
+    if (parser.peek(tmpNewPos++).type == TokenType::literal) {
+        isValid = true;
+    }
+
+    if (isValid) {
+        newPos = tmpNewPos;
+    }
+
+    return isValid;
+}
+
 void LiteralNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 

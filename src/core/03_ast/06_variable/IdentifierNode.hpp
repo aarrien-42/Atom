@@ -9,6 +9,7 @@ struct IdentifierNode : public ASTNode {
 
     IdentifierNode( ParserManager&, size_t );
 
+    static bool isValid( ParserManager&, int& newPos );
     void fillData( ParserManager& );
 
     void deleteNode() override {

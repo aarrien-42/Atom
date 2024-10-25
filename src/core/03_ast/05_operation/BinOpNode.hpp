@@ -13,6 +13,7 @@ struct BinOpNode : public ASTNode {
     BinOpNode( const BinOpNode& other, size_t level );
     ~BinOpNode() {}
 
+    static bool isValid( ParserManager& parser, int& newPos );
     void fillData( ParserManager& );
 
     void deleteNode() override {
