@@ -14,6 +14,7 @@ struct VarDeclNode : public ASTNode {
     ~VarDeclNode() {}
 
     static bool isValid( ParserManager& parser, int& newPos );
+    NodeType getNode( ParserManager& parser, int newPos = 0 );
     void fillData( ParserManager& );
 
     void deleteNode() override {

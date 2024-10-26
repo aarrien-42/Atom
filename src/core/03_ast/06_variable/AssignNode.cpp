@@ -2,97 +2,98 @@
 
 AssignNode::AssignNode( ParserManager& parser ) : ASTNode(NodeType::Assign), value(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
-    config.printDebug("[*] AssignNode created\n", BOLDMAGENTA);
 
+    config.printDebug("[*] AssignNode created\n", BOLDMAGENTA);
     fillData(parser);
+    config.printDebug("[-] AssignNode\n", RED);
 }
 
 bool AssignNode::isValid( ParserManager& parser, int& newPos ) {
     int tmpNewPos = newPos;
     bool isValid = false;
 
+    // Check variable name
+    if (parser.peek(tmpNewPos++).type != TokenType::identifier) {
+        return false;
+    }
+
     // Check for the equal
     if (parser.peek(tmpNewPos++).value != "=") {
         return false;
     }
 
-    // Check for <operation(=)><box>
-    bool isAssignBox = false;
-    if (tmpNewPos == (newPos + 1)) {
-        if (BoxNode::isValid(parser, tmpNewPos)) {
-            isAssignBox = true;
-        }
+    // Check if it's a BoxNode
+    bool isBoxNode = BoxNode::isValid(parser, tmpNewPos);
+
+    // Check if it's a BinOpNode
+    bool isBinOpNode = BinOpNode::isValid(parser, tmpNewPos);
+
+    // Check if it's a LiteralNode
+    bool isLiteralNode = LiteralNode::isValid(parser, tmpNewPos);
+
+    // Check if it's a IdentifierNode
+    bool isIdentifierNode = IdentifierNode::isValid(parser, tmpNewPos);
+
+    if (isBoxNode || isBinOpNode || isLiteralNode || isIdentifierNode) {
+        newPos = tmpNewPos;
+        return true;
     }
 
-    // Check for <operation(=)><binOp>
-    bool isAssignBinOp = false;
-    if (tmpNewPos == (newPos + 1)) {
-        if (BinOpNode::isValid(parser, tmpNewPos)) {
-            isAssignBinOp = true;
-        }
+    return false;
+}
+
+NodeType AssignNode::getNode( ParserManager& parser, int newPos = 0 ) {
+    ConfigManager& config = ConfigManager::getInstance();
+    int tmpNewPos = newPos + 2; // Jump variable name and equal
+
+    // Check if it's a BinOpNode
+    if (BinOpNode::isValid(parser, tmpNewPos)) {
+        return NodeType::BinOp;
     }
 
-    // Check for <operation(=)><identifier>
-    bool isAssignIdentifier = false;
-    if (tmpNewPos == (newPos + 1)) {
-        if (IdentifierNode::isValid(parser, tmpNewPos)) {
-            isAssignIdentifier = true;
-        }
+    // Check if it's a BoxNode
+    if (BoxNode::isValid(parser, tmpNewPos)) {
+        return NodeType::Box;
     }
 
-    // Check for <operation(=)><literal>
-    bool isAssignLiteral = false;
-    if (tmpNewPos == (newPos + 1)) {
-        if (LiteralNode::isValid(parser, tmpNewPos)) {
-            isAssignLiteral = true;
-        }
+    // Check if it's a LiteralNode
+    if (LiteralNode::isValid(parser, tmpNewPos)) {
+        return NodeType::Literal;
     }
 
-    if (isAssignBox||  isAssignBinOp || isAssignIdentifier || isAssignLiteral) {
-        if (parser.peek(tmpNewPos).type == TokenType::enter) {
-            isValid = true;
-        }
+    // Check if it's a IdentifierNode
+    if (IdentifierNode::isValid(parser, tmpNewPos)) {
+        return NodeType::Identifier;
     }
 
-    if (isValid) {
-        tmpNewPos = newPos;
-    }
-
-    return isValid;
+    return NodeType::Unknown;
 }
 
 void AssignNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
-    if (parser.peek().type == identifier) {
-        variableName = parser.consume().value;
-        if (parser.peek().value == "=") {
-            parser.consume();
-            if (parser.peek().type == TokenType::paren) { // box assignation
-                value = new BoxNode(parser);
-            } else if (parser.peek(1).type == TokenType::enter) { // simple assignation
-                if (parser.peek().type == identifier)
-                    value = new IdentifierNode(parser);
-                else if (parser.peek().type == literal)
-                    value = new LiteralNode(parser);
-                else {
-                    parserNodeError(INV_ASSIGN_NODE, parser, "Invalid simple assignation");
-                }
-            } else { // advanced assignation
-                if (parser.peek().type == TokenType::identifier && parser.peek(1).type == TokenType::paren) { // function call
-                    value = new FuncCallNode(parser);
-                } else if (parser.peek(1).type == TokenType::operation) {
-                    value = new BinOpNode(parser);
-                } else {
-                    parserNodeError(INV_ASSIGN_NODE, parser, "Invalid advanced assignation");
-                }
-            }
-        } else {
-            parserNodeError(INV_ASSIGN_NODE, parser, "Assignation not done");
-        }
-    } else {
-        parserNodeError(INV_ASSIGN_NODE, parser, "Invalid assignation");
+    int pos = 0;
+    if (!AssignNode::isValid(parser, pos)) {
+        // Invalid AssignNode
+        return;
     }
 
-    config.printDebug("[-] AssignNode\n", RED);
+    NodeType nodeType = getNode(parser);
+    variableName = parser.consume().value; // Variable name
+    parser.consume(); // Equal
+    switch (nodeType) {
+        case NodeType::Box:
+            value = new BoxNode(parser);
+            break;
+        case NodeType::BinOp:
+            value = new BinOpNode(parser);
+            break;
+        case NodeType::Literal:
+            value = new LiteralNode(parser);
+            break;
+        case NodeType::Identifier:
+            value = new IdentifierNode(parser);
+            break;
+    }
+
 }

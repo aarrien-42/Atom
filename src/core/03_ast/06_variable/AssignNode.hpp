@@ -12,6 +12,7 @@ struct AssignNode : public ASTNode {
     ~AssignNode() {}
 
     static bool isValid( ParserManager&, int& newPos );
+    NodeType getNode( ParserManager& parser, int newPos );
     void fillData( ParserManager& );
 
     void deleteNode() override {
