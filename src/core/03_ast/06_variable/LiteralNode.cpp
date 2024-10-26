@@ -2,9 +2,10 @@
 
 LiteralNode::LiteralNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Literal, level) {
     ConfigManager& config = ConfigManager::getInstance();
-    config.printDebug("[*] LiteralNode created\n", BOLDCYAN);
 
+    config.printDebug("[*] LiteralNode created\n", BOLDCYAN);
     fillData(parser);
+    config.printDebug("[-] LiteralNode\n", RED);
 }
 
 bool LiteralNode::isValid( ParserManager& parser, int& newPos ) {
@@ -25,12 +26,12 @@ bool LiteralNode::isValid( ParserManager& parser, int& newPos ) {
 void LiteralNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
-    if (parser.peek().type == literal) {
-        value = parser.consume().value;
-        config.printDebug("  Literal: [" + value + "]\n");
-    } else {
+    int parserPos = 0;
+    if (!LiteralNode::isValid(parser, parserPos)) {
         parserNodeError(INV_LITERAL_NODE, parser, "Invalid Literal Node");
+        return;
     }
 
-    config.printDebug("[-] LiteralNode\n", RED);
+    value = parser.consume().value;
+    config.printDebug("  Literal: [" + value + "]\n");
 }
