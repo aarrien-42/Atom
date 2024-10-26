@@ -11,24 +11,20 @@ LiteralNode::LiteralNode( ParserManager& parser ) : ASTNode(NodeType::Literal) {
 bool LiteralNode::isValid( ParserManager& parser, int& newPos ) {
     ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos;
-    bool isValid = false;
 
     if (parser.peek(tmpNewPos++).type == TokenType::literal) {
-        isValid = true;
-    }
-
-    if (isValid) {
         newPos = tmpNewPos;
+        return true;
     }
 
-    return isValid;
+    return false;
 }
 
 void LiteralNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
-    int parserPos = 0;
-    if (!LiteralNode::isValid(parser, parserPos)) {
+    int pos = 0;
+    if (!LiteralNode::isValid(parser, pos)) {
         parserNodeError(INV_LITERAL_NODE, parser, "Invalid Literal Node");
         return;
     }

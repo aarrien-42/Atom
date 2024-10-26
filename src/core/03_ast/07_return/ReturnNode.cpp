@@ -8,15 +8,9 @@ ReturnNode::ReturnNode( ParserManager& parser, std::vector<std::string>& scopedV
     config.printDebug("[-] ReturnNode\n", RED);
 }
 
-bool ReturnNode::isValid( ParserManager& parser, int& newPos, ReturnValidNext* validNext ) {
+bool ReturnNode::isValid( ParserManager& parser, int& newPos ) {
     ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos;
-    bool isValid = false;
-
-    bool saveNext = false;
-    if (validNext != nullptr) {
-        saveNext = true;
-    }
 
     // Check keyword
     if (parser.peek(tmpNewPos++).value != "r.") {
@@ -24,73 +18,75 @@ bool ReturnNode::isValid( ParserManager& parser, int& newPos, ReturnValidNext* v
     }
 
     // Check if it's a BoxNode
-    bool isBoxNode = false;
-    if (tmpNewPos == (newPos + 1)) {
-        isBoxNode = BoxNode::isValid(parser, tmpNewPos);
-        if (saveNext)
-            *validNext = ReturnValidNext::RVNbox;
+    bool isBoxNode = BoxNode::isValid(parser, tmpNewPos);
+
+    // Check if it's a BinOpNode
+    bool isBinOpNode = BinOpNode::isValid(parser, tmpNewPos);
+
+    // Check if it's a LiteralNode
+    bool isLiteralNode = LiteralNode::isValid(parser, tmpNewPos);
+
+    // Check if it's a IdentifierNode
+    bool isIdentifierNode = IdentifierNode::isValid(parser, tmpNewPos);
+
+    if (isBoxNode || isBinOpNode || isLiteralNode || isIdentifierNode) {
+        newPos = tmpNewPos;
+        return true;
+    }
+
+    return false;
+}
+
+NodeType ReturnNode::getNode( ParserManager& parser, int newPos ) {
+    ConfigManager& config = ConfigManager::getInstance();
+    int tmpNewPos = newPos + 1; // Jump keyword (r.)
+
+    // Check if it's a BoxNode
+    if (BoxNode::isValid(parser, tmpNewPos)) {
+        return NodeType::Box;
     }
 
     // Check if it's a BinOpNode
-    bool isBinOpNode = false;
-    if (tmpNewPos == (newPos + 1)) {
-        isBinOpNode = BinOpNode::isValid(parser, tmpNewPos);
-        if (saveNext)
-            *validNext = ReturnValidNext::RVNbinOp;
+    if (BinOpNode::isValid(parser, tmpNewPos)) {
+        return NodeType::BinOp;
     }
 
     // Check if it's a LiteralNode
-    bool isLiteralNode = false;
-    if (tmpNewPos == (newPos + 1)) {
-        isLiteralNode = LiteralNode::isValid(parser, tmpNewPos);
-        if (saveNext)
-            *validNext = ReturnValidNext::RVNliteral;
+    if (LiteralNode::isValid(parser, tmpNewPos)) {
+        return NodeType::Literal;
     }
 
     // Check if it's a IdentifierNode
-    bool isIdentifierNode = false;
-    if (tmpNewPos == (newPos + 1)) {
-        isIdentifierNode = IdentifierNode::isValid(parser, tmpNewPos);
-        if (saveNext)
-            *validNext = ReturnValidNext::RVNidentifier;
+    if (IdentifierNode::isValid(parser, tmpNewPos)) {
+        return NodeType::Identifier;
     }
 
-    if (isBoxNode || isBinOpNode || isLiteralNode || isIdentifierNode) {
-        if (parser.peek(tmpNewPos).type == TokenType::enter) {
-            isValid = true;
-        }
-    }
-
-    if (isValid) {
-        newPos = tmpNewPos;
-    }
-
-    return isValid;
+    return NodeType::Unknown;
 }
 
 void ReturnNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
-    ReturnValidNext validNext = ReturnValidNext::RVNnone;
-    int parserPos = 0;
-    if (!ReturnNode::isValid(parser, parserPos, &validNext)) {
+    int pos = 0;
+    if (!ReturnNode::isValid(parser, pos)) {
         parserNodeError(INV_RETURN_NODE, parser, "Invalid Return Node");
         return;
     }
 
+    NodeType nodeType = getNode(parser);
     if (parser.peek().value == "r.") {
         parser.consume();
-        switch (validNext) {
-            case ReturnValidNext::RVNbox:
+        switch (nodeType) {
+            case NodeType::Box:
                 returnValue = new BoxNode(parser);
                 break;
-            case ReturnValidNext::RVNbinOp:
+            case NodeType::BinOp:
                 returnValue = new BinOpNode(parser);
                 break;
-            case ReturnValidNext::RVNliteral:
+            case NodeType::Literal:
                 returnValue = new LiteralNode(parser);
                 break;
-            case ReturnValidNext::RVNidentifier:
+            case NodeType::Identifier:
                 returnValue = new IdentifierNode(parser);
                 break;
             default:

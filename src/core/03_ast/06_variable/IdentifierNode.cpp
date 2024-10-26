@@ -11,25 +11,21 @@ IdentifierNode::IdentifierNode( ParserManager& parser ) : ASTNode(NodeType::Iden
 bool IdentifierNode::isValid( ParserManager& parser, int& newPos ) {
     ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos;
-    bool isValid = false;
 
     if (parser.peek(tmpNewPos++).type == TokenType::identifier) {
-        isValid = true;
-    }
-
-    if (isValid) {
         newPos = tmpNewPos;
+        return true;
     }
 
-    return isValid;
+    return false;
 }
 
 void IdentifierNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
 
-    int parserPos = 0;
-    if (!IdentifierNode::isValid(parser, parserPos)) {
+    int pos = 0;
+    if (!IdentifierNode::isValid(parser, pos)) {
         parserNodeError(INV_IDENTIFIER_NODE, parser, "Invalid Identifier Node");
         return;
     }

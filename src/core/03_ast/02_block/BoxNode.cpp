@@ -40,41 +40,45 @@ bool BoxNode::isValid( ParserManager& parser, int& newPos, BoxValidNext* nextVal
         }
     }
 
-    tmpNewPos = newPos;
     if (isParenClosed) {
-        tmpNewPos++;
-    
-        // Check for BinOpNode
-        bool isBinOpNode = false;
-        if (tmpNewPos == (newPos + 1)) {
-            if (BinOpNode::isValid(parser, tmpNewPos)) {
-                isBinOpNode = true;
-                if (saveNext)
-                    *nextValid = BoxValidNext::BVNbinOp;
-            }
-        }
-
-        // Check for ConditionalNode
-        bool isConditionalNode = false;
-        if (tmpNewPos == (newPos + 1)) {
-
-        }
-
-        // Check for BoxNode
-        bool isBoxNode = false;
-        if (tmpNewPos == (newPos + 1)) {
-            if (BinOpNode::isValid(parser, tmpNewPos)) {
-                isBoxNode = true;
-                if (saveNext)
-                    *nextValid = BoxValidNext::BVNbox;
-            }
-        }
-
-        if (isBinOpNode || isConditionalNode || isBoxNode) {
+        if (!saveNext) {
             isValid = true;
+        } else {
+            tmpNewPos = newPos + 1;
+
+            // Check for BinOpNode
+            bool isBinOpNode = false;
+            if (tmpNewPos == (newPos + 1)) {
+                if (BinOpNode::isValid(parser, tmpNewPos)) {
+                    isBinOpNode = true;
+                    if (saveNext)
+                        *nextValid = BoxValidNext::BVNbinOp;
+                }
+            }
+
+            // Check for ConditionalNode
+            bool isConditionalNode = false;
+            if (tmpNewPos == (newPos + 1)) {
+
+            }
+
+            // Check for BoxNode
+            bool isBoxNode = false;
+            if (tmpNewPos == (newPos + 1)) {
+                if (BoxNode::isValid(parser, tmpNewPos)) {
+                    isBoxNode = true;
+                    if (saveNext)
+                        *nextValid = BoxValidNext::BVNbox;
+                }
+            }
+
+            if (isBinOpNode || isConditionalNode || isBoxNode) {
+                isValid = true;
+            }
         }
     }
 
+    std::cout << "isvalid : " << isValid << "\n";
     if (isValid) {
         newPos = tmpNewPos;
     }

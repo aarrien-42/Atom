@@ -24,6 +24,7 @@ enum NodeType {
     Literal,        // "42" or 42
     Identifier,     // <var>
     Return,         // r. <value>
+    Unknown
 };
 
 struct ASTNode {
