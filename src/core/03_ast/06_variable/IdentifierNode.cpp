@@ -9,6 +9,7 @@ IdentifierNode::IdentifierNode( ParserManager& parser, size_t level ) : ASTNode(
 }
 
 bool IdentifierNode::isValid( ParserManager& parser, int& newPos ) {
+    ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos;
     bool isValid = false;
 
@@ -17,7 +18,7 @@ bool IdentifierNode::isValid( ParserManager& parser, int& newPos ) {
     }
 
     if (isValid) {
-        tmpNewPos = newPos;
+        newPos = tmpNewPos;
     }
 
     return isValid;

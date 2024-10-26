@@ -9,6 +9,7 @@ LiteralNode::LiteralNode( ParserManager& parser, size_t level ) : ASTNode(NodeTy
 }
 
 bool LiteralNode::isValid( ParserManager& parser, int& newPos ) {
+    ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos;
     bool isValid = false;
 
