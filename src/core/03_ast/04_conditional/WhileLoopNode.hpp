@@ -10,7 +10,7 @@ struct WhileLoopNode : public ASTNode {
 
     std::vector<std::string>& scopedVariables;
 
-    WhileLoopNode( ParserManager&, std::vector<std::string>&, size_t );
+    WhileLoopNode( ParserManager&, std::vector<std::string>& );
     ~WhileLoopNode() {}
 
     void fillData( ParserManager& );

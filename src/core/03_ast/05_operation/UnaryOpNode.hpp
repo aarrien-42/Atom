@@ -8,7 +8,7 @@ struct UnaryOpNode : public ASTNode {
     std::string operation;
     ASTNode* operand;
 
-    UnaryOpNode( ParserManager&, size_t );
+    UnaryOpNode( ParserManager& );
     ~UnaryOpNode() {}
 
     void fillData( ParserManager& );

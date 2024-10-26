@@ -1,6 +1,6 @@
 #include "ProgramNode.hpp"
 
-ProgramNode::ProgramNode( ParserManager& parser, std::string file, size_t level ) : ASTNode(NodeType::Program, level), fileName(file) {
+ProgramNode::ProgramNode( ParserManager& parser, std::string file) : ASTNode(NodeType::Program), fileName(file) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] ProgramNode created\n", BOLDMAGENTA);
 
@@ -15,7 +15,7 @@ void ProgramNode::fillData( ParserManager& parser ) {
             parser.consume();
         } else {
             if (parser.peek().type == identifier && getStrEndChar(parser.peek().value) == ':') {
-                functions.push_back(new FuncDeclNode(parser, this->level + 1));
+                functions.push_back(new FuncDeclNode(parser));
             } else {
                 config.printDebug("(" + parser.peek().value + ") Still not implemented\n", MAGENTA);
                 parser.consume();

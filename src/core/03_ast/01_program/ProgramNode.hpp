@@ -8,7 +8,7 @@ struct ProgramNode : public ASTNode {
     std::string fileName;
     std::vector<ASTNode*> functions;
 
-    ProgramNode( ParserManager&, std::string, size_t = 0 );
+    ProgramNode( ParserManager&, std::string );
     ~ProgramNode() {}
 
     void fillData( ParserManager& );

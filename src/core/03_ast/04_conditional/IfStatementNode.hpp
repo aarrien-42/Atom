@@ -11,7 +11,7 @@ struct IfStatementNode : public ASTNode {
 
     std::vector<std::string>& scopedVariables;
 
-    IfStatementNode( ParserManager&, std::vector<std::string>&, size_t );
+    IfStatementNode( ParserManager&, std::vector<std::string>& );
     ~IfStatementNode() {}
 
     void fillData( ParserManager& );

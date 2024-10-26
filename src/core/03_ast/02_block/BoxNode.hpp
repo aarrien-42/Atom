@@ -14,7 +14,7 @@ enum BoxValidNext {
 struct BoxNode : public ASTNode {
     ASTNode* node;
 
-    BoxNode( ParserManager&, size_t );
+    BoxNode( ParserManager& );
     ~BoxNode() {}
 
     static bool isValid( ParserManager&, int& newPos, BoxValidNext* nextValid = nullptr );

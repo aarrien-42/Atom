@@ -9,7 +9,7 @@ struct ConditionNode : public ASTNode {
     ASTNode* leftComp;
     ASTNode* rightComp;
 
-    ConditionNode( ParserManager&, size_t );
+    ConditionNode( ParserManager& );
     ~ConditionNode() {}
 
     void fillData( ParserManager& );

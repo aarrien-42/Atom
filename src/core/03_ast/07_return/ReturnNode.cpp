@@ -1,6 +1,6 @@
 #include "ReturnNode.hpp"
 
-ReturnNode::ReturnNode( ParserManager& parser, std::vector<std::string>& scopedVariables, size_t level ) : ASTNode(NodeType::Return, level), scopedVariables(scopedVariables), returnValue(nullptr) {
+ReturnNode::ReturnNode( ParserManager& parser, std::vector<std::string>& scopedVariables ) : ASTNode(NodeType::Return), scopedVariables(scopedVariables), returnValue(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
 
     config.printDebug("[*] ReturnNode created\n", BOLDMAGENTA);
@@ -82,16 +82,16 @@ void ReturnNode::fillData( ParserManager& parser ) {
         parser.consume();
         switch (validNext) {
             case ReturnValidNext::RVNbox:
-                returnValue = new BoxNode(parser, level);
+                returnValue = new BoxNode(parser);
                 break;
             case ReturnValidNext::RVNbinOp:
-                returnValue = new BinOpNode(parser, level);
+                returnValue = new BinOpNode(parser);
                 break;
             case ReturnValidNext::RVNliteral:
-                returnValue = new LiteralNode(parser, level);
+                returnValue = new LiteralNode(parser);
                 break;
             case ReturnValidNext::RVNidentifier:
-                returnValue = new IdentifierNode(parser, level);
+                returnValue = new IdentifierNode(parser);
                 break;
             default:
                 parserNodeError(INV_RETURN_NODE, parser, "Invalid Return Node");

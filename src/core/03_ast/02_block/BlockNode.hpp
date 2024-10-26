@@ -10,7 +10,7 @@ struct BlockNode : public ASTNode {
 
     std::vector<std::string>& scopeVariables;
 
-    BlockNode( ParserManager&, std::vector<std::string>&, size_t, size_t );
+    BlockNode( ParserManager&, std::vector<std::string>&, size_t );
     ~BlockNode() {}
 
     void fillData( ParserManager& );

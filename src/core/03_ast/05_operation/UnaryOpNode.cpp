@@ -1,6 +1,6 @@
 #include "UnaryOpNode.hpp"
 
-UnaryOpNode::UnaryOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::UnaryOp, level), operand(nullptr) {
+UnaryOpNode::UnaryOpNode( ParserManager& parser ) : ASTNode(NodeType::UnaryOp), operand(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] UnaryOpNode created\n", BOLDMAGENTA);
 

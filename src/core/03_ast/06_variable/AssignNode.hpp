@@ -8,7 +8,7 @@ struct AssignNode : public ASTNode {
     std::string variableName;
     ASTNode* value;
 
-    AssignNode( ParserManager&, size_t );
+    AssignNode( ParserManager& );
     ~AssignNode() {}
 
     static bool isValid( ParserManager&, int& newPos );

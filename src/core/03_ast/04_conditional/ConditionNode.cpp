@@ -1,7 +1,7 @@
 #include "ConditionNode.hpp"
 
 // More conditional types need to be implemented
-ConditionNode::ConditionNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Condition, level), leftComp(nullptr), rightComp(nullptr) {
+ConditionNode::ConditionNode( ParserManager& parser ) : ASTNode(NodeType::Condition), leftComp(nullptr), rightComp(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] ConditionNode created\n", BOLDMAGENTA);
 
@@ -34,12 +34,12 @@ void ConditionNode::fillData( ParserManager& parser ) {
 
         // Check for literal, identifier or parenthesis
         if (parser.peek().type == TokenType::literal) {
-            *opNode = new LiteralNode(parser, level + 1);
+            *opNode = new LiteralNode(parser);
         } else if (parser.peek().type == TokenType::identifier) {
-            *opNode = new IdentifierNode(parser, level + 1);
+            *opNode = new IdentifierNode(parser);
         } else if (parser.peek().type == TokenType::paren) {
             if (parser.peek().value == "(") {
-                *opNode = new BoxNode(parser, level + 1);
+                *opNode = new BoxNode(parser);
             } else {
                 break;
             }

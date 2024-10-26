@@ -1,6 +1,6 @@
 #include "FuncDeclNode.hpp"
 
-FuncDeclNode::FuncDeclNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::FuncDecl, level), body(nullptr) {
+FuncDeclNode::FuncDeclNode( ParserManager& parser ) : ASTNode(NodeType::FuncDecl), body(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] FuncDeclNode created\n", BOLDMAGENTA);
 
@@ -47,7 +47,7 @@ void FuncDeclNode::fillData( ParserManager& parser ) {
     if (parser.peek().type != enter) { // Function has parameters
         while (parser.peek().type != TokenType::enter) {
             if (parser.peek().type == TokenType::identifier)
-                parameters.push_back(new IdentifierNode(parser, this->level + 1));
+                parameters.push_back(new IdentifierNode(parser));
             else
                 parserNodeError(INV_FUNCDECL_NODE, parser, "Invalid Function declaration node");
         }
@@ -63,7 +63,7 @@ void FuncDeclNode::fillData( ParserManager& parser ) {
     }
 
     // Set the function body
-    body = new BlockNode(parser, funcVariables, parser.peek().tabCount, this->level + 1);
+    body = new BlockNode(parser, funcVariables, parser.peek().tabCount);
 
     config.printDebug("[-] FuncDeclNode\n", RED);
 }

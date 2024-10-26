@@ -8,7 +8,7 @@ struct FuncCallNode : public ASTNode {
     std::string functionName;
     std::vector<ASTNode*> parameters;
 
-    FuncCallNode( ParserManager&, size_t );
+    FuncCallNode( ParserManager& );
     ~FuncCallNode() {}
 
     static bool isValid( ParserManager& parser, int& newPos );

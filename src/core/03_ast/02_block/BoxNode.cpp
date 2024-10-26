@@ -1,6 +1,6 @@
 #include "BoxNode.hpp"
 
-BoxNode::BoxNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Box, level) {
+BoxNode::BoxNode( ParserManager& parser ) : ASTNode(NodeType::Box) {
     ConfigManager& config = ConfigManager::getInstance();
 
     config.printDebug("[*] BoxNode created\n", BOLDMAGENTA);
@@ -95,13 +95,13 @@ void BoxNode::fillData( ParserManager& parser ) {
     parser.consume(); // Consume open paren
     switch (validNext) {
         case BoxValidNext::BVNbinOp:
-            node = new BinOpNode(parser, level);
+            node = new BinOpNode(parser);
             break;
         case BoxValidNext::BVNcondition:
-            node = new ConditionNode(parser, level);
+            node = new ConditionNode(parser);
             break;
         case BoxValidNext::BVNbox:
-            node = new BoxNode(parser, level);
+            node = new BoxNode(parser);
             break;
         default:
             parserNodeError(INV_BOX_NODE, parser, "Invalid Box Node");

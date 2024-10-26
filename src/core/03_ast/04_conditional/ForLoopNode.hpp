@@ -12,7 +12,7 @@ struct ForLoopNode : public ASTNode {
 
     std::vector<std::string>& scopedVariables;
 
-    ForLoopNode( ParserManager&, std::vector<std::string>&, size_t );
+    ForLoopNode( ParserManager&, std::vector<std::string>& );
     ~ForLoopNode() {}
 
     void fillData( ParserManager& );

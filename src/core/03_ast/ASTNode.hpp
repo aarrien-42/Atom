@@ -29,10 +29,8 @@ enum NodeType {
 struct ASTNode {
         private:
             NodeType type;
-        protected:
-            size_t level;
         public:
-        ASTNode(NodeType t, size_t l = 0) : type(t), level(l) {}
+        ASTNode(NodeType t) : type(t) {}
         virtual ~ASTNode() {}
 
         virtual void deleteNode() = 0;

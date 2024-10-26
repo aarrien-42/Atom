@@ -1,6 +1,6 @@
 #include "IdentifierNode.hpp"
 
-IdentifierNode::IdentifierNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Identifier, level) {
+IdentifierNode::IdentifierNode( ParserManager& parser ) : ASTNode(NodeType::Identifier) {
     ConfigManager& config = ConfigManager::getInstance();
 
     config.printDebug("[*] IdentifierNode created\n", BOLDCYAN);

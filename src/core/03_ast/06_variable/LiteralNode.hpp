@@ -7,7 +7,7 @@
 struct LiteralNode : public ASTNode {
     std::string value;
 
-    LiteralNode( ParserManager&, size_t );
+    LiteralNode( ParserManager& );
 
     static bool isValid( ParserManager&, int& newPos );
     void fillData( ParserManager& );

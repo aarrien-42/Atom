@@ -1,6 +1,6 @@
 #include "BlockNode.hpp"
 
-BlockNode::BlockNode( ParserManager& parser, std::vector<std::string>& scpVars, size_t tabs, size_t level ) : ASTNode(NodeType::Block, level), scopeVariables(scpVars), initialTabs(tabs) {
+BlockNode::BlockNode( ParserManager& parser, std::vector<std::string>& scpVars, size_t tabs ) : ASTNode(NodeType::Block), scopeVariables(scpVars), initialTabs(tabs) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] BlockNode created\n", BOLDMAGENTA);
 
@@ -35,24 +35,24 @@ void BlockNode::fillData( ParserManager& parser ) {
         // block body check
         if (parser.peek().type == TokenType::keyword) {
             if (parser.peek().value == "i.") {
-                statements.push_back(new IfStatementNode(parser, scopeVariables, this->level + 1));
+                statements.push_back(new IfStatementNode(parser, scopeVariables));
             } else if (parser.peek().value == "w.") {
-                statements.push_back(new WhileLoopNode(parser, scopeVariables, this->level + 1));
+                statements.push_back(new WhileLoopNode(parser, scopeVariables));
             } else if (parser.peek().value == "f.") {
-                statements.push_back(new ForLoopNode(parser, scopeVariables, this->level + 1));
+                statements.push_back(new ForLoopNode(parser, scopeVariables));
             } else if (parser.peek().value == "v.") {
-                ASTNode* node = new VarDeclNode(parser, scopeVariables, this->level + 1);
+                ASTNode* node = new VarDeclNode(parser, scopeVariables);
                 statements.push_back(node);
                 VarDeclNode* varDeclNode = dynamic_cast<VarDeclNode*>(node);
                 config.printDebug("New variable " + varDeclNode->name + "\n", GREEN);
                 scopeVariables.push_back(varDeclNode->name);
             } else if (parser.peek().value == "r.") {
-                statements.push_back(new ReturnNode(parser, scopeVariables, this->level + 1));
+                statements.push_back(new ReturnNode(parser, scopeVariables));
             } else {
                 parserNodeError(INV_BLOCK_NODE, parser, "Invalid keyword");
             }
         } else if (parser.peek().type == TokenType::identifier) {
-            statements.push_back(new AssignNode(parser, this->level + 1));
+            statements.push_back(new AssignNode(parser));
         } else {
             parserNodeError(INV_BLOCK_NODE, parser, "Not implemented yet");
         }

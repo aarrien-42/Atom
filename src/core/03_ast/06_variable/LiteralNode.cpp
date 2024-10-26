@@ -1,6 +1,6 @@
 #include "LiteralNode.hpp"
 
-LiteralNode::LiteralNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Literal, level) {
+LiteralNode::LiteralNode( ParserManager& parser ) : ASTNode(NodeType::Literal) {
     ConfigManager& config = ConfigManager::getInstance();
 
     config.printDebug("[*] LiteralNode created\n", BOLDCYAN);

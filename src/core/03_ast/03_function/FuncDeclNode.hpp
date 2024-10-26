@@ -11,7 +11,7 @@ struct FuncDeclNode : public ASTNode {
 
     std::vector<std::string> funcVariables;
 
-    FuncDeclNode( ParserManager&, size_t );
+    FuncDeclNode( ParserManager& );
     ~FuncDeclNode() {}
 
     static bool isValid( ParserManager& parser, int& newPos );

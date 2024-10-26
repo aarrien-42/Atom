@@ -10,7 +10,7 @@ struct VarDeclNode : public ASTNode {
 
     std::vector<std::string>& scopedVariables;
 
-    VarDeclNode( ParserManager&, std::vector<std::string>&, size_t );
+    VarDeclNode( ParserManager&, std::vector<std::string>& );
     ~VarDeclNode() {}
 
     static bool isValid( ParserManager& parser, int& newPos );

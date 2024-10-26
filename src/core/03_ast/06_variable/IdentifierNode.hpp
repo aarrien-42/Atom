@@ -7,7 +7,7 @@
 struct IdentifierNode : public ASTNode {
     std::string name;
 
-    IdentifierNode( ParserManager&, size_t );
+    IdentifierNode( ParserManager& );
 
     static bool isValid( ParserManager&, int& newPos );
     void fillData( ParserManager& );

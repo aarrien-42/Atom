@@ -1,6 +1,6 @@
 #include "AssignNode.hpp"
 
-AssignNode::AssignNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Assign, level), value(nullptr) {
+AssignNode::AssignNode( ParserManager& parser ) : ASTNode(NodeType::Assign), value(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] AssignNode created\n", BOLDMAGENTA);
 
@@ -69,20 +69,20 @@ void AssignNode::fillData( ParserManager& parser ) {
         if (parser.peek().value == "=") {
             parser.consume();
             if (parser.peek().type == TokenType::paren) { // box assignation
-                value = new BoxNode(parser, this->level + 1);
+                value = new BoxNode(parser);
             } else if (parser.peek(1).type == TokenType::enter) { // simple assignation
                 if (parser.peek().type == identifier)
-                    value = new IdentifierNode(parser, this->level + 1);
+                    value = new IdentifierNode(parser);
                 else if (parser.peek().type == literal)
-                    value = new LiteralNode(parser, this->level + 1);
+                    value = new LiteralNode(parser);
                 else {
                     parserNodeError(INV_ASSIGN_NODE, parser, "Invalid simple assignation");
                 }
             } else { // advanced assignation
                 if (parser.peek().type == TokenType::identifier && parser.peek(1).type == TokenType::paren) { // function call
-                    value = new FuncCallNode(parser, this->level + 1);
+                    value = new FuncCallNode(parser);
                 } else if (parser.peek(1).type == TokenType::operation) {
-                    value = new BinOpNode(parser, this->level + 1);
+                    value = new BinOpNode(parser);
                 } else {
                     parserNodeError(INV_ASSIGN_NODE, parser, "Invalid advanced assignation");
                 }

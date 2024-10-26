@@ -1,6 +1,6 @@
 #include "BinOpNode.hpp"
 
-BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::BinOp, level), leftOp(nullptr), rightOp(nullptr) {
+BinOpNode::BinOpNode( ParserManager& parser ) : ASTNode(NodeType::BinOp), leftOp(nullptr), rightOp(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
 
     config.printDebug("[*] BinOpNode created\n", BOLDMAGENTA);
@@ -8,7 +8,7 @@ BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::
     config.printDebug("[-] BinOpNode\n", RED);
 }
 
-BinOpNode::BinOpNode( const BinOpNode& other, size_t level ) : ASTNode(NodeType::BinOp, level) {
+BinOpNode::BinOpNode( const BinOpNode& other ) : ASTNode(NodeType::BinOp) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] BinOpNode copied\n", BOLDMAGENTA);
 
@@ -113,24 +113,24 @@ void BinOpNode::fillData( ParserManager& parser ) {
 
     switch (validNext) {
         case BinOpValidNext::BOVNboxOpBox:
-            leftOp = new BoxNode(parser, level);
+            leftOp = new BoxNode(parser);
             operation = parser.consume().value;
-            rightOp = new BoxNode(parser, level);
+            rightOp = new BoxNode(parser);
             break;
         case BinOpValidNext::BOVNlitOpBox:
-            leftOp = new LiteralNode(parser, level);
+            leftOp = new LiteralNode(parser);
             operation = parser.consume().value;
-            rightOp = new BoxNode(parser, level);
+            rightOp = new BoxNode(parser);
             break;
         case BinOpValidNext::BOVNboxOpLit:
-            leftOp = new BoxNode(parser, level);
+            leftOp = new BoxNode(parser);
             operation = parser.consume().value;
-            rightOp = new LiteralNode(parser, level);
+            rightOp = new LiteralNode(parser);
             break;
         case BinOpValidNext::BOVNlitOpLit:
-            leftOp = new LiteralNode(parser, level);
+            leftOp = new LiteralNode(parser);
             operation = parser.consume().value;
-            rightOp = new LiteralNode(parser, level);
+            rightOp = new LiteralNode(parser);
             break;
     }
 }

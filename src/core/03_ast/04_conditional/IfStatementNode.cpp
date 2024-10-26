@@ -1,6 +1,6 @@
 #include "IfStatementNode.hpp"
 
-IfStatementNode::IfStatementNode( ParserManager& parser, std::vector<std::string>& scopedVariables, size_t level ) : ASTNode(NodeType::IfStatement, level), scopedVariables(scopedVariables), condition(nullptr), body(nullptr), elseBranch(nullptr) {
+IfStatementNode::IfStatementNode( ParserManager& parser, std::vector<std::string>& scopedVariables ) : ASTNode(NodeType::IfStatement), scopedVariables(scopedVariables), condition(nullptr), body(nullptr), elseBranch(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] IfStatementNode created\n", BOLDMAGENTA);
 
@@ -18,9 +18,9 @@ void IfStatementNode::fillData( ParserManager& parser ) {
         if (parser.peek().type != TokenType::enter ) {
             // Check for conditional
             if (parser.peek().value == "(") {
-                condition = new BoxNode(parser, this->level + 1);
+                condition = new BoxNode(parser);
             } else {
-                condition = new ConditionNode(parser, this->level + 1);
+                condition = new ConditionNode(parser);
             }
 
             if (parser.peek().type == TokenType::enter) {
@@ -30,7 +30,7 @@ void IfStatementNode::fillData( ParserManager& parser ) {
             // Check for IfStatement body
             config.printDebug("Initial tab count: " + std::to_string(initialTabs) + ", New body tab count: " + std::to_string(parser.peek().tabCount) + "\n", YELLOW);
             if (parser.peek().tabCount > initialTabs) {
-                body = new BlockNode(parser, scopedVariables, parser.peek().tabCount, this->level + 1);
+                body = new BlockNode(parser, scopedVariables, parser.peek().tabCount);
             } else {
                 parserNodeError(INV_IF_NODE, parser, "Bad alignment for if statement body");
             }

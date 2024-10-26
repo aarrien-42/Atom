@@ -17,8 +17,8 @@ struct BinOpNode : public ASTNode {
     ASTNode* leftOp;
     ASTNode* rightOp;
 
-    BinOpNode( ParserManager&, size_t );
-    BinOpNode( const BinOpNode& other, size_t level );
+    BinOpNode( ParserManager& );
+    BinOpNode( const BinOpNode& other );
     ~BinOpNode() {}
 
     static bool isValid( ParserManager& parser, int& newPos, BinOpValidNext* nextValid = nullptr );

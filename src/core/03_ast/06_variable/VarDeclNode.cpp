@@ -1,6 +1,6 @@
 #include "VarDeclNode.hpp"
 
-VarDeclNode::VarDeclNode( ParserManager& parser, std::vector<std::string>& scopedVariables, size_t level ) : ASTNode(NodeType::VarDecl, level), scopedVariables(scopedVariables), initialValue(nullptr) {
+VarDeclNode::VarDeclNode( ParserManager& parser, std::vector<std::string>& scopedVariables ) : ASTNode(NodeType::VarDecl), scopedVariables(scopedVariables), initialValue(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
     config.printDebug("[*] VarDeclNode created\n", BOLDMAGENTA);
 
@@ -38,7 +38,7 @@ void VarDeclNode::fillData( ParserManager& parser ) {
         } else {
             name = parser.peek().value;
             if (parser.peek(1).value == "=") {
-                initialValue = new AssignNode(parser, this->level + 1);
+                initialValue = new AssignNode(parser);
             } else {
                 parserNodeError(INV_VARDECL_NODE, parser, "Expected assignation");
             }
