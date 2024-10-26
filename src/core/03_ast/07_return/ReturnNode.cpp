@@ -41,14 +41,14 @@ NodeType ReturnNode::getNode( ParserManager& parser, int newPos ) {
     ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos + 1; // Jump keyword (r.)
 
-    // Check if it's a BoxNode
-    if (BoxNode::isValid(parser, tmpNewPos)) {
-        return NodeType::Box;
-    }
-
     // Check if it's a BinOpNode
     if (BinOpNode::isValid(parser, tmpNewPos)) {
         return NodeType::BinOp;
+    }
+
+    // Check if it's a BoxNode
+    if (BoxNode::isValid(parser, tmpNewPos)) {
+        return NodeType::Box;
     }
 
     // Check if it's a LiteralNode

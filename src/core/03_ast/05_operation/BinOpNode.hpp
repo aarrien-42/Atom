@@ -2,14 +2,6 @@
 
 #include "nodes.hpp"
 
-enum BinOpValidNext {
-    BOVNnone,
-    BOVNboxOpBox,
-    BOVNlitOpBox,
-    BOVNboxOpLit,
-    BOVNlitOpLit
-};
-
 // Description: Binary (pair) operation node
 // Data: Operation (+, -, *, /, %, etc.) and two operands
 struct BinOpNode : public ASTNode {
@@ -21,7 +13,9 @@ struct BinOpNode : public ASTNode {
     BinOpNode( const BinOpNode& other );
     ~BinOpNode() {}
 
-    static bool isValid( ParserManager& parser, int& newPos, BinOpValidNext* nextValid = nullptr );
+    static bool isValid( ParserManager& parser, int& newPos );
+    NodeType getNode(ParserManager& parser, bool isLeft, int newPos = 0);
+    bool fillDataOp( ParserManager& parser, bool isLeft );
     void fillData( ParserManager& );
 
     void deleteNode() override {
