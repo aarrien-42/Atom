@@ -2,9 +2,10 @@
 
 BinOpNode::BinOpNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::BinOp, level), leftOp(nullptr), rightOp(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
-    config.printDebug("[*] BinOpNode created\n", BOLDMAGENTA);
 
+    config.printDebug("[*] BinOpNode created\n", BOLDMAGENTA);
     fillData(parser);
+    config.printDebug("[-] BinOpNode\n", RED);
 }
 
 BinOpNode::BinOpNode( const BinOpNode& other, size_t level ) : ASTNode(NodeType::BinOp, level) {
@@ -16,7 +17,7 @@ BinOpNode::BinOpNode( const BinOpNode& other, size_t level ) : ASTNode(NodeType:
     rightOp = other.rightOp;
 }
 
-bool BinOpNode::isValid( ParserManager& parser, int& newPos ) {
+bool BinOpNode::isValid( ParserManager& parser, int& newPos, BinOpValidNext* nextValid ) {
     ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos;
     bool isValid = false;
@@ -102,63 +103,34 @@ bool BinOpNode::isValid( ParserManager& parser, int& newPos ) {
 
 void BinOpNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
-    ASTNode** opNode;
 
-    while (true) {
-        leftOp == nullptr ? (opNode = &leftOp) : (opNode = &rightOp);
-
-        // Check for subsequent operations
-        if (leftOp != nullptr && rightOp != nullptr) {
-            config.printDebug("    Check for multiple operations\n");
-            if (parser.peek().type == TokenType::operation) {
-                config.printDebug("New binary operation: ", GREEN);
-                if (parser.peek().value == "+" || parser.peek().value == "-") {
-                    config.printDebug("[" + parser.peek().value + "]\n", CYAN);
-                    leftOp = new BinOpNode(*this, level++);
-                    rightOp = nullptr;
-                    operation.erase();
-                } else if (parser.peek().value == "*" || parser.peek().value == "/") {
-                    config.printDebug("[" + parser.peek().value + "]\n", CYAN);
-                    config.printDebug("Current Op [" + operation + "]\n", CYAN);
-                    if (operation != "*" && operation != "/") {
-                        BinOpNode* newNode = new BinOpNode(*this, level + 1); // level needs to be check
-                        rightOp = newNode;
-                        newNode->operation = parser.consume().value;
-                        newNode->leftOp = newNode->rightOp;
-                        newNode->rightOp = nullptr;
-                        newNode->fillData(parser);
-                    } else {
-                        leftOp = new BinOpNode(*this, level++);
-                        rightOp = nullptr;
-                        operation.erase();
-                    }
-                }
-            } else {
-                break;
-            }
-        }
-
-        if (leftOp != nullptr && operation.empty()) {
-            if (parser.peek().type == TokenType::operation) {
-                operation = parser.consume().value;
-            }
-        }
-
-        // Check for literal, identifier or parenthesis
-        if (parser.peek().type == TokenType::literal) {
-            *opNode = new LiteralNode(parser, level + 1);
-        } else if (parser.peek().type == TokenType::identifier) {
-            *opNode = new IdentifierNode(parser, level + 1);
-        } else if (parser.peek().type == TokenType::paren) {
-            if (parser.peek().value == "(") {
-                *opNode = new BoxNode(parser, level + 1);
-            } else {
-                break;
-            }
-        } else {
-            break;
-        }
+    BinOpValidNext validNext = BinOpValidNext::BOVNnone;
+    int parserPos = 0;
+    if (!BinOpNode::isValid(parser, parserPos, &validNext)) {
+        // "Invalid BinOp Node"
+        return;
     }
 
-    config.printDebug("[-] BinOpNode\n", RED);
+    switch (validNext) {
+        case BinOpValidNext::BOVNboxOpBox:
+            leftOp = new BoxNode(parser, level);
+            operation = parser.consume().value;
+            rightOp = new BoxNode(parser, level);
+            break;
+        case BinOpValidNext::BOVNlitOpBox:
+            leftOp = new LiteralNode(parser, level);
+            operation = parser.consume().value;
+            rightOp = new BoxNode(parser, level);
+            break;
+        case BinOpValidNext::BOVNboxOpLit:
+            leftOp = new BoxNode(parser, level);
+            operation = parser.consume().value;
+            rightOp = new LiteralNode(parser, level);
+            break;
+        case BinOpValidNext::BOVNlitOpLit:
+            leftOp = new LiteralNode(parser, level);
+            operation = parser.consume().value;
+            rightOp = new LiteralNode(parser, level);
+            break;
+    }
 }
