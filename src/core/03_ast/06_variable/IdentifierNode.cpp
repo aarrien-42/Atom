@@ -2,9 +2,10 @@
 
 IdentifierNode::IdentifierNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Identifier, level) {
     ConfigManager& config = ConfigManager::getInstance();
-    config.printDebug("[*] IdentifierNode created\n", BOLDCYAN);
 
+    config.printDebug("[*] IdentifierNode created\n", BOLDCYAN);
     fillData(parser);
+    config.printDebug("[-] IdentifierNode\n", RED);
 }
 
 bool IdentifierNode::isValid( ParserManager& parser, int& newPos ) {
@@ -25,12 +26,13 @@ bool IdentifierNode::isValid( ParserManager& parser, int& newPos ) {
 void IdentifierNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
-    if (parser.peek().type == identifier) {
-        name = parser.consume().value;
-        config.printDebug("  Identifier: [" + name + "]\n");
-    } else {
+
+    int parserPos = 0;
+    if (!IdentifierNode::isValid(parser, parserPos)) {
         parserNodeError(INV_IDENTIFIER_NODE, parser, "Invalid Identifier Node");
+        return;
     }
 
-    config.printDebug("[-] IdentifierNode\n", RED);
+    name = parser.consume().value;
+    config.printDebug("  Identifier: [" + name + "]\n");
 }
