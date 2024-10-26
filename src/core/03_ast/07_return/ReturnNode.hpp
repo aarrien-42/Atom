@@ -2,6 +2,14 @@
 
 #include "nodes.hpp"
 
+enum ReturnValidNext {
+    RVNnone,
+    RVNbox,
+    RVNbinOp,
+    RVNliteral,
+    RVNidentifier
+};
+
 // Description: Return node
 // Data: Return value (normally a literal)
 struct ReturnNode : public ASTNode {
@@ -12,7 +20,7 @@ struct ReturnNode : public ASTNode {
     ReturnNode( ParserManager&, std::vector<std::string>&, size_t );
     ~ReturnNode() {}
 
-    static bool isValid( ParserManager&, int& newPos );
+    static bool isValid( ParserManager& parser, int& newPos, ReturnValidNext& validNext );
     void fillData( ParserManager& );
 
     void deleteNode() override {

@@ -2,12 +2,13 @@
 
 ReturnNode::ReturnNode( ParserManager& parser, std::vector<std::string>& scopedVariables, size_t level ) : ASTNode(NodeType::Return, level), scopedVariables(scopedVariables), returnValue(nullptr) {
     ConfigManager& config = ConfigManager::getInstance();
-    config.printDebug("[*] ReturnNode created\n", BOLDMAGENTA);
 
+    config.printDebug("[*] ReturnNode created\n", BOLDMAGENTA);
     fillData(parser);
+    config.printDebug("[-] ReturnNode\n", RED);
 }
 
-bool ReturnNode::isValid( ParserManager& parser, int& newPos ) {
+bool ReturnNode::isValid( ParserManager& parser, int& newPos, ReturnValidNext& validNext ) {
     ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos;
     bool isValid = false;
@@ -21,24 +22,28 @@ bool ReturnNode::isValid( ParserManager& parser, int& newPos ) {
     bool isBoxNode = false;
     if (tmpNewPos == (newPos + 1)) {
         isBoxNode = BoxNode::isValid(parser, tmpNewPos);
+        validNext = ReturnValidNext::RVNbox;
     }
 
     // Check if it's a BinOpNode
     bool isBinOpNode = false;
     if (tmpNewPos == (newPos + 1)) {
         isBinOpNode = BinOpNode::isValid(parser, tmpNewPos);
+        validNext = ReturnValidNext::RVNbinOp;
     }
 
     // Check if it's a LiteralNode
     bool isLiteralNode = false;
     if (tmpNewPos == (newPos + 1)) {
         isLiteralNode = LiteralNode::isValid(parser, tmpNewPos);
+        validNext = ReturnValidNext::RVNliteral;
     }
 
     // Check if it's a IdentifierNode
     bool isIdentifierNode = false;
     if (tmpNewPos == (newPos + 1)) {
         isIdentifierNode = IdentifierNode::isValid(parser, tmpNewPos);
+        validNext = ReturnValidNext::RVNidentifier;
     }
 
     if (isBoxNode || isBinOpNode || isLiteralNode || isIdentifierNode) {
@@ -57,30 +62,30 @@ bool ReturnNode::isValid( ParserManager& parser, int& newPos ) {
 void ReturnNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
-    if (parser.peek().value != "r.")
+    ReturnValidNext validNext = ReturnValidNext::RVNnone;
+    int parserPos = 0;
+    if (!ReturnNode::isValid(parser, parserPos, validNext)) {
         parserNodeError(INV_RETURN_NODE, parser, "Invalid Return Node");
-    else {
-        parser.consume();
-
-        if (parser.peek().type != TokenType::enter && parser.peek(1).type != TokenType::enter) {
-            if (parser.peek().type == TokenType::paren)
-                returnValue = new BoxNode(parser, this->level + 1);
-            else if (parser.peek(1).type == TokenType::operation)
-                returnValue = new BinOpNode(parser, this->level + 1);
-            else if (parser.peek(1).type == TokenType::comparison)
-                returnValue = new ConditionNode(parser, this->level + 1);
-        } else {
-            if (parser.peek().type == TokenType::identifier)
-                returnValue = new IdentifierNode(parser, this->level + 1);
-            else if (parser.peek().type == TokenType::literal)
-                returnValue = new LiteralNode(parser, this->level + 1);
-        }
-
-        // Line must end by now
-        if (parser.peek().type != TokenType::enter) {
-            parserNodeError(INV_RETURN_NODE, parser, "Expected a new line");
-        }
+        return;
     }
 
-    config.printDebug("[-] ReturnNode\n", RED);
+    if (parser.peek().value == "r.") {
+        parser.consume();
+        switch (validNext) {
+            case ReturnValidNext::RVNbox:
+                returnValue = new BoxNode(parser, level);
+                break;
+            case ReturnValidNext::RVNbinOp:
+                returnValue = new BinOpNode(parser, level);
+                break;
+            case ReturnValidNext::RVNliteral:
+                returnValue = new LiteralNode(parser, level);
+                break;
+            case ReturnValidNext::RVNidentifier:
+                returnValue = new IdentifierNode(parser, level);
+                break;
+            default:
+                parserNodeError(INV_RETURN_NODE, parser, "Invalid Return Node");
+        }
+    }
 }
