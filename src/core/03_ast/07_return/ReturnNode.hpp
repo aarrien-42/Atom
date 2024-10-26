@@ -20,7 +20,7 @@ struct ReturnNode : public ASTNode {
     ReturnNode( ParserManager&, std::vector<std::string>&, size_t );
     ~ReturnNode() {}
 
-    static bool isValid( ParserManager& parser, int& newPos, ReturnValidNext& validNext );
+    static bool isValid( ParserManager& parser, int& newPos, ReturnValidNext* validNext = nullptr );
     void fillData( ParserManager& );
 
     void deleteNode() override {

@@ -8,10 +8,15 @@ ReturnNode::ReturnNode( ParserManager& parser, std::vector<std::string>& scopedV
     config.printDebug("[-] ReturnNode\n", RED);
 }
 
-bool ReturnNode::isValid( ParserManager& parser, int& newPos, ReturnValidNext& validNext ) {
+bool ReturnNode::isValid( ParserManager& parser, int& newPos, ReturnValidNext* validNext ) {
     ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos;
     bool isValid = false;
+
+    bool saveNext = false;
+    if (validNext != nullptr) {
+        saveNext = true;
+    }
 
     // Check keyword
     if (parser.peek(tmpNewPos++).value != "r.") {
@@ -22,28 +27,32 @@ bool ReturnNode::isValid( ParserManager& parser, int& newPos, ReturnValidNext& v
     bool isBoxNode = false;
     if (tmpNewPos == (newPos + 1)) {
         isBoxNode = BoxNode::isValid(parser, tmpNewPos);
-        validNext = ReturnValidNext::RVNbox;
+        if (saveNext)
+            *validNext = ReturnValidNext::RVNbox;
     }
 
     // Check if it's a BinOpNode
     bool isBinOpNode = false;
     if (tmpNewPos == (newPos + 1)) {
         isBinOpNode = BinOpNode::isValid(parser, tmpNewPos);
-        validNext = ReturnValidNext::RVNbinOp;
+        if (saveNext)
+            *validNext = ReturnValidNext::RVNbinOp;
     }
 
     // Check if it's a LiteralNode
     bool isLiteralNode = false;
     if (tmpNewPos == (newPos + 1)) {
         isLiteralNode = LiteralNode::isValid(parser, tmpNewPos);
-        validNext = ReturnValidNext::RVNliteral;
+        if (saveNext)
+            *validNext = ReturnValidNext::RVNliteral;
     }
 
     // Check if it's a IdentifierNode
     bool isIdentifierNode = false;
     if (tmpNewPos == (newPos + 1)) {
         isIdentifierNode = IdentifierNode::isValid(parser, tmpNewPos);
-        validNext = ReturnValidNext::RVNidentifier;
+        if (saveNext)
+            *validNext = ReturnValidNext::RVNidentifier;
     }
 
     if (isBoxNode || isBinOpNode || isLiteralNode || isIdentifierNode) {
@@ -64,7 +73,7 @@ void ReturnNode::fillData( ParserManager& parser ) {
 
     ReturnValidNext validNext = ReturnValidNext::RVNnone;
     int parserPos = 0;
-    if (!ReturnNode::isValid(parser, parserPos, validNext)) {
+    if (!ReturnNode::isValid(parser, parserPos, &validNext)) {
         parserNodeError(INV_RETURN_NODE, parser, "Invalid Return Node");
         return;
     }
