@@ -2,16 +2,22 @@
 
 BoxNode::BoxNode( ParserManager& parser, size_t level ) : ASTNode(NodeType::Box, level) {
     ConfigManager& config = ConfigManager::getInstance();
-    config.printDebug("[*] BoxNode created\n", BOLDMAGENTA);
 
+    config.printDebug("[*] BoxNode created\n", BOLDMAGENTA);
     fillData(parser);
+    config.printDebug("[-] BoxNode\n", RED);
 }
 
-bool BoxNode::isValid( ParserManager& parser, int& newPos ) {
+bool BoxNode::isValid( ParserManager& parser, int& newPos, BoxValidNext* nextValid ) {
     ConfigManager& config = ConfigManager::getInstance();
     int tmpNewPos = newPos;
-    bool isValid = false;
+    bool isValid = false, isParenClosed = false;
     size_t parenLevel = 1;
+
+    bool saveNext = false;
+    if (nextValid != nullptr) {
+        saveNext = true;
+    }
 
     // Check if parenthesis closes
     if (parser.peek(tmpNewPos).type == TokenType::paren && parser.peek(tmpNewPos).value == "(") {
@@ -23,7 +29,7 @@ bool BoxNode::isValid( ParserManager& parser, int& newPos ) {
                 } else if (parser.peek(tmpNewPos).value == ")") {
                     parenLevel--;
                     if (parenLevel == 0) {
-                        isValid = true;
+                        isParenClosed = true;
                         break;
                     }
                 }
@@ -31,6 +37,41 @@ bool BoxNode::isValid( ParserManager& parser, int& newPos ) {
                 break;
             }
             tmpNewPos++;
+        }
+    }
+
+    tmpNewPos = newPos;
+    if (isParenClosed) {
+        tmpNewPos++;
+    
+        // Check for BinOpNode
+        bool isBinOpNode = false;
+        if (tmpNewPos == (newPos + 1)) {
+            if (BinOpNode::isValid(parser, tmpNewPos)) {
+                isBinOpNode = true;
+                if (saveNext)
+                    *nextValid = BoxValidNext::BVNbinOp;
+            }
+        }
+
+        // Check for ConditionalNode
+        bool isConditionalNode = false;
+        if (tmpNewPos == (newPos + 1)) {
+
+        }
+
+        // Check for BoxNode
+        bool isBoxNode = false;
+        if (tmpNewPos == (newPos + 1)) {
+            if (BinOpNode::isValid(parser, tmpNewPos)) {
+                isBoxNode = true;
+                if (saveNext)
+                    *nextValid = BoxValidNext::BVNbox;
+            }
+        }
+
+        if (isBinOpNode || isConditionalNode || isBoxNode) {
+            isValid = true;
         }
     }
 
@@ -44,37 +85,26 @@ bool BoxNode::isValid( ParserManager& parser, int& newPos ) {
 void BoxNode::fillData( ParserManager& parser ) {
     ConfigManager& config = ConfigManager::getInstance();
 
-    // Check if box parenthesis closes
-    const int tokensTillBoxEnd = isParenthesisClosed(parser);
-    config.printDebug("Tokens until end of the box: " + std::to_string(tokensTillBoxEnd) + "\n");
-
-    if (tokensTillBoxEnd > 0) {
-        parser.consume(); // Consume first BoxNode parenthesis
-        ASTNode* tempNode = nullptr;
-        while (true) {
-            config.printDebug("Current token [" + parser.peek().value + " (" + std::to_string(parser.peek().type) + ")" + "]\n");
-
-            size_t opIndex = 0;
-            if (parser.peek().type == TokenType::paren && parser.peek().value == ")") {
-                break;
-            } else if (parser.peek().type == TokenType::paren && parser.peek().value == "(") {
-                opIndex = isParenthesisClosed(parser) + 1;
-            } else {
-                opIndex = 1;
-            }
-
-            config.printDebug("opNode value = " + parser.peek(opIndex).value + " (" + std::to_string(opIndex) + ")" + "\n");
-            if (parser.peek(opIndex).type == TokenType::operation) {
-                tempNode = new BinOpNode(parser, level + 1);
-            } else if (parser.peek(opIndex).type == TokenType::comparison) {
-                tempNode = new ConditionNode(parser, level + 1);
-                break;
-            }
-        }
-        parser.consume(); // Consume last BoxNode parenthesis
-        node = tempNode;
-    } else {
-        parserNodeError(INV_BOX_NODE, parser, "Parenthesis not closed");
+    BoxValidNext validNext = BoxValidNext::BVNnone;
+    int parserPos = 0;
+    if (!BoxNode::isValid(parser, parserPos, &validNext)) {
+        parserNodeError(INV_BOX_NODE, parser, "Invalid Box Node");
+        return;
     }
-    config.printDebug("[-] BoxNode\n", RED);
+
+    parser.consume(); // Consume open paren
+    switch (validNext) {
+        case BoxValidNext::BVNbinOp:
+            node = new BinOpNode(parser, level);
+            break;
+        case BoxValidNext::BVNcondition:
+            node = new ConditionNode(parser, level);
+            break;
+        case BoxValidNext::BVNbox:
+            node = new BoxNode(parser, level);
+            break;
+        default:
+            parserNodeError(INV_BOX_NODE, parser, "Invalid Box Node");
+    }
+    parser.consume(); // Consume close paren
 }
